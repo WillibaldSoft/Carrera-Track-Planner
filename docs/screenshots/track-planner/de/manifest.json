@@ -1,0 +1,143 @@
+{
+  "language": "de",
+  "viewport": {
+    "width": 1600,
+    "height": 1400
+  },
+  "syntheticData": true,
+  "screenshots": [
+    {
+      "id": "01-start-setup",
+      "file": "01-start-setup.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "80ef9bb2631ba2260b2cbe947d77ee329598dd5df0bde9ce7f81d85f781bbb94"
+    },
+    {
+      "id": "02-start-cu-two-bays",
+      "file": "02-start-cu-two-bays.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "ce8f074259aaa45b080c9305a139204192580c74a0c2b246c78c22cbb2ef3320"
+    },
+    {
+      "id": "03-readable-rotated-cu",
+      "file": "03-readable-rotated-cu.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "2c493025c01a45c43e655ac22a6cc428d3fcf78e12bfde0ed59f5c4dd0228569"
+    },
+    {
+      "id": "04-cu-on-existing-straight",
+      "file": "04-cu-on-existing-straight.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "72ab3e101bb3ba71aecf9a6158390fd9e743427b668394d2675df65921c729ba"
+    },
+    {
+      "id": "05-optional-aks-marker",
+      "file": "05-optional-aks-marker.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "3e8fef109e00d701de0199cea19b5d0822df719d5e57042261102df4e1e0375b"
+    },
+    {
+      "id": "06-pit-assistant-single-other-side",
+      "file": "06-pit-assistant-single-other-side.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "1008241e918703a9ea9e9b30b4e3a915e3a18065dac0a0e4d8755d6264180e7e"
+    },
+    {
+      "id": "07-pit-assistant-replace-six",
+      "file": "07-pit-assistant-replace-six.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "fbd7d469af96505aeba3d0fe9343e2d8dd491289e6294e722db6532d8cd00c58"
+    },
+    {
+      "id": "08-connection-gap-direction",
+      "file": "08-connection-gap-direction.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "41139c3bba9b3124e5d5106be22298188da4eabdcbfb2241a175bb90089748aa"
+    },
+    {
+      "id": "09-assembly-templates",
+      "file": "09-assembly-templates.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "725977d88eb6c75302cc64d984ea54d54c42a8fe2227b8ef062c61721c9b903c"
+    },
+    {
+      "id": "10-context-menu",
+      "file": "10-context-menu.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "456404b5b7d2bd46ca300d4698e3a5d29c9843daa56d2291c199ecd9cd1af559"
+    },
+    {
+      "id": "11-build-check-and-missing-parts",
+      "file": "11-build-check-and-missing-parts.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "87650f258aa77232fb7a1f103c65a371f8159d96d75092a4f6bf861daca3b4f1"
+    },
+    {
+      "id": "12-highlighted-overlap",
+      "file": "12-highlighted-overlap.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "5f3847b1cfe0aaf9e28ad889b70dd7865b7638f74b5df18ccbc5dcb5bf1f5a08"
+    },
+    {
+      "id": "13-open-pit-connection",
+      "file": "13-open-pit-connection.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "cd3888d9c28b0d4c206e084ac7cf15b126664d60a356ea9b14b5feb2dcb21e78"
+    },
+    {
+      "id": "14-repeat-placement",
+      "file": "14-repeat-placement.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "a3caa26b6761e48fcd2aae8941b4add1e5fa52f330fec27500d507bd6c2c9595"
+    },
+    {
+      "id": "15-replace-and-follow",
+      "file": "15-replace-and-follow.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "c64838b568a67b16d9afe6cbe5468c782d2c1d291e0c7f24a1e3ed103d64ba8a"
+    },
+    {
+      "id": "16-choose-cut-point",
+      "file": "16-choose-cut-point.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "3d71dcbcb9116afffe44af959d8cdfc9cd8355dd9e7e9a473562a4ef9bbc564b"
+    },
+    {
+      "id": "17-join-sections-preview",
+      "file": "17-join-sections-preview.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "522124483a2094546290584b48c921cc32ef766c47d1a903236d740751db8189"
+    },
+    {
+      "id": "18-joined-sections",
+      "file": "18-joined-sections.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "e170ea5528e279059d11e1eb477531bfdf026dde14ab509f82097487642ea401"
+    },
+    {
+      "id": "19-racehubos-dark-theme",
+      "file": "19-racehubos-dark-theme.png",
+      "width": 1600,
+      "height": 1400,
+      "sha256": "60a47bc00a4c30159d8a55991f9149ef913a81a1f47063e8c033283aad950b42"
+    }
+  ]
+}

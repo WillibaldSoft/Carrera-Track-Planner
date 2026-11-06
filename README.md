@@ -1,11 +1,47 @@
 # Carrera Track Planner
 
-Independent source repository prepared for Anselme’s future RaceHubOS plugin interface. The official interface is pending; no host patch is required to build or run this planner.
+[Deutsch](README.de.md) · **English** · [Français](README.fr.md)
 
-Node 22.13+: npm install, npm test, npm run build, npm start. Runtime is loopback-only and stores plans separately from RaceHubOS.
+Independent Carrera track planner, prepared for review and future RaceHubOS integration. It has its own source history, dependency lockfile and local data store. It runs without a RaceHubOS backend or database.
 
-The existing experimental iframe adapter is isolated in addons/track-planner/src/host/legacyBridge.js. It is compatibility code, not the upcoming official plugin API. The planner-owned layout handoff proposal includes geometry, lane lengths and optional sector anchors.
+## Start
 
-UI primitives, theme tokens and rendering/geometry snapshots from RaceHubOS are owned vendor sources under Apache-2.0, with source hashes in PROVENANCE.json. There are no imports from a parent RaceHubOS checkout and no backend, database or migrations. The initial export preserves paths for straightforward review; later consolidation can move these directories without changing the contract.
+Node **22.13+** and npm are required.
 
-This repository is prepared locally; no new public GitHub repository is created by the exporter.
+```sh
+npm ci
+npm test
+npm run build
+npm start
+```
+
+The launcher opens `http://127.0.0.1:3180` and binds only to loopback. Keep its terminal open while using the planner. Plans and inventory use the independent planner's local store, not the RaceHubOS database.
+
+## Features
+
+- Start/finish and Control Unit setup with two parallel fuel bays; pit assistant and reusable assemblies.
+- Optional AKS installation metadata and marker display.
+- Catalogue repeat placement, direct rail replacement with following geometry and a selectable cut point.
+- Join two selected sections through chosen free connections, with undo/redo.
+- Fixed drawing area with independently scrolling sidebars; DE/EN/FR and System/Light/Dark appearance.
+- Native JSON exchange, supported Softyroyal/TRK variants, image export, inventory and geometric build checks.
+
+## Integration for Anselme's review
+
+The **official plugin interface is pending**. Anselme owns RaceHubOS-side download, startup, permissions and add-on support. No new host/core patch is required to build or run this planner.
+
+The current experimental iframe protocol is isolated behind a replaceable adapter. A planner-owned layout/sector handoff proposal supplies native geometry, lane lengths and optional sector anchors; it does not claim an official host contract or hardware mapping.
+
+[Review guide](docs/REVIEW.md) · [Capabilities proposal](addons/track-planner/integration/proposal.json) · [Layout/sector example](addons/track-planner/integration/layout-handoff.example.json) · [Integration notes](docs/TRACK-PLANNER-INTEGRATION-20261106.md)
+
+## Screenshots and checks
+
+[English gallery: all 19 scenes](docs/TRACK-PLANNER-GALLERY.en.md) · [All three galleries](docs/TRACK-PLANNER-GALLERY.md)
+
+![Planner with joined sections](docs/screenshots/track-planner/en/18-joined-sections.png)
+
+57 real localized PNGs have SHA-256 manifests. The included four test files contain 22 focused cases. The independent preparation build also passed 33 external browser cases and three capture scenarios. See the review guide for the exact scope and remaining limitations. Closing-part recommendations and the official plugin API are not implemented.
+
+## Source and license
+
+Apache-2.0. Required RaceHubOS UI and geometry snapshots live under `vendor/racehubos`, with retained license and original source hashes in [PROVENANCE.json](PROVENANCE.json). shadcn/ui Buttons and the RaceHubOS design tokens are reused; rail artwork is preserved. `private: true` in package metadata prevents npm publishing; this GitHub source repository is public.
