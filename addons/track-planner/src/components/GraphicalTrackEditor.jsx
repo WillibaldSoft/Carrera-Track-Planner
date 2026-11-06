@@ -1,3 +1,5 @@
+import { prepareIndividualPitParts, updatePitPartWorld } from './pitPartEditing'
+import ParallelDockingPanel from './ParallelDockingPanel'
 import { trackSectionJoinOptions, joinTrackSections } from './joinTrackSections'
 import { replaceFollowingTrack } from './followingTrackReplacement'
 import { repeatedTrackPreview, placeRepeatedTrackPart } from './repeatTrackPlacement'
@@ -35,6 +37,7 @@ import {
   editablePitlane,
   deleteTrackSelection,
   deletePitComponent,
+  softyExtraGeometry,
 } from '@racehubos/shared'
 import { TrackPlanPreview } from '@core/components/tracks/TrackPlanPreview'
 import { labelTrackPart } from '@core/components/tracks/trackPartLabel'
@@ -106,10 +109,10 @@ function PartIcon({ types }) {
   )
 }
 export default function GraphicalTrackEditor({
-  plan: storedPlan,
+  plan: inputPlan,
   selected,
   onSelect: onPrimarySelect,
-  onChange,
+  onChange: onPlanChange,
   undo,
   redo,
   canUndo,
@@ -119,6 +122,14 @@ export default function GraphicalTrackEditor({
   planDetails,
 }) {
   const { t } = useTranslation('tracks')
+  const { t: te } = useTranslation('plannerEditing')
+  const storedPlan = useMemo(() => prepareIndividualPitParts(inputPlan), [inputPlan])
+  const [dockPreview, setDockPreview] = useState(null)
+  const [dockingSelection, setDockingSelection] = useState([])
+  const [editNotice, setEditNotice] = useState('')
+  function onChange(next) {
+    onPlanChange(prepareIndividualPitParts(next))
+  }
   const [joinKey, setJoinKey] = useState('')
   const [joinedPlan, setJoinedPlan] = useState(null)
   const [replacement, setReplacement] = useState(null)
@@ -185,6 +196,7 @@ export default function GraphicalTrackEditor({
     return () => document.removeEventListener('pointerdown', close)
   }, [context])
   function selectIndices(indices) {
+    setDockingSelection(indices.map((index) => ({ kind: 'rail', index })))
     setSelectedPitPart(null)
     setLayerTarget('rails')
     setPicked(indices)
@@ -220,6 +232,16 @@ export default function GraphicalTrackEditor({
     setSelectedPitPart(null)
     setLayerTarget('rails')
     const toggle = event?.ctrlKey || event?.metaKey
+    const ref = { kind: 'rail', index }
+    setDockingSelection((previous) =>
+      index < 0
+        ? []
+        : toggle
+          ? previous.some((p) => p.kind === 'rail' && p.index === index)
+            ? previous.filter((p) => p.kind !== 'rail' || p.index !== index)
+            : [...previous, ref]
+          : [ref],
+    )
     const next =
       index < 0
         ? []
@@ -278,10 +300,20 @@ export default function GraphicalTrackEditor({
     }
     const p = pitParts.find((p) => p.id === id)
     if (!p) return
-    if ((event?.ctrlKey || event?.metaKey) && p.anchor !== undefined) {
-      onSelect(p.anchor, event)
+    const eligible = p.extraIndex !== undefined && ['single', 'fuel', 'entry', 'exit'].includes(p.kind)
+    const ref = eligible ? { kind: 'extra', index: p.extraIndex } : null
+    if ((event?.ctrlKey || event?.metaKey) && ref) {
+      const next = dockingSelection.some((r) => r.kind === ref.kind && r.index === ref.index)
+        ? dockingSelection.filter((r) => r.kind !== ref.kind || r.index !== ref.index)
+        : [...dockingSelection, ref]
+      setDockingSelection(next)
+      const last = next.at(-1)
+      setPicked(next.filter((r) => r.kind === 'rail').map((r) => r.index))
+      onPrimarySelect(last?.kind === 'rail' ? last.index : -1)
+      setSelectedPitPart(last?.kind === 'extra' ? `extra-${last.index}` : null)
       return
     }
+    setDockingSelection(ref ? [ref] : [])
     setPicked([])
     onPrimarySelect(-1)
     setSelectedPitPart(id)
@@ -296,7 +328,7 @@ export default function GraphicalTrackEditor({
             ? Object.values(plan.pieces[i].borders || {})
             : plan.pieces[i].borders?.[layerTarget]
               ? [plan.pieces[i].borders[layerTarget]]
-              : []
+              : [],
       )
   const drawValues = pitPart
     ? [
@@ -324,8 +356,8 @@ export default function GraphicalTrackEditor({
           target: drawTarget,
           extraIndex: pitPart?.extraIndex,
         },
-        delta
-      )
+        delta,
+      ),
     )
   }
   function selectBorder(index, side, event) {
@@ -354,18 +386,23 @@ export default function GraphicalTrackEditor({
   }
   function replaceAndFollow(types) {
     if (!active || pickedIndices.length !== 1 || pitPart) return false
-    if (plan.partGroups?.groups.some((g) => g.includes(selected))) return false
+    if (plan.partGroups?.groups.some((g) => g.includes(selected))) {
+      setEditNotice(te('replacement.blocked'))
+      return true
+    }
     if (plan.pieces.length - selection.length + types.length > 2000) return false
     if (selection.length === types.length && selection.every((i, n) => plan.pieces[i].type === types[n])) return true
     try {
+      setEditNotice('')
       const result = replaceFollowingTrack(storedPlan, selected, types)
       setReplacement({ base: storedPlan, index: selected, types, result })
       onChange(result.plan)
       onSelect(result.selected)
       if (zoom === 1) setFrame(null)
       return true
-    } catch {
-      return false
+    } catch (e) {
+      setEditNotice(te(e.message === 'cuProtected' ? 'replacement.cuProtected' : 'replacement.blocked'))
+      return true
     }
   }
   function changeReplacementCut(count) {
@@ -391,6 +428,10 @@ export default function GraphicalTrackEditor({
     if (zoom === 1) setFrame(null)
   }
   function patch(patch) {
+    if (patch.type && active && /^Kurve_/.test(active.type)) {
+      replaceAndFollow([patch.type])
+      return
+    }
     onChange({
       ...plan,
       ...(patch.level !== undefined && plan.softyImport
@@ -401,7 +442,7 @@ export default function GraphicalTrackEditor({
         (patch.level !== undefined ? motion : selection).includes(i) &&
         (!('jointDegrees' in patch) || i === selection[0])
           ? { ...p, ...patch }
-          : p
+          : p,
       ),
     })
   }
@@ -482,7 +523,7 @@ export default function GraphicalTrackEditor({
         degrees: delta,
         pivotX: pivot.x,
         pivotY: pivot.y,
-      })
+      }),
     )
   }
   wheelHandler.current = (e) => {
@@ -837,7 +878,7 @@ export default function GraphicalTrackEditor({
                 >
                   {t(`graph.categories.${key}`)}
                 </button>
-              )
+              ),
             )}
           </div>
           <div role="tabpanel" id={`${gridId}-catalogue-panel`} aria-labelledby={`${gridId}-tab-${category}`}>
@@ -865,7 +906,7 @@ export default function GraphicalTrackEditor({
                         (Object.hasOwn(TRACK_ASSEMBLIES, p.id) ? t(`graph.${p.id}`) : '')
                       )
                         .toLowerCase()
-                        .includes(search.toLowerCase())
+                        .includes(search.toLowerCase()),
                   )
                   .map((p) => (
                     <button
@@ -892,7 +933,7 @@ export default function GraphicalTrackEditor({
                           plan,
                           selected,
                           side,
-                          p.types
+                          p.types,
                         )
                         onChange(result.plan)
                         onSelect(result.selected)
@@ -922,7 +963,7 @@ export default function GraphicalTrackEditor({
                 onChange={(e) => setSearch(e.target.value)}
               />
               {CARRERA_MANUFACTURER_ARTICLES.filter((p) =>
-                (p.article + ' ' + p.name).toLowerCase().includes(search.toLowerCase())
+                (p.article + ' ' + p.name).toLowerCase().includes(search.toLowerCase()),
               ).map((p) => (
                 <article
                   key={p.article}
@@ -1041,7 +1082,25 @@ export default function GraphicalTrackEditor({
                 if (pitHit && e.button === 0 && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
                   e.preventDefault()
                   e.currentTarget.focus({ preventScroll: true })
-                  selectPitPart(pitHit.dataset.pitPartId, e)
+                  const id = pitHit.dataset.pitPartId
+                  const part = pitParts.find((p) => p.id === id)
+                  selectPitPart(id, e)
+                  if (part?.extraIndex !== undefined && ['single', 'fuel', 'entry', 'exit'].includes(part.kind)) {
+                    const point = world(e),
+                      matrix = e.currentTarget.getScreenCTM()
+                    dragging.current = {
+                      kind: 'pit-move',
+                      id: e.pointerId,
+                      x: e.clientX,
+                      y: e.clientY,
+                      point,
+                      inverse: matrix.inverse(),
+                      base: storedPlan,
+                      extraIndex: part.extraIndex,
+                      pose: part.pose,
+                    }
+                    e.currentTarget.setPointerCapture(e.pointerId)
+                  }
                   suppressClick.current = true
                   return
                 }
@@ -1097,6 +1156,15 @@ export default function GraphicalTrackEditor({
                   setMarquee({ a: d.point, b: point })
                   return
                 }
+                if (d.kind === 'pit-move') {
+                  const changed = updatePitPartWorld(d.base, d.extraIndex, {
+                    xMm: d.pose.xMm + point.x - d.point.x,
+                    yMm: d.pose.yMm + point.y - d.point.y,
+                  })
+                  d.result = changed
+                  setDraft(changed)
+                  return
+                }
                 let changed
                 if (d.kind === 'rotate') {
                   let delta =
@@ -1131,7 +1199,7 @@ export default function GraphicalTrackEditor({
                     d.base,
                     d.point,
                     world(e, d.inverse),
-                    level === 'all' ? null : Number(level)
+                    level === 'all' ? null : Number(level),
                   )
                   selectIndices([...new Set([...(d.additive ? d.previous : []), ...indices])])
                   suppressClick.current = true
@@ -1187,7 +1255,11 @@ export default function GraphicalTrackEditor({
                 colorParts={colors}
                 labels={labels}
                 visibleLevel={level === 'all' ? null : Number(level)}
-                connector={!repeatPlacement && plan.pieces.length + chosen.types.length <= 2000 ? connector : null}
+                connector={
+                  !repeatPlacement && !dockPreview && plan.pieces.length + chosen.types.length <= 2000
+                    ? connector
+                    : null
+                }
                 connectorRadius={
                   activeSegment
                     ? Math.max(
@@ -1196,15 +1268,50 @@ export default function GraphicalTrackEditor({
                           75,
                           Math.hypot(
                             activeSegment.end.x - activeSegment.start.x,
-                            activeSegment.end.y - activeSegment.start.y
-                          ) / 4
-                        )
+                            activeSegment.end.y - activeSegment.start.y,
+                          ) / 4,
+                        ),
                       )
                     : 75
                 }
                 onConnect={() => edit(side)}
               />
-              {joinPair && (
+              {dockPreview && (
+                <g data-testid="parallel-docking-preview" pointerEvents="none" opacity="0.55">
+                  {traceTrackPlan(dockPreview.plan)
+                    .segments.filter((s) => dockPreview.movingIndices.includes(s.index))
+                    .map((s) => (
+                      <path
+                        key={s.index}
+                        d={s.points[0].map(([x, y], i) => `${i ? 'L' : 'M'}${x} ${y}`).join(' ')}
+                        fill="none"
+                        stroke="#2563eb"
+                        strokeWidth="190"
+                      />
+                    ))}
+                  {dockPreview.extraIndices.map((i) => (
+                    <polygon
+                      key={`extra-${i}`}
+                      points={softyExtraGeometry(
+                        dockPreview.plan.trackExtras[i],
+                        traceTrackPlan(dockPreview.plan).segments,
+                      )
+                        .polygon.map((p) => p.join(','))
+                        .join(' ')}
+                      fill="#2563eb"
+                    />
+                  ))}
+                  <line
+                    x1={dockPreview.fixed.x}
+                    y1={dockPreview.fixed.y}
+                    x2={dockPreview.target.x}
+                    y2={dockPreview.target.y}
+                    stroke="#ea580c"
+                    strokeWidth="8"
+                  />
+                </g>
+              )}
+              {joinPair && !dockPreview && (
                 <g data-testid="join-sections-preview" pointerEvents="none">
                   <line
                     x1={joinPair.fixed.x}
@@ -1436,6 +1543,11 @@ export default function GraphicalTrackEditor({
               />{' '}
               {t('antiCollision.show')}
             </label>
+            {editNotice && (
+              <p role="alert" data-testid="track-edit-notice">
+                {editNotice}
+              </p>
+            )}
             <div className="planner-join-sections" data-testid="join-sections-controls">
               <Button
                 type="button"
@@ -1445,7 +1557,7 @@ export default function GraphicalTrackEditor({
               >
                 {t('joinSections.action')}
               </Button>
-              {joinPair && (
+              {joinPair && !dockPreview && (
                 <label>
                   {t('joinSections.ports')}
                   <select
@@ -1472,7 +1584,7 @@ export default function GraphicalTrackEditor({
                     ? 'joinSections.joined'
                     : joinPair
                       ? 'joinSections.ready'
-                      : `joinSections.${joinOptions.reason}`
+                      : `joinSections.${joinOptions.reason}`,
                 )}
               </p>
             </div>
@@ -1497,7 +1609,7 @@ export default function GraphicalTrackEditor({
                     ))}
                   </select>
                 </label>
-                <p>{t('replacement.hint')}</p>
+                <p>{currentReplacement.result.stoppedAtCU ? te('replacement.cuFixed') : t('replacement.hint')}</p>
                 <Button
                   type="button"
                   variant="outline"
@@ -1652,7 +1764,7 @@ export default function GraphicalTrackEditor({
                           onChange(
                             transformFreeParts(plan, motion, {
                               dx: Math.max(-1000000, Math.min(1000000, Number(e.target.value))) - activeSegment.start.x,
-                            })
+                            }),
                           )
                         }
                       />
@@ -1669,7 +1781,7 @@ export default function GraphicalTrackEditor({
                           onChange(
                             transformFreeParts(plan, motion, {
                               dy: Math.max(-1000000, Math.min(1000000, Number(e.target.value))) - activeSegment.start.y,
-                            })
+                            }),
                           )
                         }
                       />
@@ -1764,16 +1876,95 @@ export default function GraphicalTrackEditor({
               {pitParts.length > 0 && (
                 <Button
                   type="button"
-                  data-testid="select-whole-pit-combination"
+                  data-testid="select-pit-carrier"
                   disabled={pitPart?.anchor === undefined}
                   onClick={() => {
                     if (pitPart?.anchor !== undefined) selectIndices(freeTrackSelection(plan, pitPart.anchor))
                   }}
                 >
-                  {t('group.selectCombination')}
+                  {te('pit.selectCarrier')}
                 </Button>
               )}
             </div>
+            <ParallelDockingPanel
+              plan={storedPlan}
+              selectionRefs={selected < 0 && !selectedPitPart ? [] : dockingSelection}
+              currentRef={
+                pitPart?.extraIndex !== undefined && ['single', 'fuel', 'entry', 'exit'].includes(pitPart.kind)
+                  ? { kind: 'extra', index: pitPart.extraIndex }
+                  : active
+                    ? { kind: 'rail', index: selected }
+                    : null
+              }
+              onPreview={setDockPreview}
+              onApply={(next) => {
+                onChange(next)
+                if (!pitPart) selectIndices(selected >= 0 ? [selected] : [])
+                if (zoom === 1) setFrame(null)
+              }}
+            />
+            {pitPart?.extraIndex !== undefined && ['single', 'fuel', 'entry', 'exit'].includes(pitPart.kind) && (
+              <section data-testid="pit-individual-controls" className="border rounded-lg p-2 space-y-2">
+                <strong>{te('pit.individual')}</strong>
+                {['xMm', 'yMm', 'headingDegrees'].map((field) => (
+                  <label key={field} className="block">
+                    {te(`pit.${field}`)}
+                    <input
+                      type="number"
+                      step="any"
+                      data-testid={`pit-part-${field}`}
+                      value={Number(pitPart.pose[field].toFixed(2))}
+                      onChange={(e) =>
+                        onChange(
+                          updatePitPartWorld(storedPlan, pitPart.extraIndex, { [field]: Number(e.target.value) }),
+                        )
+                      }
+                    />
+                  </label>
+                ))}
+                <label className="block">
+                  {te('pit.carrier')}
+                  <select
+                    data-testid="pit-part-carrier"
+                    value={plan.trackExtras[pitPart.extraIndex].anchor ?? 'free'}
+                    onChange={(e) =>
+                      onChange(
+                        updatePitPartWorld(storedPlan, pitPart.extraIndex, {
+                          anchor: e.target.value === 'free' ? undefined : Number(e.target.value),
+                        }),
+                      )
+                    }
+                  >
+                    <option value="free">{te('pit.free')}</option>
+                    {plan.pieces.map((p, i) => (
+                      <option key={i} value={i}>
+                        {i + 1}. {labelTrackPart(p.type)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block">
+                  {te('pit.level')}
+                  <select
+                    data-testid="pit-part-level"
+                    value={
+                      plan.trackExtras[pitPart.extraIndex].anchor === undefined
+                        ? plan.trackExtras[pitPart.extraIndex].level
+                        : plan.pieces[plan.trackExtras[pitPart.extraIndex].anchor].level
+                    }
+                    onChange={(e) =>
+                      onChange(updatePitPartWorld(storedPlan, pitPart.extraIndex, { level: Number(e.target.value) }))
+                    }
+                  >
+                    {[0, 1, 2].map((i) => (
+                      <option key={i} value={i}>
+                        {i}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </section>
+            )}
             {(active || pitPart) && (
               <details
                 data-testid="drawing-layer-controls"

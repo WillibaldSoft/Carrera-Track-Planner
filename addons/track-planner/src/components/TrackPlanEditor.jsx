@@ -1,3 +1,4 @@
+import { prepareIndividualPitParts } from './pitPartEditing'
 import './trackPlanner.css'
 import PlannerThemeToggle from './PlannerThemeToggle'
 import { Route, FolderOpen, Save, Minimize2, Maximize2, Upload, Download, FileJson, ArrowLeft } from 'lucide-react'
@@ -45,7 +46,7 @@ export default function TrackPlanEditor({
   const update = (next) => {
     if (plan) setPast((p) => [...p.slice(-49), plan])
     setFuture([])
-    onChange(next)
+    onChange(prepareIndividualPitParts(next))
     setError('')
   }
   function undo() {
@@ -81,7 +82,7 @@ export default function TrackPlanEditor({
       if (!next) throw new Error()
       update(next)
       onImportNew?.(
-        `${file.name.replace(/\.[^.]+$/, '').slice(0, 150)} · ${file.name.toLowerCase().endsWith('.sbp') ? 'Softy' : 'Import'}`
+        `${file.name.replace(/\.[^.]+$/, '').slice(0, 150)} · ${file.name.toLowerCase().endsWith('.sbp') ? 'Softy' : 'Import'}`,
       )
       setSelected(-1)
       setMode('editor')
@@ -89,7 +90,7 @@ export default function TrackPlanEditor({
       setError(
         e.message?.startsWith('Unsupported SBP parts:')
           ? `${t('native.unsupported')} ${e.message.slice(23)}`
-          : t('editor.importError')
+          : t('editor.importError'),
       )
     }
   }
@@ -110,7 +111,7 @@ export default function TrackPlanEditor({
       const url = URL.createObjectURL(
         new Blob([exported], {
           type: format === 'sbp' ? 'application/json' : 'text/plain;charset=windows-1252',
-        })
+        }),
       )
       const a = document.createElement('a')
       a.href = url
@@ -236,7 +237,7 @@ export default function TrackPlanEditor({
                     update({
                       ...plan,
                       measuredLaneLengthsM: plan.measuredLaneLengthsM.map((n, j) =>
-                        j === i ? Math.max(0.001, Math.min(10000, Number(e.target.value))) : n
+                        j === i ? Math.max(0.001, Math.min(10000, Number(e.target.value))) : n,
                       ),
                     })
                   }
@@ -329,7 +330,7 @@ export default function TrackPlanEditor({
         <div hidden={mode !== 'editor'} className="planner-graph-pane">
           {!plan.pieces.length && (
             <div className="planner-notice" data-testid="start-pit-setup">
-              <p>{t('quickStart.note')}</p>
+              <p>{t('plannerEditing:pit.startHelp')}</p>
               <Button
                 type="button"
                 data-testid="start-pit-create"

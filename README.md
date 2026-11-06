@@ -11,6 +11,9 @@ Node **22.13+** and npm are required.
 ```sh
 npm ci
 npm test
+npx playwright install chromium
+npm run test:browser
+npm run screenshots
 npm run build
 npm start
 ```
@@ -36,12 +39,15 @@ The current experimental iframe protocol is isolated behind a replaceable adapte
 
 ## Screenshots and checks
 
-[English gallery: all 19 scenes](docs/TRACK-PLANNER-GALLERY.en.md) · [All three galleries](docs/TRACK-PLANNER-GALLERY.md)
+[English gallery: all 24 scenes](docs/TRACK-PLANNER-GALLERY.en.md) · [All three galleries](docs/TRACK-PLANNER-GALLERY.md)
 
 ![Planner with joined sections](docs/screenshots/track-planner/en/18-joined-sections.png)
 
-57 real localized PNGs have SHA-256 manifests. The included four test files contain 22 focused cases. The independent preparation build also passed 33 external browser cases and three capture scenarios. See the review guide for the exact scope and remaining limitations. Closing-part recommendations and the official plugin API are not implemented.
+72 real localized PNGs have SHA-256 manifests. Included and verified: six unit-test files with 38 cases, 43 browser cases and three capture scenarios. Automatic closing suggestions and the official plugin API remain pending.
 
 ## Source and license
 
 Apache-2.0. Required RaceHubOS UI and geometry snapshots live under `vendor/racehubos`, with retained license and original source hashes in [PROVENANCE.json](PROVENANCE.json). shadcn/ui Buttons and the RaceHubOS design tokens are reused; rail artwork is preserved. `private: true` in package metadata prevents npm publishing; this GitHub source repository is public.
+
+
+[Fixed CU, individual pit parts and parallel docking](docs/CU-PIT-PARALLEL.en.md)

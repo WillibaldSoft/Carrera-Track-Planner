@@ -1,0 +1,133 @@
+import { test, expect } from '@playwright/test'
+import fs from 'node:fs/promises'
+import path from 'node:path'
+const output = path.resolve(import.meta.dirname, '../../../../../outputs')
+test('standalone planner saves a local plan and exports an exchange file without RaceHubOS', async ({
+  page,
+  request,
+}) => {
+  const errors = []
+  page.on('pageerror', (error) => errors.push(error.message))
+  await page.goto('/')
+  await expect(page.getByTestId('standalone-home')).toBeVisible()
+  await page.getByTestId('standalone-language').selectOption('de')
+  await page.getByTestId('standalone-new').click()
+  await page.locator('.planner-name').fill('Plan vom zweiten Rechner')
+  await page.getByTestId('add-track-piece').click()
+  await page.getByTestId('add-track-piece').click()
+  await page.getByTestId('planner-save').click()
+  await expect(page.getByRole('status').filter({ hasText: 'lokal gespeichert' })).toBeVisible()
+  await page.getByRole('button', { name: 'Abbrechen', exact: true }).click()
+  await expect(page.getByTestId('standalone-track')).toContainText('Plan vom zweiten Rechner')
+  const rows = (await (await request.get('/api/tracks')).json()).data
+  expect(rows).toHaveLength(1)
+  expect(rows[0].length).toBe(0.69)
+  await page.reload()
+  await page.getByTestId('standalone-track').selectOption(rows[0].id)
+  await expect(page.getByTestId('graph-track-canvas')).toHaveAttribute('data-piece-count', '2')
+  await page.getByTestId('planner-files-toggle').click()
+  const pending = page.waitForEvent('download')
+  await page.getByTestId('export-track-json').click()
+  const download = await pending
+  const plan = JSON.parse(await fs.readFile(await download.path(), 'utf8'))
+  expect(plan.pieces).toHaveLength(2)
+  expect(plan.kind).toBe('racehubos.track-plan')
+  await page.screenshot({ path: path.join(output, 'planner-standalone.png') })
+  expect(errors).toEqual([])
+})
+test('standalone room planner can generate drafts without changing saved plans', async ({ page }) => {
+  await page.goto('/')
+  await page.getByTestId('standalone-new').click()
+  await page.getByTestId('planner-mode').selectOption('room')
+  await page.getByTestId('generate-room-plan').click()
+  await expect(page.getByTestId('room-proposal-oval')).toBeVisible()
+})
+test('standalone calculator offers actual and both scale speeds; mobile controls fit the viewport', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.goto('/')
+  await page.getByTestId('standalone-new').click()
+  await page.getByTestId('toggle-track-inspector').click()
+  await page.getByTestId('add-track-piece').click()
+  await page.getByTestId('add-track-piece').click()
+  await page.getByTestId('track-plan-summary').locator('..').locator('summary').click()
+  await page.getByTestId('planner-speed-mode').selectOption('1:32')
+  await expect(page.getByTestId('planner-speed-result')).toContainText('7.95 / 7.95 km/h')
+  await page.getByTestId('planner-speed-mode').selectOption('1:24')
+  await expect(page.getByTestId('planner-speed-result')).toContainText('5.96 / 5.96 km/h')
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true)
+  await page.screenshot({
+    path: path.join(output, 'planner-standalone-mobile.png'),
+  })
+})
+
+test('start assembly has two fuel bays, readable rotated CU labels and undo', async ({ page }) => {
+  await page.goto('/')
+  await page.getByTestId('standalone-new').click()
+  await page.locator('.planner-name').fill('CU und Boxengasse')
+  await page.getByTestId('start-pit-create').click()
+  const canvas = page.getByTestId('graph-track-canvas')
+  await expect(canvas).toHaveAttribute('data-piece-count', '6')
+  await expect(canvas.locator('[data-unit-kind="Control_unit"]')).toHaveCount(1)
+  await expect(page.getByTestId('start-pit-create')).toHaveCount(0)
+  await expect(page.locator('[data-testid^="fuel-detail-"]')).toHaveCount(2)
+  await page.getByTestId('track-undo').click()
+  await expect(page.getByTestId('start-pit-create')).toBeVisible()
+  await page.getByTestId('track-redo').click()
+  const cu = canvas.locator('[data-unit-kind="Control_unit"]')
+  const title = cu.locator('text').filter({ hasText: /^CONTROL UNIT$/ })
+  await expect(title).toHaveAttribute('transform', 'rotate(0 172 -107)')
+  await canvas.getByTestId('rail-2').click()
+  await page.getByTestId('free-part-angle').fill('180')
+  await page.getByTestId('free-part-angle').press('Tab')
+  await expect(title).toHaveAttribute('transform', 'rotate(180 172 -107)')
+  await page.getByTestId('planner-save').click()
+  const rows = await (await page.request.get('/api/tracks')).json()
+  const plan = JSON.parse(rows.data.at(-1).layout)
+  expect(plan.pit).toMatchObject({ enabled: true, entry: 0, merge: 5, bayLengthMm: 1035 })
+  await page.screenshot({ path: '/tmp/planner-start-pit.png', fullPage: true })
+})
+
+test('switch anti-collision installation and visibility persist independently', async ({ page }) => {
+  await page.goto('/')
+  await page.getByTestId('standalone-new').click()
+  await page.locator('.planner-name').fill('CU und Boxengasse')
+  await page.getByTestId('start-pit-create').click()
+  const canvas = page.getByTestId('graph-track-canvas')
+  await canvas.getByTestId('rail-0').focus()
+  await canvas.getByTestId('rail-0').press('Enter')
+  await page.getByTestId('switch-anti-collision').check()
+  await expect(canvas.getByTestId('anti-collision-rail-0')).toHaveCount(0)
+  await page.getByTestId('show-anti-collision').check()
+  await expect(canvas.getByTestId('anti-collision-rail-0')).toBeVisible()
+  await page.getByTestId('show-anti-collision').uncheck()
+  await expect(page.getByTestId('switch-anti-collision')).toBeChecked()
+  await expect(canvas.getByTestId('anti-collision-rail-0')).toHaveCount(0)
+  await page.getByTestId('planner-save').click()
+  const rows = await (await page.request.get('/api/tracks')).json()
+  const saved = rows.data.find((r) => JSON.parse(r.layout).pieces.some((p) => p.antiCollision))
+  expect(JSON.parse(saved.layout)).toMatchObject({
+    showAntiCollision: false,
+    pieces: [{ antiCollision: true }, {}, {}, {}, {}, {}],
+  })
+})
+
+test('AKS also annotates an individually selected pit entry', async ({ page }) => {
+  await page.goto('/')
+  await page.getByTestId('standalone-new').click()
+  await page.locator('.planner-name').fill('AKS Boxeneinfahrt')
+  await page.getByTestId('start-pit-create').click()
+  await page.getByTestId('pitlane-component-selection').locator('summary').click()
+  await page.getByTestId('select-pit-component-extra-4').click()
+  await page.getByTestId('switch-anti-collision').check()
+  await page.getByTestId('show-anti-collision').check()
+  await expect(page.locator('[data-testid^="anti-collision-extra-"]')).toHaveCount(1)
+  await page.getByTestId('planner-save').click()
+  const rows = await (await page.request.get('/api/tracks')).json()
+  const plan = JSON.parse(rows.data.find((r) => r.name === 'AKS Boxeneinfahrt').layout)
+  expect(plan.trackExtras.filter((p) => p.antiCollision)).toHaveLength(1)
+  await page.getByTestId('track-fit').click()
+  await page.getByTestId('graph-track-canvas').scrollIntoViewIfNeeded()
+  await page.screenshot({ path: '/tmp/planner-aks-pit.png', fullPage: true })
+})

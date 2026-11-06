@@ -14,7 +14,7 @@ Dans un plan vide, le bouton crée un groupe départ/arrivée avec une Control U
 
 ## 02. Départ/arrivée, CU et deux postes
 
-Le groupe inséré contient six modules principaux et deux positions FUEL. Il peut être déplacé, tourné ou dissocié. Ses extrémités libres permettent de poursuivre la construction du circuit.
+La configuration de départ comprend six modules principaux et deux positions FUEL. Les éléments des stands sont modifiables séparément ; un regroupement manuel explicite permet un déplacement commun.
 
 ![Départ/arrivée, CU et deux postes](screenshots/track-planner/fr/02-start-cu-two-bays.png)
 
@@ -119,3 +119,26 @@ Sélectionner un rail de chaque section séparée avec Ctrl/⌘+clic. La premiè
 Les commandes utilisent les mêmes variables de thème et le bouton shadcn/ui que RaceHubOS. Le planificateur autonome mémorise Système, Clair ou Sombre. Le mode intégré suit l’apparence et la langue de l’hôte. Le dessin des rails est conservé ; la nouvelle interface officielle reste à convenir avec le mainteneur.
 
 ![Style RaceHubOS et apparence sombre](screenshots/track-planner/fr/19-racehubos-dark-theme.png)
+
+
+[CU fixe, éléments des stands et alignement parallèle](CU-PIT-PARALLEL.fr.md)
+
+## 20. CU fixe et coupure dans le sens de circulation
+
+![CU fixe et coupure dans le sens de circulation](screenshots/track-planner/fr/20-fixed-cu-driving-cut.png)
+
+## 21. Modifier les éléments individuels des stands
+
+![Modifier les éléments individuels des stands](screenshots/track-planner/fr/21-individual-pit-parts.png)
+
+## 22. Piste multivoie parallèle : aperçu
+
+![Piste multivoie parallèle : aperçu](screenshots/track-planner/fr/22-parallel-multilane-preview.png)
+
+## 23. Piste multivoie parallèle : appliquée
+
+![Piste multivoie parallèle : appliquée](screenshots/track-planner/fr/23-parallel-multilane-applied.png)
+
+## 24. Aligner un rail individuel des stands
+
+![Aligner un rail individuel des stands](screenshots/track-planner/fr/24-parallel-individual-pit.png)

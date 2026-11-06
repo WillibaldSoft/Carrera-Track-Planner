@@ -1,0 +1,46 @@
+{
+  "replacement": {
+    "cuFixed": "La CU reste fixe. La section suivante est adaptée dans le sens de circulation jusqu’au point de séparation choisi avant la CU.",
+    "cuProtected": "La CU est protégée. Pour la déplacer, la sélectionner et la déplacer explicitement.",
+    "blocked": "Remplacement indisponible. Vérifier la sélection ou dégrouper son ensemble protégé."
+  },
+  "pit": {
+    "individual": "Modifier une pièce des stands",
+    "xMm": "X (mm)",
+    "yMm": "Y (mm)",
+    "headingDegrees": "Rotation (°)",
+    "carrier": "Affectation / rail porteur",
+    "free": "Libre, sans rail porteur",
+    "level": "Niveau",
+    "selectCarrier": "Sélectionner le rail principal associé",
+    "startHelp": "Créer départ/arrivée et Control Unit avec deux postes de ravitaillement. Aiguillages et rails des stands sont sélectionnables et affectables séparément ; utiliser une sélection multiple pour les déplacer ensemble."
+  },
+  "parallel": {
+    "title": "Accoster en parallèle",
+    "help": "Sélectionner deux sections séparées ou mémoriser une référence, puis choisir un rail ou une pièce des stands.",
+    "remember": "Mémoriser comme référence",
+    "noReference": "Aucune référence choisie.",
+    "reference": "Référence : {{kind}} {{number}}",
+    "rail": "Rail principal",
+    "extra": "Pièce des stands",
+    "side": "Côté dans le sens de circulation",
+    "right": "Droite",
+    "left": "Gauche",
+    "spacing": "Distance latérale",
+    "auto": "Largeurs adaptées : {{distance}} mm",
+    "custom": "Distance personnalisée",
+    "opposite": "Sens opposé",
+    "preview": "Aperçu",
+    "apply": "Accoster en parallèle",
+    "previewReady": "Aperçu : {{distance}} mm. Contrôler ensuite les rayons et raccords avec la vérification du montage.",
+    "errors": {
+      "selectParts": "Choisir deux pièces ou sections différentes.",
+      "distance": "Saisir une distance entre 1 et 10000 mm.",
+      "levels": "Les pièces doivent être au même niveau.",
+      "sameSection": "Ces rails sont déjà raccordés. Séparer d’abord la section à déplacer.",
+      "cuFixed": "La section mobile contient la CU. Choisir d’abord le côté CU comme référence fixe.",
+      "sharedCarrier": "La référence est attachée à la section mobile. Libérer d’abord son affectation."
+    },
+    "cancel": "Annuler l’aperçu"
+  }
+}

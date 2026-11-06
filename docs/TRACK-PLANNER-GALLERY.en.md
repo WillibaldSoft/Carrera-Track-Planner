@@ -14,7 +14,7 @@ In an empty plan, the button creates a start/finish assembly with a Control Unit
 
 ## 02. Start/finish, CU and two fuel bays
 
-The inserted assembly contains six main modules and two FUEL positions. Move or rotate it as a group, or ungroup it when needed. Continue building from its open ends.
+The start setup contains six main modules and two FUEL positions. Pit parts are individually editable; explicit manual grouping allows joint movement.
 
 ![Start/finish, CU and two fuel bays](screenshots/track-planner/en/02-start-cu-two-bays.png)
 
@@ -119,3 +119,26 @@ Select one rail in each separate section with Ctrl/⌘+click. The first selected
 The controls use the same theme tokens and shadcn/ui Button as RaceHubOS. The independent planner remembers System, Light or Dark appearance. Embedded mode follows the host’s theme and language. Rail artwork is preserved; the new official plugin interface remains pending maintainer agreement.
 
 ![RaceHubOS design and dark appearance](screenshots/track-planner/en/19-racehubos-dark-theme.png)
+
+
+[Fixed CU, individual pit parts and parallel docking](CU-PIT-PARALLEL.en.md)
+
+## 20. Fixed CU and driving-direction cut
+
+![Fixed CU and driving-direction cut](screenshots/track-planner/en/20-fixed-cu-driving-cut.png)
+
+## 21. Edit individual pit parts
+
+![Edit individual pit parts](screenshots/track-planner/en/21-individual-pit-parts.png)
+
+## 22. Parallel multilane layout: preview
+
+![Parallel multilane layout: preview](screenshots/track-planner/en/22-parallel-multilane-preview.png)
+
+## 23. Parallel multilane layout: applied
+
+![Parallel multilane layout: applied](screenshots/track-planner/en/23-parallel-multilane-applied.png)
+
+## 24. Dock an individual pit rail in parallel
+
+![Dock an individual pit rail in parallel](screenshots/track-planner/en/24-parallel-individual-pit.png)

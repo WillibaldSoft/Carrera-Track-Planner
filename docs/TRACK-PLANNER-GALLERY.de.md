@@ -14,7 +14,7 @@ Im leeren Plan startet die Schaltfläche eine Baugruppe aus Start/Ziel, Control 
 
 ## 02. Start/Ziel, CU und zwei Tankplätze
 
-Die eingefügte Baugruppe enthält sechs Hauptmodule und zwei FUEL-Positionen. Sie lässt sich gemeinsam bewegen, drehen und bei Bedarf trennen. Die offenen Enden sind der Ausgangspunkt für den weiteren Streckenaufbau.
+Die Startkonfiguration enthält sechs Hauptmodule und zwei FUEL-Positionen. Boxenteile sind einzeln bearbeitbar; für gemeinsame Bewegung ist eine ausdrückliche manuelle Gruppierung möglich.
 
 ![Start/Ziel, CU und zwei Tankplätze](screenshots/track-planner/de/02-start-cu-two-bays.png)
 
@@ -119,3 +119,26 @@ Je eine Schiene der beiden getrennten Abschnitte mit Strg/⌘+Klick markieren. D
 Die Bedienoberfläche verwendet dieselben Designvariablen und den shadcn/ui-Button wie RaceHubOS. Der eigenständige Planer wechselt zwischen System, Hell und Dunkel und merkt sich die Wahl. Eingebettet übernimmt er Darstellung und Sprache vom Host. Die Schienenzeichnung bleibt erhalten; die neue offizielle Plugin-Schnittstelle ist weiterhin in Abstimmung.
 
 ![RaceHubOS-Design und Dunkelansicht](screenshots/track-planner/de/19-racehubos-dark-theme.png)
+
+
+[CU, einzelne Boxenteile und paralleles Andocken](CU-PIT-PARALLEL.de.md)
+
+## 20. Feste CU und Trennpunkt in Fahrtrichtung
+
+![Feste CU und Trennpunkt in Fahrtrichtung](screenshots/track-planner/de/20-fixed-cu-driving-cut.png)
+
+## 21. Einzelne Boxenteile bearbeiten
+
+![Einzelne Boxenteile bearbeiten](screenshots/track-planner/de/21-individual-pit-parts.png)
+
+## 22. Parallele Mehrspurbahn: Vorschau
+
+![Parallele Mehrspurbahn: Vorschau](screenshots/track-planner/de/22-parallel-multilane-preview.png)
+
+## 23. Parallele Mehrspurbahn: übernommen
+
+![Parallele Mehrspurbahn: übernommen](screenshots/track-planner/de/23-parallel-multilane-applied.png)
+
+## 24. Einzelne Boxenschiene parallel andocken
+
+![Einzelne Boxenschiene parallel andocken](screenshots/track-planner/de/24-parallel-individual-pit.png)

@@ -11,6 +11,9 @@ Prérequis : **Node 22.13+** et npm.
 ```sh
 npm ci
 npm test
+npx playwright install chromium
+npm run test:browser
+npm run screenshots
 npm run build
 npm start
 ```
@@ -36,12 +39,15 @@ L’ancien protocole iframe expérimental est isolé dans un adaptateur remplaç
 
 ## Captures et vérifications
 
-[Galerie française : les 19 vues](docs/TRACK-PLANNER-GALLERY.fr.md) · [Les trois galeries](docs/TRACK-PLANNER-GALLERY.md)
+[Galerie française : les 24 vues](docs/TRACK-PLANNER-GALLERY.fr.md) · [Les trois galeries](docs/TRACK-PLANNER-GALLERY.md)
 
 ![Planificateur avec sections raccordées](docs/screenshots/track-planner/fr/18-joined-sections.png)
 
-57 véritables captures PNG localisées, avec manifestes SHA-256. Les quatre fichiers de tests inclus contiennent 22 cas ciblés. Le build autonome préparé a aussi réussi 33 cas navigateur externes et trois scénarios de capture. Le guide de revue précise le périmètre et les limites. Les recommandations automatiques de rails pour fermer le circuit et l’API officielle ne sont pas encore implémentées.
+72 captures PNG localisées avec manifestes SHA-256. Inclus et vérifiés : six fichiers de tests unitaires avec 38 cas, 43 cas navigateur et trois scénarios de capture. Les suggestions automatiques de fermeture et l’API officielle de plugin restent à réaliser.
 
 ## Sources et licence
 
 Apache-2.0. Les sources UI et géométriques RaceHubOS nécessaires sont fournies avec leur licence sous `vendor/racehubos`. [PROVENANCE.json](PROVENANCE.json) conserve les origines et empreintes. Les boutons shadcn/ui et variables de thème RaceHubOS sont réutilisés ; le dessin des rails est conservé.
+
+
+[CU fixe, éléments des stands et alignement parallèle](docs/CU-PIT-PARALLEL.fr.md)

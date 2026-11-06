@@ -1,0 +1,46 @@
+{
+  "replacement": {
+    "cuFixed": "The CU stays fixed. The following section adapts in driving direction up to the chosen cut point before the CU.",
+    "cuProtected": "The CU is protected. Select and move it explicitly to relocate it.",
+    "blocked": "Replacement unavailable. Check the selection or release its protected group first."
+  },
+  "pit": {
+    "individual": "Edit individual pit part",
+    "xMm": "X (mm)",
+    "yMm": "Y (mm)",
+    "headingDegrees": "Rotation (°)",
+    "carrier": "Assignment / carrier rail",
+    "free": "Free, without carrier rail",
+    "level": "Level",
+    "selectCarrier": "Select assigned main rail",
+    "startHelp": "Create start/finish and Control Unit with two fuel bays. Pit switches and rails are individually selectable and assignable; use multiple selection to move them together."
+  },
+  "parallel": {
+    "title": "Dock in parallel",
+    "help": "Select two separate sections, or remember a reference first and then select a rail or pit part.",
+    "remember": "Remember as docking reference",
+    "noReference": "No reference selected.",
+    "reference": "Reference: {{kind}} {{number}}",
+    "rail": "Main rail",
+    "extra": "Pit part",
+    "side": "Side in driving direction",
+    "right": "Right",
+    "left": "Left",
+    "spacing": "Lateral distance",
+    "auto": "Matching widths: {{distance}} mm",
+    "custom": "Custom distance",
+    "opposite": "Opposite direction",
+    "preview": "Preview",
+    "apply": "Dock in parallel",
+    "previewReady": "Preview: {{distance}} mm. Check radii and connections with the build audit afterwards.",
+    "errors": {
+      "selectParts": "Choose two different parts or sections.",
+      "distance": "Enter a distance between 1 and 10000 mm.",
+      "levels": "The parts must be on the same level.",
+      "sameSection": "These rails are connected already. Separate the moving section first.",
+      "cuFixed": "The moving section contains the CU. Select the CU side as the fixed reference first.",
+      "sharedCarrier": "The reference is attached to the moving section. Release its carrier assignment first."
+    },
+    "cancel": "Discard preview"
+  }
+}

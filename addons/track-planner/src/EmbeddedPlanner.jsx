@@ -1,3 +1,4 @@
+import { prepareIndividualPitParts } from './components/pitPartEditing'
 import { useEffect, useState, useRef } from 'react'
 import i18n from './i18n'
 import { connectLegacyHost } from './host/legacyBridge'
@@ -14,7 +15,7 @@ export default function EmbeddedPlanner({ connectHost = connectLegacyHost } = {}
       onInitialize({ draft, language, dark }) {
         i18n.changeLanguage(language)
         document.documentElement.classList.toggle('dark', dark)
-        setDraft(draft)
+        setDraft({ ...draft, plan: prepareIndividualPitParts(draft.plan) })
       },
       onStatus: setStatus,
     })

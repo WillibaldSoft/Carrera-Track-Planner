@@ -14,16 +14,11 @@ This repository has its own history and builds without a parent RaceHubOS checko
 
 The future official plugin interface, download/update mechanism, permissions and RaceHubOS-side sector visualization belong to Anselme's integration design. No new host patch is required to build or run this application. The existing iframe transport is experimental compatibility code, not that future API. The layout handoff is a planner-owned proposal and has not been adopted by RaceHubOS.
 
-## Verified preparation baseline
+## Verified state
 
-- Fresh dependency installation from the committed lockfile, independent UI build and startup.
-- Four included unit test files, containing 22 focused geometry, viewport, joining, replacement, adapter and handoff cases.
-- 33 browser cases passed against the independent build using the external preparation harness. They cover DE/EN/FR, responsive layout, theme persistence and host-inherited appearance, plus the existing editor features.
-- Three external capture scenarios passed and produced the 57 checked-in PNGs and their manifests.
-- Linux DEB and portable TAR were built during preparation; their UI contents matched this build. Four theme/legacy cases passed against the extracted DEB. These binaries are not attached as a new GitHub Release by this publication.
-- The revised UI was also checked in the existing race-PC host through its previous experimental adapter. No track was saved by that check.
+38 unit cases in six included files, 43 included browser cases and three capture scenarios producing 72 PNGs passed. The standalone Vite/add-on build passes; the large-chunk warning remains. Reproduce after `npm ci` and `npx playwright install chromium`: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
-The browser harness and preparation records are in the [pinned source checkout](https://github.com/WillibaldSoft/RaceHubOS/tree/fa038fff3327b7796ea0c14d2797714c35359335). They are not all part of `npm test` in this repository. Publication adds documentation and screenshots; runtime sources and locked dependencies remain the tested baseline.
+[Fixed CU, individual pit parts and parallel docking](CU-PIT-PARALLEL.en.md)
 
 ## Current limits
 

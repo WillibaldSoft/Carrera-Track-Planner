@@ -1,3 +1,4 @@
+import { prepareIndividualPitParts } from './components/pitPartEditing'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { emptyTrackPlan, readTrackPlan, trackPlanFields } from '@racehubos/shared'
@@ -28,7 +29,7 @@ export default function StandalonePlanner() {
     setError('')
     setSuccess('')
     const track = tracks.find((row) => row.id === value)
-    setPlan(readTrackPlan(track?.layout) || emptyTrackPlan())
+    setPlan(prepareIndividualPitParts(readTrackPlan(track?.layout) || emptyTrackPlan()))
     setName(track?.name || '')
     setOpened(true)
   }
@@ -44,7 +45,7 @@ export default function StandalonePlanner() {
       const r = await fetch(`/api/tracks${id ? '/' + id : ''}`, {
         method: id ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name.trim(), ...trackPlanFields(plan) }),
+        body: JSON.stringify({ name: name.trim(), ...trackPlanFields(prepareIndividualPitParts(plan)) }),
       })
       if (!r.ok) throw new Error()
       const result = await r.json()

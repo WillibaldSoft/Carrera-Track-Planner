@@ -13,16 +13,11 @@ Dieses Repository besitzt eine eigene Historie und benötigt weder ein übergeor
 
 Die offizielle Plugin-Schnittstelle sowie Download, Updates, Berechtigungen und Sektorenanzeige auf Host-Seite liegen bei Anselme. Das vorhandene iframe-Protokoll ist experimentelle Kompatibilität. Das Übergabeformat ist ein Vorschlag, kein bereits übernommener RaceHubOS-Vertrag. Zum eigenständigen Bauen und Starten ist kein neuer Core-Patch nötig.
 
-## Verifizierter Vorbereitungsstand
+## Verifizierter Stand
 
-- Frische Installation anhand der Lockdatei und eigenständiger Build.
-- Vier enthaltene Testdateien mit 22 gezielten Fällen für Geometrie, Ansicht, Austausch, Zusammenfügen, Adapter und Übergabe.
-- 33 externe Browserfälle gegen den unabhängigen Build, einschließlich DE/EN/FR, responsiver Ansicht, Themes und bisheriger Editorfunktionen.
-- Drei externe Aufnahme-Szenarien mit 57 echten PNGs und SHA-256-Manifesten.
-- Während der Vorbereitung erstellte Linux-DEB/TAR-Dateien; UI-Inhalte byteweise mit dem Build verglichen. Vier Theme-/Legacy-Fälle gegen das extrahierte DEB bestanden. Diese Veröffentlichung hängt keine neue GitHub-Release-Datei an.
-- Live-Prüfung im bisherigen Renn-PC-Host über dessen experimentellen Adapter, ohne eine Strecke zu speichern.
+38 Unit-Fälle in sechs enthaltenen Dateien, 43 enthaltene Browserfälle und drei Aufnahme-Szenarien mit insgesamt 72 PNGs bestanden. Der eigenständige Vite-/Add-on-Build besteht; der Hinweis auf große Chunks bleibt. Reproduzierbar nach `npm ci` und `npx playwright install chromium`: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
-Der externe Browser-/Screenshot-Prüfaufbau liegt im [festgehaltenen Vorbereitungscheckout](https://github.com/WillibaldSoft/RaceHubOS/tree/fa038fff3327b7796ea0c14d2797714c35359335). `npm test` dieses Repositories führt die vier enthaltenen Unit-Testdateien aus. Die Veröffentlichung ergänzt Dokumentation und Bilder; Laufzeitquellen und Lockdatei bleiben auf dem geprüften Stand.
+[CU, einzelne Boxenteile und paralleles Andocken](CU-PIT-PARALLEL.de.md)
 
 ## Grenzen
 

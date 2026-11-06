@@ -13,16 +13,11 @@ Ce dépôt possède son propre historique et ne nécessite ni checkout parent Ra
 
 L’interface officielle, le téléchargement, les mises à jour, les autorisations et l’affichage des secteurs côté hôte relèvent de la conception d’Anselme. Le protocole iframe existant est une compatibilité expérimentale. Le format de transfert est une proposition, pas un contrat déjà adopté par RaceHubOS. Aucun nouveau correctif du cœur n’est nécessaire pour compiler ou lancer l’application autonome.
 
-## Préparation vérifiée
+## État vérifié
 
-- Installation fraîche à partir du fichier de verrouillage et build autonome.
-- Quatre fichiers de tests inclus, avec 22 cas ciblés : géométrie, cadrage, remplacement, raccordement, adaptateur et transfert.
-- 33 cas navigateur externes contre le build indépendant, couvrant DE/EN/FR, vue responsive, thèmes et fonctions existantes.
-- Trois scénarios de capture externes : 57 véritables PNG avec manifestes SHA-256.
-- Paquets Linux DEB/TAR construits pendant la préparation ; UI comparée octet par octet au build. Quatre cas thème/compatibilité ont réussi contre le DEB extrait. Cette publication ne joint pas de nouvelle archive GitHub Release.
-- Vérification dans l’hôte existant du PC de course via son adaptateur expérimental, sans enregistrer de circuit.
+38 cas unitaires dans six fichiers inclus, 43 cas navigateur inclus et trois scénarios produisant 72 PNG ont réussi. La compilation autonome Vite/add-on réussit ; l’avertissement sur les grands blocs reste présent. Après `npm ci` et `npx playwright install chromium` : `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
-Le dispositif navigateur/captures externe reste dans le [checkout de préparation fixé](https://github.com/WillibaldSoft/RaceHubOS/tree/fa038fff3327b7796ea0c14d2797714c35359335). Ici, `npm test` exécute les quatre fichiers unitaires inclus. Cette publication ajoute documentation et images ; les sources d’exécution et dépendances verrouillées restent celles vérifiées.
+[CU fixe, éléments des stands et alignement parallèle](CU-PIT-PARALLEL.fr.md)
 
 ## Limites
 

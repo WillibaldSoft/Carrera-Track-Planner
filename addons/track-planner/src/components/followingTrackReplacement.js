@@ -1,3 +1,5 @@
+import { drivingDirections } from './trackDrivingDirection.js'
+import { prepareIndividualPitParts } from './pitPartEditing.js'
 import {
   enableFreePlacement,
   traceTrackPlan,
@@ -11,10 +13,11 @@ import {
 // Follow physical, unambiguous connections rather than array order. Imported
 // layouts may contain unrelated rails or rails traversed in reverse.
 export function replaceFollowingTrack(input, index, types, cutAfter = null) {
-  const base = enableFreePlacement(input)
+  const base = enableFreePlacement(prepareIndividualPitParts(input))
   const selection = trackSelection(base, index)
   if (!selection.length || !types.length || base.pieces.length - selection.length + types.length > 2000)
     throw new Error('Invalid replacement')
+  if (selection.some((i) => base.pieces[i].type === 'Control_unit')) throw new Error('cuProtected')
   const first = selection[0],
     last = selection.at(-1)
   if (base.partGroups?.groups.some((g) => g.some((i) => selection.includes(i))))
@@ -24,17 +27,30 @@ export function replaceFollowingTrack(input, index, types, cutAfter = null) {
   // Catalogue assemblies must still form a continuous forward assembly.
   for (let i = 1; i < selection.length; i++)
     if (links[selection[i - 1] * 2 + 1] !== selection[i] * 2) throw new Error('Disconnected assembly')
+  const reverse = drivingDirections(base, segments, links).get(first) === true
   const visited = new Set(selection),
     route = []
-  let exit = last * 2 + 1
+  let exit = reverse ? first * 2 : last * 2 + 1
+  let stoppedAtCU = false
   while (links[exit] >= 0) {
     const port = links[exit],
       next = Math.floor(port / 2),
       reverse = port % 2 === 1
+    if (base.pieces[next].type === 'Control_unit') {
+      stoppedAtCU = true
+      break
+    }
     if (visited.has(next)) break
     visited.add(next)
     route.push({ index: next, reverse })
     exit = next * 2 + (reverse ? 0 : 1)
+  }
+  if (stoppedAtCU) {
+    let lastOrdinary = -1
+    for (let n = 0; n < route.length; n++)
+      if (base.pieces[route[n].index].type === 'Standardgerade' || /^Kurve_/.test(base.pieces[route[n].index].type))
+        lastOrdinary = n
+    route.splice(lastOrdinary + 1)
   }
   const choices = []
   const positions = new Map(route.map((r, i) => [r.index, i]))
@@ -63,11 +79,23 @@ export function replaceFollowingTrack(input, index, types, cutAfter = null) {
   const count = cutAfter ?? choices.at(-1).count
   if (!choices.some((c) => c.count === count)) throw new Error('Invalid cut point')
   const result = editFreeParts(base, index, 'replace', types)
+  const inserted = types.map((_, i) => first + i)
+  if (reverse) {
+    const incoming = segments[last].end
+    const end = traceTrackPlan(result.plan).segments[inserted.at(-1)].end
+    result.plan = transformFreeParts(result.plan, inserted, {
+      degrees: ((incoming.h - end.h) * 180) / Math.PI,
+      pivotX: end.x,
+      pivotY: end.y,
+      dx: incoming.x - end.x,
+      dy: incoming.y - end.y,
+    })
+  }
   const delta = types.length - selection.length
   const remap = (i) => (i < first ? i : i > last ? i + delta : first)
-  const before = segments[last].end
+  const before = segments[reverse ? first : last][reverse ? 'start' : 'end']
   const newSegments = traceTrackPlan(result.plan).segments
-  const after = newSegments[first + types.length - 1].end
+  const after = newSegments[reverse ? first : first + types.length - 1][reverse ? 'start' : 'end']
   const rotation = ((after.h - before.h) * 180) / Math.PI
   const indices = route.slice(0, count).map((r) => remap(r.index))
   const plan = indices.length
@@ -83,13 +111,18 @@ export function replaceFollowingTrack(input, index, types, cutAfter = null) {
   const tail = count ? route[count - 1] : null
   const boundary = tail ? traced[remap(tail.index)][tail.reverse ? 'start' : 'end'] : after
   const fixed = tail ? segments[tail.index][tail.reverse ? 'start' : 'end'] : before
-  const nextPort = tail ? tail.index * 2 + (tail.reverse ? 0 : 1) : last * 2 + 1
+  const nextPort = tail ? tail.index * 2 + (tail.reverse ? 0 : 1) : reverse ? first * 2 : last * 2 + 1
   return {
     plan,
     selected: result.selected,
     count,
-    choices: choices.map((c) => ({ ...c, index: c.count ? remap(c.index) : first + types.length - 1 })),
+    choices: choices.map((c) => ({
+      ...c,
+      index: c.count ? remap(c.index) : reverse ? first : first + types.length - 1,
+    })),
     moving: indices,
+    stoppedAtCU,
+    reverse,
     boundary,
     fixed,
     hasFixedNeighbour: links[nextPort] >= 0,

@@ -1,0 +1,46 @@
+{
+  "replacement": {
+    "cuFixed": "Die CU bleibt stehen. Der folgende Abschnitt wird in Fahrtrichtung bis zum gewählten Auftrennpunkt vor der CU angepasst.",
+    "cuProtected": "Die CU bleibt geschützt. Zum Umsetzen die CU ausdrücklich auswählen und verschieben.",
+    "blocked": "Austausch nicht möglich. Die Auswahl oder eine feste Baugruppe zuerst prüfen."
+  },
+  "pit": {
+    "individual": "Boxenteil einzeln bearbeiten",
+    "xMm": "X (mm)",
+    "yMm": "Y (mm)",
+    "headingDegrees": "Drehung (°)",
+    "carrier": "Zuordnung / Trägerschiene",
+    "free": "Frei, ohne Trägerschiene",
+    "level": "Ebene",
+    "selectCarrier": "Zugeordnete Hauptschiene auswählen",
+    "startHelp": "Start/Ziel und Control Unit mit zwei Tankplätzen anlegen. Boxenweichen und Schienen sind einzeln wählbar und zuordenbar; gemeinsam bewegen lassen sie sich per Mehrfachauswahl."
+  },
+  "parallel": {
+    "title": "Parallel andocken",
+    "help": "Zwei getrennte Abschnitte markieren oder zuerst eine Referenz merken und dann eine Schiene bzw. ein Boxenteil wählen.",
+    "remember": "Als Andock-Referenz merken",
+    "noReference": "Noch keine Referenz gewählt.",
+    "reference": "Referenz: {{kind}} {{number}}",
+    "rail": "Hauptschiene",
+    "extra": "Boxenteil",
+    "side": "Seite in Fahrtrichtung",
+    "right": "Rechts",
+    "left": "Links",
+    "spacing": "Seitlicher Abstand",
+    "auto": "Passende Breite: {{distance}} mm",
+    "custom": "Eigener Abstand",
+    "opposite": "Gegenrichtung",
+    "preview": "Vorschau",
+    "apply": "Parallel andocken",
+    "previewReady": "Vorschau: {{distance}} mm. Radien und Anschlüsse anschließend mit der Aufbauprüfung kontrollieren.",
+    "errors": {
+      "selectParts": "Zwei unterschiedliche Teile bzw. Abschnitte wählen.",
+      "distance": "Abstand zwischen 1 und 10000 mm angeben.",
+      "levels": "Die Teile müssen auf derselben Ebene liegen.",
+      "sameSection": "Diese Schienen sind bereits verbunden. Den zu versetzenden Abschnitt zuerst auftrennen.",
+      "cuFixed": "Der bewegliche Abschnitt enthält die CU. Die CU-Seite zuerst als feste Referenz wählen.",
+      "sharedCarrier": "Die Referenz hängt am beweglichen Abschnitt. Zuerst die Zuordnung der Referenz lösen."
+    },
+    "cancel": "Vorschau verwerfen"
+  }
+}

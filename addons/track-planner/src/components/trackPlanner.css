@@ -1157,3 +1157,19 @@
   color: var(--popover-foreground);
   background: var(--popover);
 }
+
+.planner-parallel-controls {
+  font-size: 12px;
+}
+.planner-parallel-controls label {
+  display: block;
+  margin: 6px 0;
+}
+.planner-parallel-controls select {
+  width: 100%;
+}
+[data-testid='pit-individual-controls'] input,
+[data-testid='pit-individual-controls'] select {
+  display: block;
+  width: 100%;
+}
