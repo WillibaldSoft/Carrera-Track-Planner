@@ -1,0 +1,177 @@
+{
+  "gapDisplay": {
+    "leader": "Führender",
+    "lapsGap_one": "+{{count}} Runde",
+    "lapsGap_other": "+{{count}} Runden"
+  },
+  "stateChip": {
+    "idle": "Freies Training",
+    "pending": "Startet …",
+    "running": "Rennen läuft",
+    "paused": "Pausiert",
+    "results": "Ergebnisse"
+  },
+  "startingGrid": {
+    "title": "Startaufstellung",
+    "emptyTitle": "Keine Fahrer in der Startaufstellung",
+    "emptyHint": "Ordne zuerst die Fahrer zu",
+    "row": "Reihe {{number}}"
+  },
+  "podium": {
+    "first": "1.",
+    "second": "2.",
+    "third": "3.",
+    "winner": "Sieger",
+    "lapsGap_one": "+{{count}} Runde",
+    "lapsGap_other": "+{{count}} Runden",
+    "laps": "Runden",
+    "duration": "Dauer",
+    "grace": "Nachlaufzeit",
+    "lapsCount_one": "{{count}} Runde",
+    "lapsCount_other": "{{count}} Runden"
+  },
+  "leaderboard": {
+    "empty": "Keine Einträge in der Rangliste",
+    "laps": "Runden",
+    "best": "Bestzeit",
+    "last": "Letzte Runde",
+    "gap": "Abstand",
+    "total": "Gesamt"
+  },
+  "resultsModal": {
+    "title": "Ergebnisse",
+    "colPos": "Platz",
+    "colDriver": "Fahrer",
+    "colLaps": "Runden",
+    "colBest": "Bestzeit",
+    "backToFreePractice": "Zurück zum freien Training"
+  },
+  "sessionHeader": {
+    "elapsed": "Vergangen",
+    "remaining": "Verbleibend",
+    "cuOk": "CU verbunden",
+    "cuOff": "CU getrennt"
+  },
+  "cancelConfirmModal": {
+    "title": "Sitzung abbrechen?",
+    "message": "Die laufende Sitzung wird abgebrochen.",
+    "back": "Zurück",
+    "confirm": "Sitzung abbrechen"
+  },
+  "sessionModal": {
+    "nameLabel": "Sitzungsname",
+    "durationLabel": "Dauer (Min.)",
+    "maxLapsLabel": "Max. Runden",
+    "unlimitedHint": "0 = unbegrenzt",
+    "useQualifyingGrid": "Startaufstellung aus der Qualifikation übernehmen",
+    "startQualifying": "Qualifikation starten",
+    "startRace": "Rennen starten"
+  },
+  "trackRecords": {
+    "title": "Rekorde",
+    "noRecord": "Kein Rekord",
+    "selectTrack": "Strecke auswählen"
+  },
+  "freePracticeEntry": {
+    "laps": "Runden",
+    "best": "Bestzeit",
+    "last": "Letzte Runde",
+    "controller": "Regler {{number}}"
+  },
+  "freePracticeLeaderboard": {
+    "title": "Rangliste",
+    "sortLaps": "Runden",
+    "sortTime": "Zeit",
+    "reset": "Zurücksetzen",
+    "waitingTitle": "Warte auf Runden …",
+    "waitingHint": "Fahre auf der Bahn"
+  },
+  "freePracticeHeader": {
+    "title": "Freies Training",
+    "selectTrack": "Strecke auswählen …",
+    "qualifying": "Qualifikation",
+    "race": "Rennen",
+    "cuConnected": "CU verbunden",
+    "cuDisconnected": "CU getrennt"
+  },
+  "controllerConfig": {
+    "title": "Fahrerzuordnung",
+    "session": "Sitzung"
+  },
+  "startLights": {
+    "cancelTitle": "Abbrechen (Esc)",
+    "falseStart": "FEHLSTART",
+    "go": "LOS!",
+    "start": "START"
+  },
+  "session": {
+    "noSession": "Keine Sitzung ausgewählt",
+    "typePractice": "Freies Training",
+    "typeQualif": "Qualifikation",
+    "typeRace": "Rennen",
+    "elapsed": "Vergangen",
+    "remaining": "Verbleibend",
+    "cuOk": "CU verbunden",
+    "cuOff": "CU getrennt",
+    "connectCu": "Control Unit verbinden",
+    "start": "Starten",
+    "pause": "Pause",
+    "finish": "Beenden",
+    "resume": "Fortsetzen",
+    "lastLapInProgress": "Letzte Runde läuft …",
+    "viewResults": "Ergebnisse anzeigen"
+  },
+  "controllerSlot": {
+    "controller": "Regler {{number}}",
+    "driverLabel": "Fahrer",
+    "carLabel": "Auto",
+    "select": "Auswählen …"
+  },
+  "configStatus": {
+    "ready": "Bereit",
+    "toConfigure_one": "{{count}} Regler zu konfigurieren",
+    "toConfigure_other": "{{count}} Regler zu konfigurieren",
+    "toConfigureWithSlots_one": "{{count}} Regler zu konfigurieren ({{slots}})",
+    "toConfigureWithSlots_other": "{{count}} Regler zu konfigurieren ({{slots}})"
+  },
+  "voice": {
+    "bestLap": "Neue Bestzeit für {{name}}: {{time}}.",
+    "car": "Auto {{number}}",
+    "places": ["Erster Platz", "Zweiter Platz", "Dritter Platz"],
+    "minutes_one": "{{count}} Minute",
+    "minutes_other": "{{count}} Minuten",
+    "seconds": "{{value}} Sekunden",
+    "podium": "{{place}}: {{name}} mit {{time}}."
+  },
+  "dnf": "Nicht im Ziel",
+  "fuel": {
+    "title": "Tankanzeige · Regler 1",
+    "level": "Tankstand Regler 1",
+    "value": "CU-Wert {{value}} von 15",
+    "scale": "CU-Skala 0–15; keine Literangabe. Der Balken zeigt den gemeldeten Stufenwert.",
+    "mode": "Tankmodus: {{mode}}",
+    "modes": {
+      "unknown": "unbekannt",
+      "off": "AUS",
+      "on": "ON",
+      "real": "REAL"
+    },
+    "noData": "Keine aktuellen Daten",
+    "noPit": "Pit-Lane-Sensor nicht erkannt",
+    "inPit": "Boxenstatus aktiv",
+    "onTrack": "Boxenstatus inaktiv",
+    "stale": "Keine aktuellen CU-Daten. Die letzte Messung wird nicht als aktueller Tankstand angezeigt.",
+    "switchOn": "Für den Tanktest den FUEL-Schiebeschalter an der CU auf ON stellen. Der Start bleibt bis dahin gesperrt.",
+    "useOn": "Für diesen ersten Test ON statt REAL wählen.",
+    "empty": "Tank leer – zum Nachtanken in die Box fahren.",
+    "low": "Tank niedrig – Boxenstopp vorbereiten.",
+    "refuel": "Nach dem Tanksensor anhalten und die Weichentaste gedrückt halten. Prüfe, ob der Tankwert steigt."
+  },
+  "lapSpeed": {
+    "label": "Berechnete Durchschnittsgeschwindigkeit der letzten Runde",
+    "short": "Ø Runde",
+    "lap": "Runde {{number}}",
+    "noLength": "Keine gültige Streckenlänge hinterlegt.",
+    "explanation": "Schätzung aus Rundenzeit und {{length}} m mittlerer Spurlänge. Spurwechsel und Boxenwege werden nicht erfasst; keine Höchstgeschwindigkeit."
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "update": {
+    "title": "Update",
+    "currentVersion": "Current version",
+    "check": "Check",
+    "newVersionAvailable": "New version available: v{{version}}",
+    "updateButton": "Update",
+    "upToDate": "The application is up to date",
+    "cantCheck": "Unable to check",
+    "starting": "Starting...",
+    "serverRestart": "Restarting server...",
+    "restarting": "Restarting...",
+    "connectionError": "Server connection error",
+    "genericError": "Error"
+  },
+  "connection": {
+    "connected": "Connected: {{device}}",
+    "noDevice": "No device connected",
+    "disconnect": "Disconnect",
+    "pending": "Connection is still being established. The actual status updates automatically."
+  },
+  "devices": {
+    "title": "Select a device",
+    "auto": "Auto",
+    "manual": "Manual",
+    "new": "(new)",
+    "connecting": "Connecting...",
+    "connect": "Connect",
+    "scanning": "Scanning...",
+    "scan": "Search for a new track"
+  },
+  "cuStatus": {
+    "title": "Device status",
+    "start": "Start",
+    "mode": "Mode",
+    "display": "Display",
+    "fuel": "Fuel"
+  },
+  "appearance": {
+    "themeNight": "Night mode",
+    "themeDay": "Day mode",
+    "darkInterface": "Dark interface",
+    "lightInterface": "Light interface",
+    "defaultView": "Default view",
+    "bestLapVoice": "Best lap announcement",
+    "bestLapVoiceDesc": "Voice when a new record is set",
+    "minLapsBeforeAnnounce": "Minimum laps before announcement",
+    "podiumVoice": "Podium announcement",
+    "podiumVoiceDesc": "Voice results at the end of the session",
+    "defaultVoice": "Default voice",
+    "testVoice": "Test voice",
+    "testVoicePhrase": "New best lap for Test Driver: 8.23 seconds.",
+    "adminMode": "Administrator mode",
+    "adminModeDesc": "Displays, Test, Simulator",
+    "language": "Language",
+    "languageDesc": "Interface language",
+    "voiceRate": "Speech rate",
+    "voiceHint": "Spoken times rounded to hundredths; stored times keep millisecond precision. Voice quality depends on the voices available in your browser.",
+    "localVoice": "Thorsten – local (Piper)",
+    "localVoiceHint": "German neural voice running on this computer. Offline after installation, no subscription. If audio is blocked, click Test voice once.",
+    "localVoiceError": "Local speech could not be played. Try Test voice again or select the default voice.",
+    "localStates": {
+      "loading": "Generating speech locally...",
+      "playing": "Playing speech...",
+      "done": "Last announcement played."
+    }
+  },
+  "logs": {
+    "title": "Logs",
+    "empty": "No logs",
+    "controllerLap": "Ctrl {{n}}: {{time}}s",
+    "controllerSector": "Ctrl {{n}}: sector {{sector}}",
+    "connectedTo": "Connected to {{device}}",
+    "errorWith": "Error: {{error}}",
+    "scanning": "Scanning...",
+    "devicesFound": "{{count}} device(s) found",
+    "deviceDeleted": "Device {{name}} deleted"
+  },
+  "referenceDriver": {
+    "title": "Reference driver",
+    "description": "Every balancing lap is credited to them, whoever actually holds the controller.",
+    "select": "Choose a driver",
+    "none": "No reference driver",
+    "noneWarning": "Without a reference driver, balancing laps are credited to nobody.",
+    "createStig": "Create The STIG",
+    "creating": "Creating...",
+    "created": "The STIG was created and set as reference driver",
+    "migrate": "Claim past balancing laps",
+    "migrateDesc": "Reassigns balancing laps already recorded to the reference driver.",
+    "migrating": "Claiming...",
+    "migrated_zero": "No lap to reassign",
+    "migrated_one": "{{count}} lap reassigned to {{name}}",
+    "migrated_other": "{{count}} laps reassigned to {{name}}",
+    "error": "Error: {{message}}",
+    "migrateButton": "Claim"
+  }
+}

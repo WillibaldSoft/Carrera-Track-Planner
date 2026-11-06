@@ -1,0 +1,611 @@
+{
+  "sourceRepository": "https://github.com/WillibaldSoft/RaceHubOS",
+  "upstreamRepository": "https://github.com/AnselmeSDR/RaceHubOS",
+  "sourceCommit": "fa038fff3327b7796ea0c14d2797714c35359335",
+  "workingTreeIncluded": true,
+  "license": "Apache-2.0",
+  "frontendSnapshots": [
+    {
+      "source": "packages/frontend/src/i18n/locales/en/voice.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/voice.json",
+      "sha256": "589664d8b069ba7f818d0c364dfe63576de284aeb036f9e39d2633b8df4a9735"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/layout.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/layout.json",
+      "sha256": "792176e55ece84b747f5ea6472cb1ea851286b423be18d037f2688ef95f391f1"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/freeSession.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/freeSession.json",
+      "sha256": "5a9db92b64904188eb7832b6c6022d8ce862331e25c1f7b61b693a258d822474"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/settings.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/settings.json",
+      "sha256": "31c2ce14ce93e827ab903b592069b75d9d1f4b20d354eed425c4d0c6978089c6"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/sessions.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/sessions.json",
+      "sha256": "564d968fd7a704f1965c4cdd4e3a0ae4192bc830c6c660643bb692afb221e544"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/addons.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/addons.json",
+      "sha256": "879ba229f08e40a1bfbf46daae383ca2a782b29fa110b7a71ab67bf81f9e5799"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/dashboard.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/dashboard.json",
+      "sha256": "559e8d07c43c0863ed0eb9941400951398846fe5537dafdea78437d224fd1638"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/tracks.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/tracks.json",
+      "sha256": "ee3354e71ff255663e4e846aac9acf68b6cb97a3a45a07ac22acee020e8da8db"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/extensions.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/extensions.json",
+      "sha256": "867b9d9a884d39f10620232b2fe1b825e4f7be9a0967ec4c38c165d0a3ca46ac"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/test.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/test.json",
+      "sha256": "21321c5de7c1ae1de7160bb08bb2a1a9fdd09f6293ece8bcffadbe1aa272836e"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/PitSwitchDetail.jsx",
+      "export": "vendor/racehubos/ui/components/tracks/PitSwitchDetail.jsx",
+      "sha256": "d54c494a702d694c9253a3efc3d53910348ba7698037b12c272b30b7495d2b5f"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/extensions.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/extensions.json",
+      "sha256": "c155861bb4f68e2d9308aada9c6930fba79082ee3f8b9366d81a93e0113aa74f"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/teams.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/teams.json",
+      "sha256": "5526c8d667b23ce0cdfebba77c1957d5e6d085765d7c9b89e3d8106697c18cf3"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/test.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/test.json",
+      "sha256": "a974e9ef3567990bceb7e784e062178cc07fa73965dcde69b81d21438c44da50"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/layout.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/layout.json",
+      "sha256": "c1440795fdf55d8202385c674132312ec157e2d034d8c1100725982485a62362"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/common.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/common.json",
+      "sha256": "8e2194e9acff4ba627c8c9293e2a69348fc2b32e9d5a950b08fe3cdae87a9a14"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/settings.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/settings.json",
+      "sha256": "93ea52119714d2f6a2f0551992af6a1dcf949115b7bb5a808742f3b7e7d25adf"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/SavedRoomPlan.jsx",
+      "export": "vendor/racehubos/ui/components/tracks/SavedRoomPlan.jsx",
+      "sha256": "d10175632eee48e0e9cfd3d55cbeec0160f73714a7fd64c1390c60f6f5bb8392"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/sessions.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/sessions.json",
+      "sha256": "555913edcc28bbcbc2a55acbb4c4549bbb885fd960293b62a77b2823c8012ecd"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/drivers.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/drivers.json",
+      "sha256": "16d7b5bfd6e8bef7c9b0515d31b1434d1dc6527012c0e0c83a3765ea210c29a9"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/raceScreens.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/raceScreens.json",
+      "sha256": "b3ad03f9ee922a02fe100008c76806376a5120922c4c1e0370bd5d7c8fdc2865"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/dashboard.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/dashboard.json",
+      "sha256": "77bd8281d9619be23115f8bf5e5b370bbb1c31f69644f7f5f63df35e4b60aa0e"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/AntiCollisionMarker.jsx",
+      "export": "vendor/racehubos/ui/components/tracks/AntiCollisionMarker.jsx",
+      "sha256": "2d87befe8fc83736203ae878c85d181e836a06e93234d8b81ee65642fcc3b136"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/teams.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/teams.json",
+      "sha256": "37bc9ebe1624954f1c641ffd1e5c134bed0cfa1f74a9ee8a4d996d68ecef6c9b"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/race.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/race.json",
+      "sha256": "aa574b6dff906b5fe8e56791e56bf28215d85e9867226ca2f2b8835530ab776b"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/balancing.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/balancing.json",
+      "sha256": "38d5eb4e529206421e9db1160fcb85a141983850d1873db6bb79122d619347cf"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/common.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/common.json",
+      "sha256": "6b5e9fa28aa0dca22d1c40d8caa4f64499bc8513ae111783930cf3c1e3e0c06c"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/RailSlotPaths.jsx",
+      "export": "vendor/racehubos/ui/components/tracks/RailSlotPaths.jsx",
+      "sha256": "6bf7c899aceb3f943f7c2de84adacf3e10187e0d0508037b00ffb08199a0c1cf"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/addons.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/addons.json",
+      "sha256": "3f3a24e409d7dfe5f007080858092e233da7408e2209d1295911514a81b9d789"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/cockpit.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/cockpit.json",
+      "sha256": "ef41283e38be280749b31981e3f5a62b48db88a49cf6aadb66317d88cea96db2"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/addons.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/addons.json",
+      "sha256": "605345b475a249f72a2c56e03abb6fcbb082e7fa2337486b3e121346100173b5"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/cars.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/cars.json",
+      "sha256": "d1463d9b567fb5de9c6b23a08fb92145c5b1d94f7df2d7f36d0998546b4c283e"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/drivers.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/drivers.json",
+      "sha256": "3bc68dd400e370958f07915a3ef20928767e3634b6858a917e4c373cf5110906"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/glossary.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/glossary.json",
+      "sha256": "aedb8461e8ff1650dc052a9a296c30cf2b07edf3bbd3fa874793364fb92a1fcf"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/championships.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/championships.json",
+      "sha256": "c0e8c87c8a79a35061ca3dfbbace72e2acce8d177b4dd3b066cb0708bae9bc95"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/raceScreens.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/raceScreens.json",
+      "sha256": "16c5069e4429f003ea690dd68c47f6d307db899f7cf2e381df19434771e93eb8"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/sessions.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/sessions.json",
+      "sha256": "24ffbff514b0f2860683231e802825c2b49915241689a7bfe8317875bd4c2140"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/championships.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/championships.json",
+      "sha256": "1eeba8c557bf837fe72e235a115458cbcb9376eeb3a676855fedafe26255194c"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/freeSession.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/freeSession.json",
+      "sha256": "ce4abaf8799d7f04db49cae0dce77a1c2d82edfce26eddbb9ace0fc721419841"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/dashboard.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/dashboard.json",
+      "sha256": "770ff5dda36e04a998623268acde43b5b9eb2b522c860541e838df549b0d3eaf"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/tracks.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/tracks.json",
+      "sha256": "80974a45212fe9cac8f0bd13319deeaa2e25162dc463eaa6538abe4ee62c7eab"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/championships.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/championships.json",
+      "sha256": "c1d48b5a1331dff83836346f5f0406a763721ab90987814c90b63f23de1a3664"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/freeSession.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/freeSession.json",
+      "sha256": "91d043bb7881a8afdec5722567acdbac03385027e604574f127604688e11222c"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/raceScreens.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/raceScreens.json",
+      "sha256": "456d55da05429bc36d473ae4b6db9e2ec3b3d3c80ec4c1cd2a5667c2baff25dc"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/TrackUnitDetails.jsx",
+      "export": "vendor/racehubos/ui/components/tracks/TrackUnitDetails.jsx",
+      "sha256": "9c325325f8c334228283715fec864937702f60370bf68f6754dd2d30096459a4"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/common.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/common.json",
+      "sha256": "6aa7d94f4a5f67e7593ec1cf569f6c3608e9b582c55d8d367639e82add3779a1"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/glossary.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/glossary.json",
+      "sha256": "2546b108da61afaddd3a8912fffb90a442089d49b1cf621bf157d58a71f6c797"
+    },
+    {
+      "source": "packages/frontend/src/components/ui/button.jsx",
+      "export": "vendor/racehubos/ui/components/ui/button.jsx",
+      "sha256": "b9297b9d00899820a27a9bf58a32eca56d4d1949418a416c0fb073c9069593a2"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/balancing.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/balancing.json",
+      "sha256": "50bc1789c60ab251ccd56964c7a00bf929c1c656e3ad6b0d25e8d6eb3c3ac8be"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/balancing.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/balancing.json",
+      "sha256": "1af83b9fbe93472796f439468abbe3848766295dd60dd6b1daa8270d6f692223"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/displays.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/displays.json",
+      "sha256": "6769c23d59c88aa95f738d1c2b9df3c92d4e4228e31c8d802cf22697fe17188f"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/voice.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/voice.json",
+      "sha256": "e47478a0fde4da3b07a5493ed868e7fd294e9d9d8790748afe563ab7bbdfc107"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/race.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/race.json",
+      "sha256": "ebd3510e664bd65caccb9024cd4ef76ff2307df90af18fc7d86814312b150153"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/TrackPlanPreview.jsx",
+      "export": "vendor/racehubos/ui/components/tracks/TrackPlanPreview.jsx",
+      "sha256": "4c445eb963013b812b12fa4af33aef3619f3c8c9d785461accca6cdbeb92590e"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/stats.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/stats.json",
+      "sha256": "b21ed69e8464f7a99c56383955a4bfc40d1617d35d41b8db5a39264cae9f6209"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/teams.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/teams.json",
+      "sha256": "41b74bf1475bf1b0d520e4d8afc7b5be89498d2a1b12a628d89fafc6c0115f4d"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/voice.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/voice.json",
+      "sha256": "97246ff11002b66ade3d5dc8748aaee73ca5e1cbe6454afbec01a388a2a546b9"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/cockpit.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/cockpit.json",
+      "sha256": "76c84d3cd6b0980a2bca5a2dece4e915c6e147b08df909b5a944fb5f605c33da"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/race.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/race.json",
+      "sha256": "2b0776cddd0ad26a89e5e093e7ebde112eee5354a4f858080257fc0a3d8ec691"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/stats.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/stats.json",
+      "sha256": "36a2cfcb111124ed426c246f68dce0ed36854188767bbc28f18376e5d8ce23a0"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/test.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/test.json",
+      "sha256": "729c9c45818a4934faa2a81b56632af45158047df31902ba6038b0f76a2ae20a"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/glossary.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/glossary.json",
+      "sha256": "37e40287a3724d321de6edf98eb679672ac158b63ca10e032556568a902c8e01"
+    },
+    {
+      "source": "packages/frontend/src/lib/utils.js",
+      "export": "vendor/racehubos/ui/lib/utils.js",
+      "sha256": "74b0cf54290ee923ec45b3745964928146eba8d30068269d3e78c66774fb7f93"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/cars.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/cars.json",
+      "sha256": "88bdcddafd184c8a33fd63bcf1bafe3c994e76dc7528bc57f7d347282c78fe8b"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/settings.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/settings.json",
+      "sha256": "0327873db6caf9a4df93f087ddddff82ec6c308d86f70c23e03289796caefee2"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/TrackImageExport.jsx",
+      "export": "vendor/racehubos/ui/components/tracks/TrackImageExport.jsx",
+      "sha256": "f69cc48700f0f7ff66c974654a36ed64ed83123137820bfac624fada9a1614c9"
+    },
+    {
+      "source": "packages/frontend/src/i18n/index.js",
+      "export": "vendor/racehubos/ui/i18n/index.js",
+      "sha256": "da45948bc6b459741e08be7c0aab4162c85782df98ca9a936bbcb75e1526dd31"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/TrackPlanSummary.jsx",
+      "export": "vendor/racehubos/ui/components/tracks/TrackPlanSummary.jsx",
+      "sha256": "7501156101193b9fea67b52810520c005668a3e73874b0e672e326b5b5c729b8"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/stats.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/stats.json",
+      "sha256": "87c7ff4c4406dd7760f4de76d6a507ffb66e655d53302c35f54857763c9b831b"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/drivers.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/drivers.json",
+      "sha256": "9e6845c995e822638d2b2dd38bf31ea235b5110f1d7d39471b7397e818b9b10f"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/extensions.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/extensions.json",
+      "sha256": "53068e4aabf5cf5c2a771d60830df13fff4808612507042359ebded5f7277320"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/trackPartLabel.js",
+      "export": "vendor/racehubos/ui/components/tracks/trackPartLabel.js",
+      "sha256": "f3d870fa8868a7e1df66db368512a8ee420c3d33d47c1685fdcd1c0d9091004d"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/tracks.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/tracks.json",
+      "sha256": "8bd2be53722b47fc6da9f77b870c0fd15749e2fdf9bf0457560914ec14677763"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/pitlaneComponents.js",
+      "export": "vendor/racehubos/ui/components/tracks/pitlaneComponents.js",
+      "sha256": "f7b585777acb50bcaa105dc6b0b18aecef924c32fcf0dc2dd29e593ab9580031"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/RailRequirementsTable.jsx",
+      "export": "vendor/racehubos/ui/components/tracks/RailRequirementsTable.jsx",
+      "sha256": "553ae44f9b194c463cde209efd58121b195479fddf7b7360e8184e12eaaf3f6a"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/en/layout.json",
+      "export": "vendor/racehubos/ui/i18n/locales/en/layout.json",
+      "sha256": "4a26f4fc4bfeb4799ad65771ff0bf8db943e4c00028a1ed2c9050d4f9cb40309"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/displays.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/displays.json",
+      "sha256": "44231cbba43143a93e7752b500aef5d045551b7dd0000ca5c54dbd25aa18fd8f"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/cars.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/cars.json",
+      "sha256": "15f20a6331fea4aefb321404eb001e96f5ef59e197d783f8dfb517f065a2a55a"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/de/cockpit.json",
+      "export": "vendor/racehubos/ui/i18n/locales/de/cockpit.json",
+      "sha256": "ad1b9e4e656b3277561f89f19f74bb1366f99c136eafb487859ce3778e5552b6"
+    },
+    {
+      "source": "packages/frontend/src/i18n/locales/fr/displays.json",
+      "export": "vendor/racehubos/ui/i18n/locales/fr/displays.json",
+      "sha256": "f5b5b0ed776463aa5adbd06ca77089fe601fdfef42c79965e5544dec25a79963"
+    },
+    {
+      "source": "packages/frontend/src/components/tracks/trackPartAppearance.js",
+      "export": "vendor/racehubos/ui/components/tracks/trackPartAppearance.js",
+      "sha256": "f26041c6543d01b5d81888ae0765afc64e3a8a99ef3d3998a576e9a98764207f"
+    },
+    {
+      "source": "packages/frontend/src/index.css",
+      "export": "vendor/racehubos/ui/index.css",
+      "sha256": "a0d8d4d029dfd83593b7b83a9e494ec80d6cfda3a2f0dc7bbea0d8386b6ccdb3"
+    }
+  ],
+  "sharedSnapshots": [
+    {
+      "source": "packages/shared/src/carScale.js",
+      "export": "vendor/racehubos/shared/src/carScale.js",
+      "sha256": "fd63edc333ea782e27ed7d03647450bc0ad5527395bf01696368cba6a7478798"
+    },
+    {
+      "source": "packages/shared/src/carSettings.js",
+      "export": "vendor/racehubos/shared/src/carSettings.js",
+      "sha256": "f7641cec61e174a832a326ad1d18bdff9762ad0ae0fe6a3da7bc92418c589861"
+    },
+    {
+      "source": "packages/shared/src/carSpecs.js",
+      "export": "vendor/racehubos/shared/src/carSpecs.js",
+      "sha256": "617a98f560e9cbb2c58d9d9fe55630a9f48855aabbcd67677aa2f0eb4cedb1ca"
+    },
+    {
+      "source": "packages/shared/src/carreraTrackCatalog.js",
+      "export": "vendor/racehubos/shared/src/carreraTrackCatalog.js",
+      "sha256": "11cc422c6cfbdf28510faf7349f3d58035987f3de9f3f719ef4551c442317a4a"
+    },
+    {
+      "source": "packages/shared/src/catalogReference.js",
+      "export": "vendor/racehubos/shared/src/catalogReference.js",
+      "sha256": "4cad9e7cea069d5cc89e401394dddad48adc2120a3ed1815b54718fd6d647d33"
+    },
+    {
+      "source": "packages/shared/src/championship.js",
+      "export": "vendor/racehubos/shared/src/championship.js",
+      "sha256": "9e4e95e5a4ac945f0252754c32cf810149d231c1161ca4bc432d64d8ee4d977a"
+    },
+    {
+      "source": "packages/shared/src/cuStart.js",
+      "export": "vendor/racehubos/shared/src/cuStart.js",
+      "sha256": "785c4e54d7109f92f08ea8b57f038fbbdaf289020f70d9755ce7f12d04f565b0"
+    },
+    {
+      "source": "packages/shared/src/curveDynamics.js",
+      "export": "vendor/racehubos/shared/src/curveDynamics.js",
+      "sha256": "503d246c734caee14630e72f4c0255f46a2b6c0cfb9f3957cb2699f52560de6f"
+    },
+    {
+      "source": "packages/shared/src/detailedTrackSearch.js",
+      "export": "vendor/racehubos/shared/src/detailedTrackSearch.js",
+      "sha256": "ed598f26d3969eebbae332a2a9e437592405a2093e0656f6c61cdea77f270297"
+    },
+    {
+      "source": "packages/shared/src/freeTrackEditing.js",
+      "export": "vendor/racehubos/shared/src/freeTrackEditing.js",
+      "sha256": "68be6759fd4bc62685ab3f4ac232ed91636ffc125922b33a966277d8bb2cf56a"
+    },
+    {
+      "source": "packages/shared/src/fuelMode.js",
+      "export": "vendor/racehubos/shared/src/fuelMode.js",
+      "sha256": "6525f2450031822851d7a2a67db3ebd0b1102f71dd089c648bbf6cbcec7c1a0a"
+    },
+    {
+      "source": "packages/shared/src/index.js",
+      "export": "vendor/racehubos/shared/src/index.js",
+      "sha256": "31debfc92833a2c9ccccdad68230fbef346a9b1fe248a31ffa366d022a2817f8"
+    },
+    {
+      "source": "packages/shared/src/newTrackPatterns.js",
+      "export": "vendor/racehubos/shared/src/newTrackPatterns.js",
+      "sha256": "7a10a981e7ee32ae6e306480b4996d9c9c5adaf3ff3200ac82fa24c495ec470b"
+    },
+    {
+      "source": "packages/shared/src/pitlaneEditing.js",
+      "export": "vendor/racehubos/shared/src/pitlaneEditing.js",
+      "sha256": "bc25799a6a0b003430cfdc0561e5cce614c54545d3da3b1b84a58e6e8c70fc6e"
+    },
+    {
+      "source": "packages/shared/src/railInventory.js",
+      "export": "vendor/racehubos/shared/src/railInventory.js",
+      "sha256": "2d1bffd365591e23cdf4e42659a72be6a3a19c5e3b51d979bc36f9a6b8127ede"
+    },
+    {
+      "source": "packages/shared/src/railInventoryManagement.js",
+      "export": "vendor/racehubos/shared/src/railInventoryManagement.js",
+      "sha256": "17bfb84a374b7e1cd16a7268e1e687de71c0199ac012168928a79655efbb2c9c"
+    },
+    {
+      "source": "packages/shared/src/roomConfiguration.js",
+      "export": "vendor/racehubos/shared/src/roomConfiguration.js",
+      "sha256": "a60dc899bc8679f9115841aa0b4c33442421f3ea54da76917e05659abb92dd52"
+    },
+    {
+      "source": "packages/shared/src/roomPlanner.js",
+      "export": "vendor/racehubos/shared/src/roomPlanner.js",
+      "sha256": "300153da0b5b8abb66b89cdc458d13a5e8899e0efe6f986a1922da9517f95436"
+    },
+    {
+      "source": "packages/shared/src/sessionStatus.js",
+      "export": "vendor/racehubos/shared/src/sessionStatus.js",
+      "sha256": "67c952b682e33029cc906f945735c9c92b918a2034d16807a947ad77668d3549"
+    },
+    {
+      "source": "packages/shared/src/sessionTypes.js",
+      "export": "vendor/racehubos/shared/src/sessionTypes.js",
+      "sha256": "515cf3e0dcfdd3276e3231ef0690429f69f3db060671bc104bcb714f869a8cc7"
+    },
+    {
+      "source": "packages/shared/src/softyExtraGeometry.js",
+      "export": "vendor/racehubos/shared/src/softyExtraGeometry.js",
+      "sha256": "5515a7e2075680dd9471c7c4c7232688bdcb46449f5152f773c1f12192e5b60c"
+    },
+    {
+      "source": "packages/shared/src/softyNativeCatalog.js",
+      "export": "vendor/racehubos/shared/src/softyNativeCatalog.js",
+      "sha256": "53626f9ffd07791df558c5cd86592e0df33378e7c3769ec66780f41b68d04db4"
+    },
+    {
+      "source": "packages/shared/src/softyNativeImport.js",
+      "export": "vendor/racehubos/shared/src/softyNativeImport.js",
+      "sha256": "fc0557f9ab4ebe0f40871ad943ccd671dca1b922d9f9c0a97d6fb42b475474a4"
+    },
+    {
+      "source": "packages/shared/src/softyRoyal.js",
+      "export": "vendor/racehubos/shared/src/softyRoyal.js",
+      "sha256": "40d2966b6ae44cad0a5fa65b46690d7049342f8696959b9a455f8160a056a22e"
+    },
+    {
+      "source": "packages/shared/src/specialTrackGeometry.js",
+      "export": "vendor/racehubos/shared/src/specialTrackGeometry.js",
+      "sha256": "451f001a35e79e1d96d824c8eb2f2a4ff8b502dbd86584922a7692f5fe5f9447"
+    },
+    {
+      "source": "packages/shared/src/speedDisplay.js",
+      "export": "vendor/racehubos/shared/src/speedDisplay.js",
+      "sha256": "29f02ec6a448b0b2a8e5d497c681fa6a37a60899044a61046a2f223d6596e249"
+    },
+    {
+      "source": "packages/shared/src/trackAssemblies.js",
+      "export": "vendor/racehubos/shared/src/trackAssemblies.js",
+      "sha256": "5d6f6585d2f19afc5616c9e0edd35d97ed84b3d3efa888e321f5130efdee0b7e"
+    },
+    {
+      "source": "packages/shared/src/trackBorderConnections.js",
+      "export": "vendor/racehubos/shared/src/trackBorderConnections.js",
+      "sha256": "991ddcfa1a1adf676cd20bca3556fb7f060f252fd7b17fcbf6a4ef30b8e2a021"
+    },
+    {
+      "source": "packages/shared/src/trackBorderGeometry.js",
+      "export": "vendor/racehubos/shared/src/trackBorderGeometry.js",
+      "sha256": "662714ca7344aaac9f17a4fb8e14e46cd3a5c66811d28aa1d9b9c3f4edc51649"
+    },
+    {
+      "source": "packages/shared/src/trackBorders.js",
+      "export": "vendor/racehubos/shared/src/trackBorders.js",
+      "sha256": "2d4da11bb8231e5661661320ddd7de3170b81dfc77f55beacd6ce89a1d6c3180"
+    },
+    {
+      "source": "packages/shared/src/trackConnections.js",
+      "export": "vendor/racehubos/shared/src/trackConnections.js",
+      "sha256": "8b87d7bc4a2cf231535f981a8d0dd90bf65797e724e6a63ae27841e3b29e2d65"
+    },
+    {
+      "source": "packages/shared/src/trackDrawLayers.js",
+      "export": "vendor/racehubos/shared/src/trackDrawLayers.js",
+      "sha256": "12b64d255176987e49ca50427e1250d3265cb658b3646fb4bb60464dd463fdce"
+    },
+    {
+      "source": "packages/shared/src/trackEditing.js",
+      "export": "vendor/racehubos/shared/src/trackEditing.js",
+      "sha256": "db34cfc1201a7b97fa08ef8930c5701a977e915ef4cb2a618692067e8a53191d"
+    },
+    {
+      "source": "packages/shared/src/trackPlan.js",
+      "export": "vendor/racehubos/shared/src/trackPlan.js",
+      "sha256": "47375ae779f8752463623e6a199f6c2b3411267bebe9bb25f44181ddee957483"
+    },
+    {
+      "source": "packages/shared/src/trackPlannerTools.js",
+      "export": "vendor/racehubos/shared/src/trackPlannerTools.js",
+      "sha256": "f30dd0e2b5766139fdf3c98bbf97169dfdf2a11980ae9373fb82577c1a38f9b5"
+    },
+    {
+      "source": "packages/shared/src/trackRectangleSelection.js",
+      "export": "vendor/racehubos/shared/src/trackRectangleSelection.js",
+      "sha256": "d5c09e41f3a604a1002bbb45fe385f035e340e51627564f56d5aa1d8385988db"
+    },
+    {
+      "source": "packages/shared/src/trackTrk.js",
+      "export": "vendor/racehubos/shared/src/trackTrk.js",
+      "sha256": "d5746b6099565d2c953d69ef96906893790b4a97805e4d9f59e4968a0721d0b1"
+    },
+    {
+      "source": "packages/shared/src/trackUnitGeometry.js",
+      "export": "vendor/racehubos/shared/src/trackUnitGeometry.js",
+      "sha256": "c7d20d01ed0ce53646beac3d8cbcc17fa594f6edccccc221a7bc9b73a5914590"
+    }
+  ]
+}

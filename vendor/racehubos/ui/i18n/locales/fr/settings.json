@@ -1,0 +1,97 @@
+{
+  "update": {
+    "title": "Mise à jour",
+    "currentVersion": "Version actuelle",
+    "check": "Vérifier",
+    "newVersionAvailable": "Nouvelle version disponible : v{{version}}",
+    "updateButton": "Mettre à jour",
+    "upToDate": "L'application est à jour",
+    "cantCheck": "Impossible de vérifier",
+    "starting": "Démarrage...",
+    "serverRestart": "Redémarrage du serveur...",
+    "restarting": "Redémarrage en cours...",
+    "connectionError": "Erreur de connexion au serveur",
+    "genericError": "Erreur"
+  },
+  "connection": {
+    "connected": "Connecté: {{device}}",
+    "noDevice": "Aucun appareil connecté",
+    "disconnect": "Déconnecter",
+    "pending": "Connexion en cours. L’état réel sera actualisé automatiquement."
+  },
+  "devices": {
+    "title": "Sélectionner un appareil",
+    "auto": "Auto",
+    "manual": "Manuel",
+    "new": "(nouveau)",
+    "connecting": "Connexion...",
+    "connect": "Connecter",
+    "scanning": "Recherche en cours...",
+    "scan": "Rechercher un nouveau circuit"
+  },
+  "cuStatus": {
+    "title": "État du Device",
+    "start": "Start",
+    "mode": "Mode",
+    "display": "Display",
+    "fuel": "Fuel"
+  },
+  "appearance": {
+    "themeNight": "Mode nuit",
+    "themeDay": "Mode jour",
+    "darkInterface": "Interface sombre",
+    "lightInterface": "Interface claire",
+    "defaultView": "Vue par défaut",
+    "bestLapVoice": "Annonce meilleur tour",
+    "bestLapVoiceDesc": "Voix quand un nouveau record est établi",
+    "minLapsBeforeAnnounce": "Tours minimum avant annonce",
+    "podiumVoice": "Annonce podium",
+    "podiumVoiceDesc": "Résultats vocaux en fin de session",
+    "defaultVoice": "Voix par défaut",
+    "testVoice": "Tester la voix",
+    "testVoicePhrase": "Nouveau meilleur tour pour le pilote test : 8,23 secondes.",
+    "adminMode": "Mode administrateur",
+    "adminModeDesc": "Displays, Test, Simulateur",
+    "language": "Langue",
+    "languageDesc": "Langue de l'interface",
+    "voiceRate": "Vitesse de parole",
+    "voiceHint": "Temps annoncés au centième, mesures conservées à la milliseconde. La qualité dépend des voix du navigateur.",
+    "localVoice": "Thorsten – local (Piper)",
+    "localVoiceHint": "Voix neuronale allemande sur cet ordinateur, hors ligne après installation et sans abonnement. Si le son est bloqué, cliquer sur Tester la voix.",
+    "localVoiceError": "Lecture locale impossible. Réessayer Tester la voix ou sélectionner la voix par défaut.",
+    "localStates": {
+      "loading": "Génération locale de la voix…",
+      "playing": "Lecture en cours…",
+      "done": "Dernière annonce lue."
+    }
+  },
+  "logs": {
+    "title": "Logs",
+    "empty": "Aucun log",
+    "controllerLap": "Ctrl {{n}}: {{time}}s",
+    "controllerSector": "Ctrl {{n}}: secteur {{sector}}",
+    "connectedTo": "Connecté à {{device}}",
+    "errorWith": "Erreur: {{error}}",
+    "scanning": "Scan en cours...",
+    "devicesFound": "{{count}} appareil(s) trouvé(s)",
+    "deviceDeleted": "Device {{name}} supprimé"
+  },
+  "referenceDriver": {
+    "title": "Pilote de référence",
+    "description": "Tous les tours d'équilibrage lui sont attribués, quel que soit celui qui tient la manette.",
+    "select": "Choisir un pilote",
+    "none": "Aucun pilote de référence",
+    "noneWarning": "Sans pilote de référence, les tours d'équilibrage ne sont attribués à personne.",
+    "createStig": "Créer Le STIG",
+    "creating": "Création...",
+    "created": "Le STIG a été créé et défini comme pilote de référence",
+    "migrate": "Attribuer les anciens tours d'équilibrage",
+    "migrateDesc": "Réattribue les tours d'équilibrage déjà enregistrés au pilote de référence.",
+    "migrating": "Attribution...",
+    "migrated_zero": "Aucun tour à réattribuer",
+    "migrated_one": "{{count}} tour réattribué à {{name}}",
+    "migrated_other": "{{count}} tours réattribués à {{name}}",
+    "error": "Erreur : {{message}}",
+    "migrateButton": "Attribuer"
+  }
+}
