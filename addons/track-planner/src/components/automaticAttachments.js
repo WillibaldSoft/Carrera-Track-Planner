@@ -126,3 +126,11 @@ export function automaticBorderReversed(plan, index, connectivity = null) {
   const cu = route.find((item) => plan.pieces[item.index]?.type === 'Control_unit')
   return !!step && step.reverse !== !!cu?.reverse
 }
+
+// Decorate only the newly inserted range; existing rails keep their settings.
+export function attachInsertedBorders(plan, start, count, side) {
+  if (!side || side === 'none') return plan
+  for (let index = start; index < start + count; index++)
+    plan = attachAutomaticBorders(plan, index, side, automaticBorderReversed(plan, index))
+  return plan
+}

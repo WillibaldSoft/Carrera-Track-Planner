@@ -1,3 +1,4 @@
+import { attachInsertedBorders } from './automaticAttachments.js'
 import { placementCoordinates } from './placementCoordinates.js'
 import {
   emptyTrackPlan,
@@ -13,7 +14,7 @@ export function repeatedTrackPreview(
   input,
   types,
   point,
-  { headingDegrees = 0, level = 0, snap = true, distanceMm = 55 } = {},
+  { headingDegrees = 0, level = 0, snap = true, distanceMm = 55, borderSide = 'none' } = {},
 ) {
   point = placementCoordinates(point)
   if (!point || !types.length || input.pieces.length + types.length > 2000) return null
@@ -48,9 +49,24 @@ export function repeatedTrackPreview(
         Math.abs(degrees(((s.start.h - p.start.h) * 180) / Math.PI)) < 1,
     ),
   )
-  return { plan: preview, pose, level, occupied, snapped: !!nearest }
+  const decorated =
+    borderSide === 'none'
+      ? preview
+      : {
+          ...preview,
+          pieces: placeRepeatedTrackPart(input, types, { pose, level, occupied: false }, borderSide).plan.pieces.slice(
+            input.pieces.length,
+          ),
+        }
+  return {
+    plan: decorated,
+    pose,
+    level,
+    occupied,
+    snapped: !!nearest,
+  }
 }
-export function placeRepeatedTrackPart(input, types, preview) {
+export function placeRepeatedTrackPart(input, types, preview, borderSide = 'none') {
   if (!preview || preview.occupied || input.pieces.length + types.length > 2000)
     return { plan: input, selected: -1, placed: false }
   const offset = input.pieces.length
@@ -58,9 +74,14 @@ export function placeRepeatedTrackPart(input, types, preview) {
   return {
     ...result,
     placed: true,
-    plan: validateTrackPlan({
-      ...result.plan,
-      pieces: result.plan.pieces.map((p, i) => (i >= offset ? { ...p, level: preview.level } : p)),
-    }),
+    plan: attachInsertedBorders(
+      validateTrackPlan({
+        ...result.plan,
+        pieces: result.plan.pieces.map((p, i) => (i >= offset ? { ...p, level: preview.level } : p)),
+      }),
+      offset,
+      types.length,
+      borderSide,
+    ),
   }
 }

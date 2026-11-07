@@ -24,5 +24,14 @@
   "side": "Seite in Fahrtrichtung",
   "both": "Beidseitig",
   "continueHint": "Seite wählen, Schiene überfahren und anklicken. Die Auswahl bleibt aktiv; danach folgt der nächste passende Anschluss.",
-  "applyNext": "Randstreifen anfügen und fortsetzen"
+  "applyNext": "Randstreifen anfügen und fortsetzen",
+  "newBorders": {
+    "label": "Randstreifen mit neuen Schienen legen",
+    "side": "Seite in Fahrtrichtung",
+    "left": "Links",
+    "right": "Rechts",
+    "both": "Beidseitig",
+    "pit": "Boxengassen-Randstreifen anfügen",
+    "pitHint": "Boxengasse: Formteile 20602 für Ein-/Ausfahrt und gerade Randstreifen 20560. Boxenteil markieren, dann passenden Randstreifen anfügen."
+  }
 }

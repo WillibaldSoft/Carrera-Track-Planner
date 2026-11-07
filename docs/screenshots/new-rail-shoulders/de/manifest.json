@@ -1,0 +1,20 @@
+{
+  "language": "de",
+  "screenshots": [
+    {
+      "id": "01-repeat-shoulders",
+      "file": "01-repeat-shoulders.png",
+      "sha256": "e4f739d469e50436a62ee35108ee9d1cd2e7aca2c9d6da36c90c5107891317b2"
+    },
+    {
+      "id": "02-pit-shoulder",
+      "file": "02-pit-shoulder.png",
+      "sha256": "bf39460ea054bee971b4944aa57485330e9b688b218487b69dacad1eaf36406f"
+    },
+    {
+      "id": "03-pit-catalogue",
+      "file": "03-pit-catalogue.png",
+      "sha256": "7cdd1327f7b0d0d53bc8ee9aaebd24a3d02eeb2e8f2771f647724766bda14434"
+    }
+  ]
+}

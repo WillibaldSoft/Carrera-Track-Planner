@@ -1,3 +1,4 @@
+import { attachedPitShoulderIndices } from './pitShoulders.js'
 import {
   validateTrackPlan,
   traceTrackPlan,
@@ -104,6 +105,27 @@ export function updatePitPartWorld(input, index, patch) {
       headingDegrees: degrees(pose.headingDegrees - (h * 180) / Math.PI),
     },
   }
+  const attached = new Set(attachedPitShoulderIndices(plan, index))
+  const delta = ((pose.headingDegrees - old.headingDegrees) * Math.PI) / 180
+  function moveShoulder(e) {
+    const world = extraWorldPose(e, segments),
+      dx = world.xMm - old.xMm,
+      dy = world.yMm - old.yMm
+    const wx = pose.xMm + Math.cos(delta) * dx - Math.sin(delta) * dy
+    const wy = pose.yMm + Math.sin(delta) * dx + Math.cos(delta) * dy
+    const { anchor: previousAnchor, ...body } = e
+    void previousAnchor
+    return {
+      ...body,
+      ...(anchor !== undefined ? { anchor } : {}),
+      level: changed.level,
+      placement: {
+        xMm: c * (wx - (a?.x ?? 0)) + s * (wy - (a?.y ?? 0)),
+        yMm: -s * (wx - (a?.x ?? 0)) + c * (wy - (a?.y ?? 0)),
+        headingDegrees: degrees(world.headingDegrees + pose.headingDegrees - old.headingDegrees - (h * 180) / Math.PI),
+      },
+    }
+  }
   // Releasing a carrier switch must not resurrect its implicit drawing.
   const releaseCarrier =
     (anchor !== extra.anchor || Math.hypot(pose.xMm - old.xMm, pose.yMm - old.yMm) > 0.001) &&
@@ -125,6 +147,6 @@ export function updatePitPartWorld(input, index, patch) {
       void antiCollision
       return { ...rest, type: 'Standardgerade' }
     }),
-    trackExtras: plan.trackExtras.map((e, i) => (i === index ? changed : e)),
+    trackExtras: plan.trackExtras.map((e, i) => (i === index ? changed : attached.has(i) ? moveShoulder(e) : e)),
   })
 }

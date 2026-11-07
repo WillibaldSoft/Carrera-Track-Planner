@@ -5,6 +5,7 @@ import TrackHeightLabels from './TrackHeightLabels'
 import RailElevationEditor from './RailElevationEditor'
 import AutomaticAttachments from './AutomaticAttachments'
 import {
+  attachInsertedBorders,
   attachmentOptions,
   attachTrackAccessory,
   attachAutomaticBorders,
@@ -16,6 +17,7 @@ import { selectedTrackBounds } from './selectionViewport.js'
 import { placementCoordinates } from './placementCoordinates'
 import { anchorRoom, withRoomAnchor, roomAndTrackBounds } from './roomBackground'
 import RoomFootprintDrawing from './RoomFootprintDrawing'
+import { pitShoulderOptions, attachPitShoulder } from './pitShoulders.js'
 import { prepareIndividualPitParts, updatePitPartWorld } from './pitPartEditing'
 import ParallelDockingPanel from './ParallelDockingPanel'
 import { trackSectionJoinOptions, joinTrackSections } from './joinTrackSections'
@@ -47,13 +49,13 @@ import {
   transformFreeParts,
   snapFreeParts,
   editFreeParts,
+  extraWorldPose,
   rotateTrackPlan,
   trackRectangleSelection,
   groupTrackParts,
   ungroupTrackParts,
   changeTrackDrawLayer,
   replacePitlaneSwitch,
-  rotatePitlaneSwitch,
   editablePitlane,
   deleteTrackSelection,
   deletePitComponent,
@@ -158,6 +160,11 @@ export default function GraphicalTrackEditor({
   const autoHoverLock = useRef(-1)
   const autoHoverDirection = useRef(false)
   const [autoSide, setAutoSide] = useState('both')
+  const [layBorders, setLayBorders] = useState(false)
+  const newBorderSide = layBorders ? autoSide : 'none'
+  function decorateInsertion(result, count) {
+    return attachInsertedBorders(result.plan, result.selected, count, newBorderSide)
+  }
   const [autoReverse, setAutoReverse] = useState(false)
   const [autoOption, setAutoOption] = useState(null)
   useEffect(() => {
@@ -439,6 +446,7 @@ export default function GraphicalTrackEditor({
         level: active?.level ?? 0,
         snap: snapEnabled,
         distanceMm: Math.max(20, w / 25),
+        borderSide: newBorderSide,
       })
     : null
   function placeAt(point) {
@@ -448,7 +456,7 @@ export default function GraphicalTrackEditor({
       snap: snapEnabled,
       distanceMm: Math.max(20, w / 25),
     })
-    const result = placeRepeatedTrackPart(storedPlan, chosen.types, preview)
+    const result = placeRepeatedTrackPart(storedPlan, chosen.types, preview, newBorderSide)
     if (!result.placed) return
     setFrame(zoom === 1 ? null : bounds)
     onChange(result.plan)
@@ -585,7 +593,7 @@ export default function GraphicalTrackEditor({
     }
     if (action === 'replace' && replaceAndFollow(chosen.types)) return
     const result = (plan.freePlacement ? editFreeParts : editTrackPieces)(plan, selected, action, chosen.types)
-    onChange(result.plan)
+    onChange(['before', 'after'].includes(action) ? decorateInsertion(result, chosen.types.length) : result.plan)
     onSelect(result.selected)
     if (zoom === 1) setFrame(null)
   }
@@ -750,7 +758,13 @@ export default function GraphicalTrackEditor({
               if (nativePitSwitch) {
                 const prepared = editablePitlane(plan),
                   i = pitPart.extraIndex ?? prepared.ids[pitPart.id]
-                onChange(rotatePitlaneSwitch(prepared.plan, i))
+                onChange(
+                  updatePitPartWorld(prepared.plan, i, {
+                    headingDegrees:
+                      extraWorldPose(prepared.plan.trackExtras[i], traceTrackPlan(prepared.plan).segments)
+                        .headingDegrees + 180,
+                  }),
+                )
                 setSelectedPitPart(`extra-${i}`)
               } else rotate(15)
               setContext(null)
@@ -1187,6 +1201,25 @@ export default function GraphicalTrackEditor({
             />{' '}
             {t('layout.repeatPlace')}
           </label>
+          <label className="planner-repeat-option">
+            <input
+              type="checkbox"
+              data-testid="lay-borders"
+              checked={layBorders}
+              onChange={(e) => setLayBorders(e.target.checked)}
+            />{' '}
+            {ta('newBorders.label')}
+          </label>
+          <label>
+            {ta('newBorders.side')}{' '}
+            <select data-testid="lay-borders-side" value={autoSide} onChange={(e) => setAutoSide(e.target.value)}>
+              {['left', 'right', 'both'].map((value) => (
+                <option key={value} value={value}>
+                  {ta(`newBorders.${value}`)}
+                </option>
+              ))}
+            </select>
+          </label>
           {!repeatPlacement && <p className="planner-replacement-hint">{t('replacement.catalogueHint')}</p>}
           {repeatPlacement && (
             <p className="planner-repeat-hint" role="status" data-testid="repeat-placement-hint">
@@ -1265,7 +1298,7 @@ export default function GraphicalTrackEditor({
                           side,
                           p.types,
                         )
-                        onChange(result.plan)
+                        onChange(decorateInsertion(result, p.types.length))
                         onSelect(result.selected)
                       }}
                     >
@@ -1318,6 +1351,21 @@ export default function GraphicalTrackEditor({
             </div>
             <div hidden={category !== 'borders'} className="planner-border-submenu">
               <p data-testid="catalogue-border-selection">{t('graph.multiple', { count: pickedIndices.length })}</p>
+              <p className="text-sm" data-testid="pit-shoulder-catalogue">
+                {ta('newBorders.pitHint')}
+              </p>
+              {pitPart?.extraIndex !== undefined &&
+                pitShoulderOptions(plan, pitPart.extraIndex).map((option) => (
+                  <button
+                    type="button"
+                    key={option.side}
+                    data-testid={`pit-shoulder-${option.side}`}
+                    className="border rounded p-2"
+                    onClick={() => onChange(attachPitShoulder(plan, pitPart.extraIndex, option.side))}
+                  >
+                    {ta('newBorders.pit')} · {option.article} · {ta(`newBorders.${option.side}`)}
+                  </button>
+                ))}
               <TrackBorders
                 plan={plan}
                 selected={selected}
@@ -1370,7 +1418,7 @@ export default function GraphicalTrackEditor({
                         distanceMm: Math.max(20, w / 25),
                       })
                     : { plan: result.plan, snap: null }
-                onChange(snapped.plan)
+                onChange(decorateInsertion({ ...result, plan: snapped.plan }, item.types.length))
                 onSelect(result.selected)
                 setPart(item.id)
                 setSnapHint(snapped.snap)
@@ -1586,7 +1634,7 @@ export default function GraphicalTrackEditor({
                         yMm: p.y,
                         headingDegrees: 0,
                       })
-                    onChange(result.plan)
+                    onChange(decorateInsertion(result, chosen.types.length))
                     onSelect(result.selected)
                   } else onSelect(-1)
                 }
@@ -2164,7 +2212,13 @@ export default function GraphicalTrackEditor({
                 onClick={() => {
                   const prepared = editablePitlane(plan),
                     index = pitPart.extraIndex ?? prepared.ids[pitPart.id]
-                  onChange(rotatePitlaneSwitch(prepared.plan, index))
+                  onChange(
+                    updatePitPartWorld(prepared.plan, index, {
+                      headingDegrees:
+                        extraWorldPose(prepared.plan.trackExtras[index], traceTrackPlan(prepared.plan).segments)
+                          .headingDegrees + 180,
+                    }),
+                  )
                   setSelectedPitPart(`extra-${index}`)
                 }}
               >

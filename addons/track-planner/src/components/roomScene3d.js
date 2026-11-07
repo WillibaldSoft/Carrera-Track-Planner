@@ -374,7 +374,7 @@ export function buildRoomScene(input, overrides = {}) {
       for (const patch of borderArtwork({
         points: g.polygon,
         kind: e.kind.startsWith('borderEnd') ? 'endCap' : 'strip',
-        outerFirst: e.kind.startsWith('borderInner'),
+        outerFirst: e.kind.startsWith('borderInner') || e.kind.startsWith('pitBorder'),
       }))
         face(
           patch.points.map((p) => [...p, z + 13]),

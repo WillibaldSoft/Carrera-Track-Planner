@@ -2,6 +2,7 @@
 
 **Deutsch** · [English](README.md) · [Français](README.fr.md)
 
+[1.1.4 · Randstreifen / Shoulders / Bordures](docs/RELEASE-1.1.4.de.md)
 Eigenständiger Carrera-Streckenplaner zur Prüfung und Vorbereitung der künftigen RaceHubOS-Integration. Mit eigener Git-Historie, Lockdatei und lokalem Datenspeicher; ohne RaceHubOS-Backend oder Datenbank nutzbar.
 
 ## Start

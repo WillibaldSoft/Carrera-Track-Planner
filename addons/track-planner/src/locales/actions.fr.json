@@ -24,5 +24,14 @@
   "side": "Côté dans le sens de circulation",
   "both": "Deux côtés",
   "continueHint": "Choisir un côté, survoler un rail et cliquer. Le choix reste actif ; le raccord suivant est proposé.",
-  "applyNext": "Ajouter les bordures et continuer"
+  "applyNext": "Ajouter les bordures et continuer",
+  "newBorders": {
+    "label": "Poser les bordures avec les nouveaux rails",
+    "side": "Côté dans le sens de circulation",
+    "left": "Gauche",
+    "right": "Droite",
+    "both": "Des deux côtés",
+    "pit": "Ajouter une bordure de stands",
+    "pitHint": "Stands : bordures 20602 pour entrée/sortie et bordures droites 20560. Sélectionner un élément des stands, puis ajouter la bordure adaptée."
+  }
 }

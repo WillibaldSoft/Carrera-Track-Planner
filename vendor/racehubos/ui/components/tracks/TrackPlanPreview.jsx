@@ -373,7 +373,7 @@ export function TrackPlanPreview({
                       {borderArtwork({
                         points: g.polygon,
                         kind: s.kind.startsWith('borderEnd') ? 'endCap' : 'strip',
-                        outerFirst: s.kind.startsWith('borderInner'),
+                        outerFirst: s.kind.startsWith('borderInner') || s.kind.startsWith('pitBorder'),
                       }).map((patch, i) => (
                         <path key={i} d={`${line(patch.points)} Z`} fill={patch.color} />
                       ))}

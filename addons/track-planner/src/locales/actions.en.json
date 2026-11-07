@@ -24,5 +24,14 @@
   "side": "Side in driving direction",
   "both": "Both sides",
   "continueHint": "Choose a side, hover a rail and click. The choice stays active; the next matching connection follows.",
-  "applyNext": "Attach shoulders and continue"
+  "applyNext": "Attach shoulders and continue",
+  "newBorders": {
+    "label": "Add shoulders with new rails",
+    "side": "Side in driving direction",
+    "left": "Left",
+    "right": "Right",
+    "both": "Both sides",
+    "pit": "Attach pit lane shoulder",
+    "pitHint": "Pit lane: shaped 20602 entrance/exit shoulders and 20560 straight shoulders. Select a pit piece, then attach a matching shoulder."
+  }
 }
