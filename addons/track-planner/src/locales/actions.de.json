@@ -37,6 +37,19 @@
   "layers": {
     "edit": "Sichtbare Ebene",
     "isolated": "Nur Ebene {{level}} sichtbar",
-    "group": "Die Baugruppe umfasst mehrere Ebenen. In „Alle Ebenen“ zunächst die Gruppierung aufheben."
+    "group": "Die Baugruppe enthält ausgeblendete Ebenen. Alle zugehörigen Ebenen einblenden oder die Gruppierung in der Gesamtansicht aufheben.",
+    "title": "Ebenen",
+    "all": "Alle",
+    "none": "Keine",
+    "close": "Ebenenauswahl schließen",
+    "help": "Ebenen einzeln ein- oder ausblenden. Sichtbare Ebenen bleiben gemeinsam bearbeitbar.",
+    "showAll": "Alle anzeigen",
+    "hideAll": "Alle ausblenden",
+    "layer": "Ebene {{level}}",
+    "only": "Nur diese",
+    "insertion": "Neue Schienen auf Ebene",
+    "shown": "Sichtbar: {{levels}}",
+    "empty": "Keine Ebene sichtbar. Zum Bearbeiten eine Ebene einblenden.",
+    "onlyLabel": "Nur Ebene {{level}} anzeigen"
   }
 }

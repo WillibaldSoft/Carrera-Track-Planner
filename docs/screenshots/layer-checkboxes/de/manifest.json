@@ -1,0 +1,15 @@
+{
+  "language": "de",
+  "screenshots": [
+    {
+      "id": "01-two-editable-layers",
+      "file": "01-two-editable-layers.png",
+      "sha256": "3b28b5bbd1e0c97c0820f99efd144c309e51f8d10e4dad55106527a857b89d9e"
+    },
+    {
+      "id": "02-empty-layers-help",
+      "file": "02-empty-layers-help.png",
+      "sha256": "20d296249160712dc6da7922d0b4a031db08f2e7efa6c747c6a8aae5fe3257e9"
+    }
+  ]
+}

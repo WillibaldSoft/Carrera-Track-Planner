@@ -4,6 +4,7 @@ import { buildTrackElevationModel } from './trackElevationModel.js'
 import TrackHeightLabels from './TrackHeightLabels'
 import RailElevationEditor from './RailElevationEditor'
 import AutomaticAttachments from './AutomaticAttachments'
+import LayerVisibilityControls from './LayerVisibilityControls'
 import {
   attachInsertedBorders,
   attachmentOptions,
@@ -219,26 +220,43 @@ export default function GraphicalTrackEditor({
     [category, setCategory] = useState('all')
   const [colors, setColors] = useState(false),
     [labels, setLabels] = useState('none'),
-    [level, setLevel] = useState('all'),
+    [visibleLevels, setVisibleLevels] = useState(null),
+    [insertionPlane, setInsertionPlane] = useState(0),
     [background, setBackground] = useState('paper')
   const [layerWarning, setLayerWarning] = useState(false)
-  const visibleLevel = level === 'all' ? null : Number(level)
+  const visibleLevel =
+    visibleLevels === null ? null : visibleLevels.includes(insertionPlane) ? insertionPlane : (visibleLevels[0] ?? null)
+  const level = visibleLevels === null ? 'all' : String(visibleLevel ?? 0)
+  const noVisibleLayers = visibleLevels !== null && !visibleLevels.length
+  const planeVisible = (plane) => visibleLevels === null || visibleLevels.includes(plane)
   const railVisible = (index) =>
-    !!plan.pieces[index] &&
-    (visibleLevel === null || plan.pieces[index].level + (plan.pieces[index].drawLayer ?? 0) === visibleLevel)
+    !!plan.pieces[index] && planeVisible(plan.pieces[index].level + (plan.pieces[index].drawLayer ?? 0))
   const borderVisible = (index, side) => {
     const p = plan.pieces[index]
-    return (
-      !!p?.borders?.[side] &&
-      (visibleLevel === null || p.level + (p.borders[side].drawLayer ?? p.drawLayer ?? 0) === visibleLevel)
-    )
+    return !!p?.borders?.[side] && planeVisible(p.level + (p.borders[side].drawLayer ?? p.drawLayer ?? 0))
   }
   const editableRail = (index) => railVisible(index) && freeTrackSelection(plan, index).every(railVisible)
-  function changeVisibleLevel(value) {
-    setLevel(value)
-    setPicked([])
-    onPrimarySelect(-1)
-    setSelectedPitPart(null)
+  function changeVisibleLevels(values) {
+    const next = values === null ? null : [...new Set(values)].sort((a, b) => a - b)
+    setVisibleLevels(next)
+    const allowed = (i) =>
+      !!plan.pieces[i] && (next === null || next.includes(plan.pieces[i].level + (plan.pieces[i].drawLayer ?? 0)))
+    const remaining = pickedIndices.filter((i) => allowed(i) && freeTrackSelection(plan, i).every(allowed))
+    const border = plan.pieces[selected]?.borders?.[layerTarget]
+    const keepBorder =
+      (!allowed(selected) || freeTrackSelection(plan, selected).every(allowed)) &&
+      border &&
+      (next === null ||
+        next.includes(plan.pieces[selected].level + (border.drawLayer ?? plan.pieces[selected].drawLayer ?? 0)))
+    if (!keepBorder) setLayerTarget('rails')
+    setPicked(keepBorder ? [selected] : remaining)
+    onPrimarySelect(keepBorder || remaining.includes(selected) ? selected : (remaining.at(-1) ?? -1))
+    const extra = selectedPitPart?.startsWith('extra-') ? plan.trackExtras?.[Number(selectedPitPart.slice(6))] : null
+    const extraPlane = extra
+      ? (plan.pieces[extra.anchor]?.level ?? extra.level) +
+        (extra.drawLayer ?? plan.pieces[extra.anchor]?.drawLayer ?? 0)
+      : (plan.pit.drawLayer ?? 0)
+    if (selectedPitPart && next !== null && !next.includes(extraPlane)) setSelectedPitPart(null)
     setDockingSelection([])
     setJoinKey('')
     setEndpointKey('')
@@ -261,7 +279,7 @@ export default function GraphicalTrackEditor({
       setDockingSelection([])
       setContext(null)
     }
-  }, [selected, level, inputPlan])
+  }, [selected, visibleLevels, inputPlan])
   const [zoom, setZoom] = useState(1),
     [pan, setPan] = useState({ x: 0, y: 0 })
   const canvasRef = useRef(null),
@@ -335,6 +353,7 @@ export default function GraphicalTrackEditor({
       return
     }
     setLayerWarning(false)
+    if (index >= 0) setInsertionPlane(plan.pieces[index].level + (plan.pieces[index].drawLayer ?? 0))
     if (event?.type === 'click' && suppressClick.current) {
       suppressClick.current = false
       return
@@ -391,7 +410,7 @@ export default function GraphicalTrackEditor({
       ...trackDrawItems(plan, traceTrackPlan(plan).segments, borderShapes(plan)).map(
         (item) => item.level + item.drawLayer,
       ),
-      ...(visibleLevel === null ? [] : [visibleLevel]),
+      ...(visibleLevels ?? []),
     ]),
   ].sort((a, b) => a - b)
   const trace = traceTrackPlan(plan),
@@ -413,7 +432,7 @@ export default function GraphicalTrackEditor({
             box,
             viewport,
             selected,
-            visibleDrawingLevel: visibleLevel,
+            visibleDrawingLevels: visibleLevels,
             preview: heightLabelPreview,
           })
         : null,
@@ -427,7 +446,7 @@ export default function GraphicalTrackEditor({
       viewport.width,
       viewport.height,
       selected,
-      level,
+      visibleLevels,
       heightLabelPreview,
     ],
   )
@@ -439,7 +458,7 @@ export default function GraphicalTrackEditor({
       box,
       viewport,
       selected,
-      visibleDrawingLevel: visibleLevel,
+      visibleDrawingLevels: visibleLevels,
       preview: { index, offset, fallbackRect: original?.rect },
     })
     const card = resolved.items.find((c) => c.index === index)
@@ -516,16 +535,18 @@ export default function GraphicalTrackEditor({
   const pitSwitchLocked = nativePitSwitch && plan.partGroups?.groups.some((g) => g.includes(pitPart.anchor))
   const pitReplacement =
     nativePitSwitch && !pitSwitchLocked && ['Pit_stop_weiche_anfang', 'Pit_stop_weiche_ende'].includes(part)
-  const stamp = repeatPlacement
-    ? repeatedTrackPreview(plan, chosen.types, placementPoint, {
-        headingDegrees: placementHeading,
-        level: active?.level ?? Math.max(0, Math.min(2, visibleLevel ?? 0)),
-        snap: snapEnabled,
-        distanceMm: Math.max(20, w / 25),
-        borderSide: newBorderSide,
-      })
-    : null
+  const stamp =
+    repeatPlacement && !noVisibleLayers
+      ? repeatedTrackPreview(plan, chosen.types, placementPoint, {
+          headingDegrees: placementHeading,
+          level: active?.level ?? Math.max(0, Math.min(2, visibleLevel ?? 0)),
+          snap: snapEnabled,
+          distanceMm: Math.max(20, w / 25),
+          borderSide: newBorderSide,
+        })
+      : null
   function placeAt(point) {
+    if (noVisibleLayers) return
     const preview = repeatedTrackPreview(storedPlan, chosen.types, point, {
       headingDegrees: placementHeading,
       level: active?.level ?? Math.max(0, Math.min(2, visibleLevel ?? 0)),
@@ -668,6 +689,7 @@ export default function GraphicalTrackEditor({
     if (zoom === 1) setFrame(null)
   }
   function edit(action) {
+    if (noVisibleLayers) return
     if (action === 'replace' && pitReplacement) {
       const prepared = editablePitlane(plan),
         index = pitPart.extraIndex ?? prepared.ids[pitPart.id]
@@ -1128,20 +1150,16 @@ export default function GraphicalTrackEditor({
           <option value="box">{ta('box')}</option>
           <option value="pan">{ta('pan')}</option>
         </select>
-        <label className="planner-layer-choice">
-          {ta('layers.edit')}{' '}
-          <select data-testid="toolbar-layer-filter" value={level} onChange={(e) => changeVisibleLevel(e.target.value)}>
-            <option value="all">{t('graph.allLayers')}</option>
-            {availableDrawingLevels.map((n) => (
-              <option key={n} value={n}>
-                {t('editor.level')} {n}
-              </option>
-            ))}
-          </select>
-        </label>
-        {level !== 'all' && (
-          <span role="status" data-testid="layer-isolation-status" className="text-xs">
-            {ta('layers.isolated', { level })}
+        <LayerVisibilityControls
+          levels={availableDrawingLevels}
+          visible={visibleLevels}
+          onChange={changeVisibleLevels}
+          insertion={visibleLevel ?? 0}
+          onInsertion={setInsertionPlane}
+        />
+        {noVisibleLayers && (
+          <span role="status" data-testid="no-visible-layers" className="text-xs">
+            {ta('layers.empty')}
           </span>
         )}
         {layerWarning && (
@@ -1227,21 +1245,6 @@ export default function GraphicalTrackEditor({
                 {['paper', 'dark', 'green'].map((k) => (
                   <option key={k} value={k}>
                     {t(`graph.${k}`)}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              {t('graph.layers')}{' '}
-              <select
-                data-testid="track-layer-filter"
-                value={level}
-                onChange={(e) => changeVisibleLevel(e.target.value)}
-              >
-                <option value="all">{t('graph.allLayers')}</option>
-                {availableDrawingLevels.map((n) => (
-                  <option key={n} value={n}>
-                    {t('editor.level')} {n}
                   </option>
                 ))}
               </select>
@@ -1400,7 +1403,7 @@ export default function GraphicalTrackEditor({
                         setPlacementPoint(null)
                       }}
                       onDoubleClick={() => {
-                        if (repeatPlacement || active || pitPart) return
+                        if (noVisibleLayers || repeatPlacement || active || pitPart) return
                         if (plan.pieces.length + p.types.length > 2000) return
                         const result = (plan.freePlacement ? editFreeParts : editTrackPieces)(
                           plan,
@@ -1511,6 +1514,10 @@ export default function GraphicalTrackEditor({
                 }
               }}
               onDrop={(e) => {
+                if (noVisibleLayers) {
+                  e.preventDefault()
+                  return
+                }
                 const item = catalogue.find((p) => p.id === e.dataTransfer.getData('application/x-racehub-track-part'))
                 if (!item || plan.pieces.length + item.types.length > 2000) return
                 e.preventDefault()
@@ -1739,7 +1746,7 @@ export default function GraphicalTrackEditor({
                   onChange(d.result)
                 } else if (d?.kind === 'move') onSelect(d.index)
                 else if (d && !d.moved && ['box', 'pan'].includes(d.kind)) {
-                  if (!storedPlan.pieces.length) {
+                  if (!storedPlan.pieces.length && !noVisibleLayers) {
                     const p = world(e),
                       result = editFreeParts(storedPlan, -1, 'after', chosen.types, {
                         xMm: p.x,
@@ -1804,12 +1811,12 @@ export default function GraphicalTrackEditor({
                 onSelect={onSelect}
                 colorParts={colors}
                 labels={labels}
-                visibleDrawingLevel={visibleLevel}
+                visibleDrawingLevels={visibleLevels}
                 connector={
                   !repeatPlacement &&
                   !autoAttachments &&
                   !dockPreview &&
-                  (visibleLevel === null || !!active) &&
+                  (visibleLevels === null || !!active) &&
                   plan.pieces.length + chosen.types.length <= 2000
                     ? connector
                     : null
@@ -1977,7 +1984,7 @@ export default function GraphicalTrackEditor({
                 <g pointerEvents={repeatPlacement ? 'none' : undefined}>
                   <ConnectionHints
                     plan={plan}
-                    visibleDrawingLevel={visibleLevel}
+                    visibleDrawingLevels={visibleLevels}
                     indices={joinPair ? [] : motion}
                     endpointKey={endpointKey}
                     width={w}
@@ -2008,7 +2015,7 @@ export default function GraphicalTrackEditor({
                       pointerEvents="none"
                     />
                   ))}
-              {visibleLevel === null &&
+              {visibleLevels === null &&
                 auditMarks?.plan === storedPlan &&
                 auditMarks.auxiliary?.map((p, i) => (
                   <circle
@@ -2292,7 +2299,7 @@ export default function GraphicalTrackEditor({
             <Button
               type="button"
               data-testid="add-track-piece"
-              disabled={!!pitPart || plan.pieces.length + chosen.types.length > 2000}
+              disabled={noVisibleLayers || !!pitPart || plan.pieces.length + chosen.types.length > 2000}
               onClick={() => edit(side)}
             >
               {t('graph.place')}

@@ -4,17 +4,17 @@
     {
       "id": "01-repeat-shoulders",
       "file": "01-repeat-shoulders.png",
-      "sha256": "335bffc368a71b313ae6197c8484e8a41d5058c31cf29026ce5ce400b4d75d7c"
+      "sha256": "adb3023a51e4630bd9a0598ccce7f6062a6289b745233b45ea0a7fe6b0b97e6e"
     },
     {
       "id": "02-pit-shoulder",
       "file": "02-pit-shoulder.png",
-      "sha256": "b3362c294988ee43f1c4bad71ea80d27c2fbcca1560c151e9d1ce719b3a7a214"
+      "sha256": "0e4deba5aae45416b609a44d0bf322393943e8eefc62fafb5a842726750af2c0"
     },
     {
       "id": "03-pit-catalogue",
       "file": "03-pit-catalogue.png",
-      "sha256": "36299d49daa2b93b2fb5c7d4669e5e301704485272752c7360acd3a4f2e209a5"
+      "sha256": "87a52da378d3d7460442d20ba7931641e085a5b591a8a90f524d9aec625b61bc"
     }
   ]
 }

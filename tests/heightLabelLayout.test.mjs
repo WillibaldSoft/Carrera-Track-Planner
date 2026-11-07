@@ -87,13 +87,33 @@ test('level filters and offscreen rails do not generate stray cards or change va
   assert.equal(away.items.length, 0)
   assert.equal(away.visibleCount, 0)
 })
-test('drawing-plane isolation hides labels of rails on other planes without mutating their layout',()=>{
- const plan=p();plan.pieces[0].drawLayer=2
- const before=JSON.stringify(plan),model=buildTrackElevationModel(plan)
- const options={plan,model,box:[-300,-800,3000,1600],viewport:{width:1200,height:650}}
- const isolated=layoutTrackHeightLabels({...options,visibleDrawingLevel:2})
- assert.deepEqual(isolated.items.map(item=>item.index),[0])
- const lower=layoutTrackHeightLabels({...options,visibleDrawingLevel:0})
- assert.ok(lower.items.every(item=>item.index!==0))
- assert.equal(JSON.stringify(plan),before)
+test('drawing-plane isolation hides labels of rails on other planes without mutating their layout', () => {
+  const plan = p()
+  plan.pieces[0].drawLayer = 2
+  const before = JSON.stringify(plan),
+    model = buildTrackElevationModel(plan)
+  const options = { plan, model, box: [-300, -800, 3000, 1600], viewport: { width: 1200, height: 650 } }
+  const isolated = layoutTrackHeightLabels({ ...options, visibleDrawingLevel: 2 })
+  assert.deepEqual(
+    isolated.items.map((item) => item.index),
+    [0],
+  )
+  const lower = layoutTrackHeightLabels({ ...options, visibleDrawingLevel: 0 })
+  assert.ok(lower.items.every((item) => item.index !== 0))
+  assert.equal(JSON.stringify(plan), before)
+})
+test('multiple visible drawing planes share labels while unchecked planes and empty selections are omitted', () => {
+  const plan = p()
+  plan.pieces.forEach((piece, i) => {
+    piece.drawLayer = i % 3
+  })
+  const before = JSON.stringify(plan),
+    model = buildTrackElevationModel(plan)
+  const options = { plan, model, box: [-300, -800, 3000, 1600], viewport: { width: 1200, height: 650 } }
+  const subset = layoutTrackHeightLabels({ ...options, visibleDrawingLevels: [0, 2] })
+  assert.ok(subset.items.some((item) => item.index === 0))
+  assert.ok(subset.items.some((item) => item.index === 2))
+  assert.ok(subset.items.every((item) => plan.pieces[item.index].drawLayer !== 1))
+  assert.equal(layoutTrackHeightLabels({ ...options, visibleDrawingLevels: [] }).items.length, 0)
+  assert.equal(JSON.stringify(plan), before)
 })

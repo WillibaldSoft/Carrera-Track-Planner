@@ -37,6 +37,19 @@
   "layers": {
     "edit": "Calque visible",
     "isolated": "Niveau {{level}} uniquement",
-    "group": "Cet assemblage couvre plusieurs niveaux. Le dissocier d’abord dans Tous les niveaux."
+    "group": "Cet assemblage contient des calques masqués. Afficher tous ses calques ou le dissocier dans la vue complète.",
+    "title": "Calques",
+    "all": "Tous",
+    "none": "Aucun",
+    "close": "Fermer le choix des calques",
+    "help": "Afficher ou masquer chaque calque. Les calques visibles restent modifiables ensemble.",
+    "showAll": "Tout afficher",
+    "hideAll": "Tout masquer",
+    "layer": "Calque {{level}}",
+    "only": "Celui-ci",
+    "insertion": "Nouveaux rails sur le calque",
+    "shown": "Visibles : {{levels}}",
+    "empty": "Aucun calque visible. Afficher un calque pour modifier le circuit.",
+    "onlyLabel": "Afficher uniquement le calque {{level}}"
   }
 }

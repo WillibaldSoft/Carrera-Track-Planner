@@ -31,6 +31,7 @@ export function TrackPlanPreview({
   labels = 'none',
   visibleLevel = null,
   visibleDrawingLevel = null,
+  visibleDrawingLevels = null,
   light = false,
   connector,
   onConnect,
@@ -84,7 +85,7 @@ export function TrackPlanPreview({
   const drawItems = trackDrawItems(plan, segments, shoulders)
   const schematicDrawing = (
     <>
-      {pit.enabled && !pit.native && entry && merge && (visibleLevel === null || visibleLevel === 0) && (visibleDrawingLevel === null || (pit.drawLayer ?? 0) === visibleDrawingLevel) && (
+      {pit.enabled && !pit.native && entry && merge && (visibleLevel === null || visibleLevel === 0) && (visibleDrawingLevel === null || (pit.drawLayer ?? 0) === visibleDrawingLevel) && (visibleDrawingLevels === null || visibleDrawingLevels.includes(pit.drawLayer ?? 0)) && (
         <g transform={`translate(${entry.x} ${entry.y}) rotate(${(entry.h * 180) / Math.PI}) scale(1 -1)`}>
           {/* Schematic double box: one feeder, split, two parallel bays, merge, one exit. */}
           {(() => {
@@ -181,7 +182,7 @@ export function TrackPlanPreview({
       )}
 
       {!pit.native &&
-        (visibleLevel === null || visibleLevel === 0) && (visibleDrawingLevel === null || (pit.drawLayer ?? 0) === visibleDrawingLevel) &&
+        (visibleLevel === null || visibleLevel === 0) && (visibleDrawingLevel === null || (pit.drawLayer ?? 0) === visibleDrawingLevel) && (visibleDrawingLevels === null || visibleDrawingLevels.includes(pit.drawLayer ?? 0)) &&
         components
           .filter((p) => p.extraIndex === undefined)
           .map((part, i) => (
@@ -266,7 +267,7 @@ export function TrackPlanPreview({
         </linearGradient>
       </defs>
       {drawItems
-        .filter((s) => (visibleLevel === null || s.level === visibleLevel) && (visibleDrawingLevel === null || s.level + s.drawLayer === visibleDrawingLevel))
+        .filter((s) => (visibleLevel === null || s.level === visibleLevel) && (visibleDrawingLevel === null || s.level + s.drawLayer === visibleDrawingLevel) && (visibleDrawingLevels === null || visibleDrawingLevels.includes(s.level+s.drawLayer)))
         .map((s) =>
           s.drawKind === 'shadow' ? (
             <path

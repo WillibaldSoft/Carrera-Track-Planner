@@ -37,6 +37,19 @@
   "layers": {
     "edit": "Visible layer",
     "isolated": "Only level {{level}} visible",
-    "group": "This assembly spans multiple levels. Ungroup it in All levels first."
+    "group": "This assembly includes hidden layers. Show all its layers or ungroup it in the full view.",
+    "title": "Layers",
+    "all": "All",
+    "none": "None",
+    "close": "Close layer selection",
+    "help": "Show or hide each layer. Visible layers remain editable together.",
+    "showAll": "Show all",
+    "hideAll": "Hide all",
+    "layer": "Layer {{level}}",
+    "only": "Only this",
+    "insertion": "New rails on layer",
+    "shown": "Visible: {{levels}}",
+    "empty": "No layer visible. Show a layer to start editing.",
+    "onlyLabel": "Show only layer {{level}}"
   }
 }

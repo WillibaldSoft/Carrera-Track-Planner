@@ -1234,3 +1234,14 @@
 
 .planner-auto-attachments select { min-width:0; max-width:100%; border:1px solid var(--border); border-radius:5px; padding:4px; }
 .planner-auto-attachments button { max-width:100%; white-space:normal; }
+
+.planner-layer-popover { z-index:160; width:min(320px,calc(100vw - 24px)); max-height:var(--radix-popover-content-available-height); overflow:auto; padding:14px; border:1px solid var(--border); border-radius:12px; background:var(--card); color:var(--foreground); box-shadow:0 10px 30px #0003; font-size:13px; }
+.planner-layer-heading,.planner-layer-row,.planner-layer-actions { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.planner-layer-heading button,.planner-layer-row > button { padding:5px 8px; border-radius:6px; }
+.planner-layer-row { border-bottom:1px solid var(--border); }
+.planner-layer-row label { display:flex; gap:9px; align-items:center; flex:1; padding:10px 4px; cursor:pointer; }
+.planner-layer-row input { width:17px; height:17px; accent-color:var(--primary); }
+.planner-layer-row > button { border:1px solid var(--border); font-size:12px; }
+.planner-layer-popover p { margin:8px 0; color:var(--muted-foreground); }
+.planner-layer-insertion { display:grid; gap:5px; margin-top:12px; }
+.planner-layer-insertion select { border:1px solid var(--border); border-radius:7px; padding:7px; background:var(--card); }

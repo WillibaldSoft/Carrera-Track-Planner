@@ -2,6 +2,7 @@
 
 [Deutsch](README.de.md) · [English](README.md) · **Français**
 
+[1.1.6 · Ebenen-Checkboxen / Layer checkboxes / Cases par calque](docs/RELEASE-1.1.6.fr.md)
 [1.1.5 · Ebenen ausblenden / Layer visibility / Visibilité des calques](docs/RELEASE-1.1.5.fr.md)
 [1.1.4 · Randstreifen / Shoulders / Bordures](docs/RELEASE-1.1.4.fr.md)
 Planificateur Carrera indépendant, prêt à être examiné pour la future intégration à RaceHubOS. Il possède son propre historique Git, fichier de verrouillage et stockage local. Aucun backend ni base de données RaceHubOS n’est nécessaire.

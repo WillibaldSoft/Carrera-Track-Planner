@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next'
 import { nearestTrackConnection, openTrackPorts } from '@racehubos/shared'
-export default function ConnectionHints({ plan, indices, endpointKey, onPort, width, visibleDrawingLevel = null }) {
+export default function ConnectionHints({ plan, indices, endpointKey, onPort, width, visibleDrawingLevels = null }) {
   const { t } = useTranslation('tracks')
   const ports = openTrackPorts(plan).filter(
     (p) =>
-      visibleDrawingLevel === null ||
-      plan.pieces[p.index].level + (plan.pieces[p.index].drawLayer ?? 0) === visibleDrawingLevel,
+      visibleDrawingLevels === null ||
+      visibleDrawingLevels.includes(plan.pieces[p.index].level + (plan.pieces[p.index].drawLayer ?? 0)),
   )
   const hint = indices.length && indices.length < plan.pieces.length ? nearestTrackConnection(plan, indices) : null
   return (
@@ -51,9 +51,9 @@ export default function ConnectionHints({ plan, indices, endpointKey, onPort, wi
         </g>
       ))}
       {hint &&
-        (visibleDrawingLevel === null ||
-          [hint.a, hint.b].every(
-            (p) => plan.pieces[p.index].level + (plan.pieces[p.index].drawLayer ?? 0) === visibleDrawingLevel,
+        (visibleDrawingLevels === null ||
+          [hint.a, hint.b].every((p) =>
+            visibleDrawingLevels.includes(plan.pieces[p.index].level + (plan.pieces[p.index].drawLayer ?? 0)),
           )) && (
           <g pointerEvents="none" data-testid="connection-candidate">
             <line

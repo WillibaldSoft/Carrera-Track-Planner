@@ -4,17 +4,17 @@
     {
       "id": "01-lower-level",
       "file": "01-lower-level.png",
-      "sha256": "d7de5439b54508cdad45efa5cb604a738c2c0b626230c6f059bd92594a0697cb"
+      "sha256": "ef6d00ae90eeffc1559a42b249c424b047469092234d01b88bb2f0cfc6bb8f95"
     },
     {
       "id": "02-upper-level-edit",
       "file": "02-upper-level-edit.png",
-      "sha256": "affa5e582d4342436ac8680fcb432c6a77d13dd87ff0f361d62eb5c8f14e7cbb"
+      "sha256": "34d191fbef98c96ef92b1e889233872ff5ca89806b6f878ee663a9de5ae15aed"
     },
     {
       "id": "03-all-levels",
       "file": "03-all-levels.png",
-      "sha256": "a0f7858ece9ce5e6452523aabdfc047a00c32724e9faa1de9fe3468554937529"
+      "sha256": "df75a79b49b16e7b3f54a1272b664e1995453915ea388461adf1ee4dd49a6804"
     }
   ]
 }

@@ -14,6 +14,7 @@ export function layoutTrackHeightLabels({
   selected = -1,
   visibleLevel = null,
   visibleDrawingLevel = null,
+  visibleDrawingLevels = null,
   preview = null,
 }) {
   const width = Math.max(1, viewport.width),
@@ -48,7 +49,8 @@ export function layoutTrackHeightLabels({
   for (const s of model.segments) {
     if (
       (visibleLevel !== null && s.level !== visibleLevel) ||
-      (visibleDrawingLevel !== null && s.level + (s.drawLayer ?? 0) !== visibleDrawingLevel)
+      (visibleDrawingLevel !== null && s.level + (s.drawLayer ?? 0) !== visibleDrawingLevel) ||
+      (visibleDrawingLevels !== null && !visibleDrawingLevels.includes(s.level + (s.drawLayer ?? 0)))
     )
       continue
     const radius = (99 + (s.borders?.left || s.borders?.right ? BORDER_WIDTH_MM : 0)) * Math.max(sx, sy) + 4
@@ -65,9 +67,18 @@ export function layoutTrackHeightLabels({
     }
     markPolygon(unitHousingPolygon(s))
   }
-  for (const e of plan.trackExtras ?? [])
-    if (!e.hidden && (visibleLevel === null || (e.level ?? model.segments[e.anchor]?.level ?? 0) === visibleLevel))
+  for (const e of plan.trackExtras ?? []) {
+    const anchor = model.segments[e.anchor]
+    const physicalLevel = anchor?.level ?? e.level
+    const drawingPlane = physicalLevel + (e.drawLayer ?? anchor?.drawLayer ?? 0)
+    if (
+      !e.hidden &&
+      (visibleLevel === null || physicalLevel === visibleLevel) &&
+      (visibleDrawingLevel === null || drawingPlane === visibleDrawingLevel) &&
+      (visibleDrawingLevels === null || visibleDrawingLevels.includes(drawingPlane))
+    )
       markPolygon(softyExtraGeometry(e, model.segments).polygon)
+  }
   const hitsTrack = (r) => {
     for (let y = Math.max(0, Math.floor(r.y / tile)); y <= Math.min(rows - 1, Math.floor((r.y + r.height) / tile)); y++)
       for (
@@ -82,7 +93,8 @@ export function layoutTrackHeightLabels({
     .filter(
       (s) =>
         (visibleLevel === null || s.level === visibleLevel) &&
-        (visibleDrawingLevel === null || s.level + (s.drawLayer ?? 0) === visibleDrawingLevel),
+        (visibleDrawingLevel === null || s.level + (s.drawLayer ?? 0) === visibleDrawingLevel) &&
+        (visibleDrawingLevels === null || visibleDrawingLevels.includes(s.level + (s.drawLayer ?? 0))),
     )
     .flatMap((s) => {
       const pts = s.points[0].map(point),
