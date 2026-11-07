@@ -87,3 +87,13 @@ test('level filters and offscreen rails do not generate stray cards or change va
   assert.equal(away.items.length, 0)
   assert.equal(away.visibleCount, 0)
 })
+test('drawing-plane isolation hides labels of rails on other planes without mutating their layout',()=>{
+ const plan=p();plan.pieces[0].drawLayer=2
+ const before=JSON.stringify(plan),model=buildTrackElevationModel(plan)
+ const options={plan,model,box:[-300,-800,3000,1600],viewport:{width:1200,height:650}}
+ const isolated=layoutTrackHeightLabels({...options,visibleDrawingLevel:2})
+ assert.deepEqual(isolated.items.map(item=>item.index),[0])
+ const lower=layoutTrackHeightLabels({...options,visibleDrawingLevel:0})
+ assert.ok(lower.items.every(item=>item.index!==0))
+ assert.equal(JSON.stringify(plan),before)
+})

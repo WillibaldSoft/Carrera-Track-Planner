@@ -30,6 +30,7 @@ export function TrackPlanPreview({
   colorParts = false,
   labels = 'none',
   visibleLevel = null,
+  visibleDrawingLevel = null,
   light = false,
   connector,
   onConnect,
@@ -83,7 +84,7 @@ export function TrackPlanPreview({
   const drawItems = trackDrawItems(plan, segments, shoulders)
   const schematicDrawing = (
     <>
-      {pit.enabled && !pit.native && entry && merge && (visibleLevel === null || visibleLevel === 0) && (
+      {pit.enabled && !pit.native && entry && merge && (visibleLevel === null || visibleLevel === 0) && (visibleDrawingLevel === null || (pit.drawLayer ?? 0) === visibleDrawingLevel) && (
         <g transform={`translate(${entry.x} ${entry.y}) rotate(${(entry.h * 180) / Math.PI}) scale(1 -1)`}>
           {/* Schematic double box: one feeder, split, two parallel bays, merge, one exit. */}
           {(() => {
@@ -180,7 +181,7 @@ export function TrackPlanPreview({
       )}
 
       {!pit.native &&
-        (visibleLevel === null || visibleLevel === 0) &&
+        (visibleLevel === null || visibleLevel === 0) && (visibleDrawingLevel === null || (pit.drawLayer ?? 0) === visibleDrawingLevel) &&
         components
           .filter((p) => p.extraIndex === undefined)
           .map((part, i) => (
@@ -265,7 +266,7 @@ export function TrackPlanPreview({
         </linearGradient>
       </defs>
       {drawItems
-        .filter((s) => visibleLevel === null || s.level === visibleLevel)
+        .filter((s) => (visibleLevel === null || s.level === visibleLevel) && (visibleDrawingLevel === null || s.level + s.drawLayer === visibleDrawingLevel))
         .map((s) =>
           s.drawKind === 'shadow' ? (
             <path

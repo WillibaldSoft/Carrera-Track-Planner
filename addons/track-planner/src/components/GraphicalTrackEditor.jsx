@@ -38,6 +38,7 @@ import {
   SPECIAL_GEOMETRY_AUDIT,
   CARRERA_BORDERS,
   trackArticle,
+  trackDrawItems,
   editTrackPieces,
   trackSelection,
   traceTrackPlan,
@@ -163,7 +164,22 @@ export default function GraphicalTrackEditor({
   const [layBorders, setLayBorders] = useState(false)
   const newBorderSide = layBorders ? autoSide : 'none'
   function decorateInsertion(result, count) {
-    return attachInsertedBorders(result.plan, result.selected, count, newBorderSide)
+    const layered =
+      level === 'all'
+        ? result.plan
+        : {
+            ...result.plan,
+            pieces: result.plan.pieces.map((p, i) =>
+              i >= result.selected && i < result.selected + count
+                ? {
+                    ...p,
+                    level: Math.max(0, Math.min(2, Number(level))),
+                    drawLayer: Number(level) - Math.max(0, Math.min(2, Number(level))),
+                  }
+                : p,
+            ),
+          }
+    return attachInsertedBorders(layered, result.selected, count, newBorderSide)
   }
   const [autoReverse, setAutoReverse] = useState(false)
   const [autoOption, setAutoOption] = useState(null)
@@ -205,6 +221,47 @@ export default function GraphicalTrackEditor({
     [labels, setLabels] = useState('none'),
     [level, setLevel] = useState('all'),
     [background, setBackground] = useState('paper')
+  const [layerWarning, setLayerWarning] = useState(false)
+  const visibleLevel = level === 'all' ? null : Number(level)
+  const railVisible = (index) =>
+    !!plan.pieces[index] &&
+    (visibleLevel === null || plan.pieces[index].level + (plan.pieces[index].drawLayer ?? 0) === visibleLevel)
+  const borderVisible = (index, side) => {
+    const p = plan.pieces[index]
+    return (
+      !!p?.borders?.[side] &&
+      (visibleLevel === null || p.level + (p.borders[side].drawLayer ?? p.drawLayer ?? 0) === visibleLevel)
+    )
+  }
+  const editableRail = (index) => railVisible(index) && freeTrackSelection(plan, index).every(railVisible)
+  function changeVisibleLevel(value) {
+    setLevel(value)
+    setPicked([])
+    onPrimarySelect(-1)
+    setSelectedPitPart(null)
+    setDockingSelection([])
+    setJoinKey('')
+    setEndpointKey('')
+    setAutoTarget(-1)
+    setAutoOption(null)
+    setContext(null)
+    setSnapHint(null)
+    setLayerWarning(false)
+    dragging.current = null
+    autoHoverLock.current = -1
+    setDraft(null)
+    setMarquee(null)
+    setDockPreview(null)
+    setReplacement(null)
+  }
+  useEffect(() => {
+    if (selected >= 0 && !railVisible(selected) && !borderVisible(selected, layerTarget)) {
+      setPicked([])
+      onPrimarySelect(-1)
+      setDockingSelection([])
+      setContext(null)
+    }
+  }, [selected, level, inputPlan])
   const [zoom, setZoom] = useState(1),
     [pan, setPan] = useState({ x: 0, y: 0 })
   const canvasRef = useRef(null),
@@ -244,6 +301,7 @@ export default function GraphicalTrackEditor({
     return () => document.removeEventListener('pointerdown', close)
   }, [context])
   function selectIndices(indices) {
+    indices = indices.filter(editableRail)
     setDockingSelection(indices.map((index) => ({ kind: 'rail', index })))
     setSelectedPitPart(null)
     setLayerTarget('rails')
@@ -251,7 +309,6 @@ export default function GraphicalTrackEditor({
     onPrimarySelect(indices.at(-1) ?? -1)
   }
   function selectAll() {
-    setLevel('all')
     selectIndices(storedPlan.pieces.map((_, i) => i))
   }
   const pickedIndices =
@@ -273,6 +330,11 @@ export default function GraphicalTrackEditor({
     if (zoom === 1) setFrame(null)
   }
   function onSelect(index, event) {
+    if (index >= 0 && !editableRail(index)) {
+      setLayerWarning(railVisible(index))
+      return
+    }
+    setLayerWarning(false)
     if (event?.type === 'click' && suppressClick.current) {
       suppressClick.current = false
       return
@@ -302,8 +364,11 @@ export default function GraphicalTrackEditor({
     onPrimarySelect(next.at(-1) ?? -1)
   }
   const selection = trackSelection(plan, selected),
-    motion = selectedPitPart ? [] : [...new Set(pickedIndices.flatMap((i) => freeTrackSelection(plan, i)))],
-    active = selectedPitPart ? null : plan.pieces[selected],
+    motion =
+      selectedPitPart || (!railVisible(selected) && borderVisible(selected, layerTarget))
+        ? []
+        : [...new Set(pickedIndices.flatMap((i) => freeTrackSelection(plan, i)))],
+    active = selectedPitPart || !railVisible(selected) ? null : plan.pieces[selected],
     chosen = catalogue.find((p) => p.id === part)
   const bounds =
     frame ??
@@ -318,6 +383,17 @@ export default function GraphicalTrackEditor({
   const calculatedBox = trackViewport(bounds, viewport, zoom, pan)
   const [, , w, h] = calculatedBox
   const box = dragging.current?.kind === 'pan' ? calculatedBox : (dragging.current?.box ?? calculatedBox)
+  const availableDrawingLevels = [
+    ...new Set([
+      0,
+      1,
+      2,
+      ...trackDrawItems(plan, traceTrackPlan(plan).segments, borderShapes(plan)).map(
+        (item) => item.level + item.drawLayer,
+      ),
+      ...(visibleLevel === null ? [] : [visibleLevel]),
+    ]),
+  ].sort((a, b) => a - b)
   const trace = traceTrackPlan(plan),
     activeSegment = trace.segments[selected],
     join = side === 'before' ? trace.segments[selection[0]]?.start : trace.segments[selection.at(-1)]?.end
@@ -337,7 +413,7 @@ export default function GraphicalTrackEditor({
             box,
             viewport,
             selected,
-            visibleLevel: level === 'all' ? null : Number(level),
+            visibleDrawingLevel: visibleLevel,
             preview: heightLabelPreview,
           })
         : null,
@@ -363,7 +439,7 @@ export default function GraphicalTrackEditor({
       box,
       viewport,
       selected,
-      visibleLevel: level === 'all' ? null : Number(level),
+      visibleDrawingLevel: visibleLevel,
       preview: { index, offset, fallbackRect: original?.rect },
     })
     const card = resolved.items.find((c) => c.index === index)
@@ -413,7 +489,7 @@ export default function GraphicalTrackEditor({
     return automaticBorderReversed(storedPlan, index, trace.connectivity)
   }
   function addAutomatic(index = autoTarget, id = autoSide, fromCanvas = false) {
-    if (!storedPlan.pieces[index]) return
+    if (!railVisible(index)) return
     const strip = ['left', 'right', 'both'].includes(id)
     const backwards =
       index === autoTarget
@@ -432,7 +508,7 @@ export default function GraphicalTrackEditor({
     const following = strip ? nextAutomaticBorderTarget(next, index, id, backwards) : null
     autoHoverLock.current = fromCanvas && following ? index : -1
     autoHoverDirection.current = backwards
-    setAutoTarget(following?.index ?? index)
+    setAutoTarget(following && railVisible(following.index) ? following.index : index)
     setAutoReverse(following?.reverse ?? backwards)
     setAutoOption(null)
   }
@@ -443,7 +519,7 @@ export default function GraphicalTrackEditor({
   const stamp = repeatPlacement
     ? repeatedTrackPreview(plan, chosen.types, placementPoint, {
         headingDegrees: placementHeading,
-        level: active?.level ?? 0,
+        level: active?.level ?? Math.max(0, Math.min(2, visibleLevel ?? 0)),
         snap: snapEnabled,
         distanceMm: Math.max(20, w / 25),
         borderSide: newBorderSide,
@@ -452,14 +528,14 @@ export default function GraphicalTrackEditor({
   function placeAt(point) {
     const preview = repeatedTrackPreview(storedPlan, chosen.types, point, {
       headingDegrees: placementHeading,
-      level: active?.level ?? 0,
+      level: active?.level ?? Math.max(0, Math.min(2, visibleLevel ?? 0)),
       snap: snapEnabled,
       distanceMm: Math.max(20, w / 25),
     })
     const result = placeRepeatedTrackPart(storedPlan, chosen.types, preview, newBorderSide)
     if (!result.placed) return
     setFrame(zoom === 1 ? null : bounds)
-    onChange(result.plan)
+    onChange(decorateInsertion(result, chosen.types.length))
     onSelect(result.selected)
     setPlacementPoint(null)
   }
@@ -531,13 +607,21 @@ export default function GraphicalTrackEditor({
     )
   }
   function selectBorder(index, side, event) {
-    onSelect(index, event)
+    if (!borderVisible(index, side)) return
+    if (railVisible(index)) onSelect(index, event)
+    else {
+      setPicked([index])
+      onPrimarySelect(index)
+      setSelectedPitPart(null)
+      setDockingSelection([])
+    }
     setLayerTarget(side)
   }
   const activeHeading = activeSegment
     ? (((((activeSegment.start.h * 180) / Math.PI + 180) % 360) + 360) % 360) - 180
     : 0
-  const connector = join ?? trace.segments.at(-1)?.end ?? { x: 0, y: 0 }
+  const visibleSegments = trace.segments.filter((s) => railVisible(s.index))
+  const connector = join ?? visibleSegments.at(-1)?.end ?? { x: 0, y: 0 }
   function setAntiCollision(antiCollision) {
     if (nativePitSwitch) {
       const prepared = editablePitlane(plan)
@@ -592,7 +676,8 @@ export default function GraphicalTrackEditor({
       return
     }
     if (action === 'replace' && replaceAndFollow(chosen.types)) return
-    const result = (plan.freePlacement ? editFreeParts : editTrackPieces)(plan, selected, action, chosen.types)
+    const insertAt = selected < 0 && visibleLevel !== null ? (visibleSegments.at(-1)?.index ?? -1) : selected
+    const result = (plan.freePlacement ? editFreeParts : editTrackPieces)(plan, insertAt, action, chosen.types)
     onChange(['before', 'after'].includes(action) ? decorateInsertion(result, chosen.types.length) : result.plan)
     onSelect(result.selected)
     if (zoom === 1) setFrame(null)
@@ -1043,6 +1128,27 @@ export default function GraphicalTrackEditor({
           <option value="box">{ta('box')}</option>
           <option value="pan">{ta('pan')}</option>
         </select>
+        <label className="planner-layer-choice">
+          {ta('layers.edit')}{' '}
+          <select data-testid="toolbar-layer-filter" value={level} onChange={(e) => changeVisibleLevel(e.target.value)}>
+            <option value="all">{t('graph.allLayers')}</option>
+            {availableDrawingLevels.map((n) => (
+              <option key={n} value={n}>
+                {t('editor.level')} {n}
+              </option>
+            ))}
+          </select>
+        </label>
+        {level !== 'all' && (
+          <span role="status" data-testid="layer-isolation-status" className="text-xs">
+            {ta('layers.isolated', { level })}
+          </span>
+        )}
+        {layerWarning && (
+          <span role="alert" data-testid="layer-group-warning">
+            {ta('layers.group')}
+          </span>
+        )}
         <Button type="button" variant="outline" data-testid="track-fit" onClick={fit}>
           {t('graph.fit')}
         </Button>
@@ -1127,9 +1233,13 @@ export default function GraphicalTrackEditor({
             </label>
             <label>
               {t('graph.layers')}{' '}
-              <select data-testid="track-layer-filter" value={level} onChange={(e) => setLevel(e.target.value)}>
+              <select
+                data-testid="track-layer-filter"
+                value={level}
+                onChange={(e) => changeVisibleLevel(e.target.value)}
+              >
                 <option value="all">{t('graph.allLayers')}</option>
-                {[0, 1, 2].map((n) => (
+                {availableDrawingLevels.map((n) => (
                   <option key={n} value={n}>
                     {t('editor.level')} {n}
                   </option>
@@ -1412,13 +1522,14 @@ export default function GraphicalTrackEditor({
                   yMm: point.y,
                   headingDegrees: 0,
                 })
+                result.plan = decorateInsertion(result, item.types.length)
                 const indices = trackSelection(result.plan, result.selected),
                   snapped = snapEnabled
                     ? snapFreeParts(result.plan, indices, {
                         distanceMm: Math.max(20, w / 25),
                       })
                     : { plan: result.plan, snap: null }
-                onChange(decorateInsertion({ ...result, plan: snapped.plan }, item.types.length))
+                onChange(snapped.plan)
                 onSelect(result.selected)
                 setPart(item.id)
                 setSnapHint(snapped.snap)
@@ -1512,6 +1623,10 @@ export default function GraphicalTrackEditor({
                   matrix = e.currentTarget.getScreenCTM()
                 const kind =
                   e.button === 1 ? 'pan' : e.shiftKey ? 'box' : rotation ? 'rotate' : rail ? 'move' : pointerMode
+                if (['move', 'rotate'].includes(kind) && !editableRail(index)) {
+                  setLayerWarning(true)
+                  return
+                }
                 const indices = pickedIndices.includes(index) ? motion : freeTrackSelection(storedPlan, index)
                 setFrame(bounds)
                 dragging.current = {
@@ -1614,11 +1729,8 @@ export default function GraphicalTrackEditor({
               onPointerUp={(e) => {
                 const d = dragging.current
                 if (d?.kind === 'box' && d.moved) {
-                  const indices = trackRectangleSelection(
-                    d.base,
-                    d.point,
-                    world(e, d.inverse),
-                    level === 'all' ? null : Number(level),
+                  const indices = trackRectangleSelection(d.base, d.point, world(e, d.inverse), null).filter(
+                    editableRail,
                   )
                   selectIndices([...new Set([...(d.additive ? d.previous : []), ...indices])])
                   suppressClick.current = true
@@ -1669,7 +1781,7 @@ export default function GraphicalTrackEditor({
                 </g>
               )}
               <rect x={box[0]} y={box[1]} width={w} height={h} fill={`url(#${gridId})`} />
-              {autoAttachments && trace.segments[autoTarget] && (
+              {autoAttachments && railVisible(autoTarget) && trace.segments[autoTarget] && (
                 <path
                   data-testid="automatic-attachment-target"
                   d={trace.segments[autoTarget].points[0].map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ')}
@@ -1692,11 +1804,12 @@ export default function GraphicalTrackEditor({
                 onSelect={onSelect}
                 colorParts={colors}
                 labels={labels}
-                visibleLevel={level === 'all' ? null : Number(level)}
+                visibleDrawingLevel={visibleLevel}
                 connector={
                   !repeatPlacement &&
                   !autoAttachments &&
                   !dockPreview &&
+                  (visibleLevel === null || !!active) &&
                   plan.pieces.length + chosen.types.length <= 2000
                     ? connector
                     : null
@@ -1825,7 +1938,12 @@ export default function GraphicalTrackEditor({
                   opacity={stamp.occupied ? 0.3 : 0.55}
                   pointerEvents="none"
                 >
-                  <TrackPlanPreview plan={stamp.plan} embedded realistic={realistic} showOrigin={false} />
+                  <TrackPlanPreview
+                    plan={decorateInsertion({ plan: stamp.plan, selected: 0 }, chosen.types.length)}
+                    embedded
+                    realistic={realistic}
+                    showOrigin={false}
+                  />
                   <circle
                     cx={stamp.pose.xMm}
                     cy={stamp.pose.yMm}
@@ -1859,6 +1977,7 @@ export default function GraphicalTrackEditor({
                 <g pointerEvents={repeatPlacement ? 'none' : undefined}>
                   <ConnectionHints
                     plan={plan}
+                    visibleDrawingLevel={visibleLevel}
                     indices={joinPair ? [] : motion}
                     endpointKey={endpointKey}
                     width={w}
@@ -1876,7 +1995,7 @@ export default function GraphicalTrackEditor({
               )}
               {auditMarks?.plan === storedPlan &&
                 trace.segments
-                  .filter((s) => auditMarks.indices.includes(s.index))
+                  .filter((s) => railVisible(s.index) && auditMarks.indices.includes(s.index))
                   .map((s) => (
                     <path
                       key={s.index}
@@ -1889,7 +2008,8 @@ export default function GraphicalTrackEditor({
                       pointerEvents="none"
                     />
                   ))}
-              {auditMarks?.plan === storedPlan &&
+              {visibleLevel === null &&
+                auditMarks?.plan === storedPlan &&
                 auditMarks.auxiliary?.map((p, i) => (
                   <circle
                     key={i}
@@ -2553,7 +2673,7 @@ export default function GraphicalTrackEditor({
                 </label>
               </section>
             )}
-            {(active || pitPart) && (
+            {(active || pitPart || borderVisible(selected, layerTarget)) && (
               <details
                 data-testid="drawing-layer-controls"
                 className="flex flex-wrap items-center gap-2 border rounded-lg p-2 text-sm"
@@ -2566,7 +2686,7 @@ export default function GraphicalTrackEditor({
                     onChange={(e) => setLayerTarget(e.target.value)}
                   >
                     {['rails', 'left', 'right', 'borders'].map((v) => (
-                      <option key={v} value={v}>
+                      <option key={v} value={v} disabled={!railVisible(selected) && !borderVisible(selected, v)}>
                         {t(`drawLayers.${v}`)}
                       </option>
                     ))}

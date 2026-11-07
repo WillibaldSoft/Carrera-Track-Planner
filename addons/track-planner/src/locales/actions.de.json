@@ -33,5 +33,10 @@
     "both": "Beidseitig",
     "pit": "Boxengassen-Randstreifen anfügen",
     "pitHint": "Boxengasse: Formteile 20602 für Ein-/Ausfahrt und gerade Randstreifen 20560. Boxenteil markieren, dann passenden Randstreifen anfügen."
+  },
+  "layers": {
+    "edit": "Sichtbare Ebene",
+    "isolated": "Nur Ebene {{level}} sichtbar",
+    "group": "Die Baugruppe umfasst mehrere Ebenen. In „Alle Ebenen“ zunächst die Gruppierung aufheben."
   }
 }

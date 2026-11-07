@@ -1,8 +1,12 @@
 import { useTranslation } from 'react-i18next'
 import { nearestTrackConnection, openTrackPorts } from '@racehubos/shared'
-export default function ConnectionHints({ plan, indices, endpointKey, onPort, width }) {
+export default function ConnectionHints({ plan, indices, endpointKey, onPort, width, visibleDrawingLevel = null }) {
   const { t } = useTranslation('tracks')
-  const ports = openTrackPorts(plan)
+  const ports = openTrackPorts(plan).filter(
+    (p) =>
+      visibleDrawingLevel === null ||
+      plan.pieces[p.index].level + (plan.pieces[p.index].drawLayer ?? 0) === visibleDrawingLevel,
+  )
   const hint = indices.length && indices.length < plan.pieces.length ? nearestTrackConnection(plan, indices) : null
   return (
     <g data-testid="connection-hints">
@@ -46,41 +50,45 @@ export default function ConnectionHints({ plan, indices, endpointKey, onPort, wi
           />
         </g>
       ))}
-      {hint && (
-        <g pointerEvents="none" data-testid="connection-candidate">
-          <line
-            x1={hint.a.x}
-            y1={hint.a.y}
-            x2={hint.b.x}
-            y2={hint.b.y}
-            stroke={hint.compatible ? '#16a34a' : '#ea580c'}
-            strokeWidth="5"
-            strokeDasharray="12 10"
-          />
-          <circle
-            cx={hint.b.x}
-            cy={hint.b.y}
-            r="28"
-            fill="none"
-            stroke={hint.compatible ? '#16a34a' : '#ea580c'}
-            strokeWidth="4"
-          />
-          <text
-            x={(hint.a.x + hint.b.x) / 2}
-            y={(hint.a.y + hint.b.y) / 2 - 45}
-            textAnchor="middle"
-            fontSize="27"
-            fontWeight="bold"
-            fill={hint.compatible ? '#166534' : '#9a3412'}
-            stroke="white"
-            strokeWidth="6"
-            paintOrder="stroke"
-          >
-            {hint.distanceMm.toFixed(1)} mm · {hint.rotation.toFixed(1)}° ·{' '}
-            {t(hint.compatible ? 'tools.aligned' : 'tools.checkDirection')}
-          </text>
-        </g>
-      )}
+      {hint &&
+        (visibleDrawingLevel === null ||
+          [hint.a, hint.b].every(
+            (p) => plan.pieces[p.index].level + (plan.pieces[p.index].drawLayer ?? 0) === visibleDrawingLevel,
+          )) && (
+          <g pointerEvents="none" data-testid="connection-candidate">
+            <line
+              x1={hint.a.x}
+              y1={hint.a.y}
+              x2={hint.b.x}
+              y2={hint.b.y}
+              stroke={hint.compatible ? '#16a34a' : '#ea580c'}
+              strokeWidth="5"
+              strokeDasharray="12 10"
+            />
+            <circle
+              cx={hint.b.x}
+              cy={hint.b.y}
+              r="28"
+              fill="none"
+              stroke={hint.compatible ? '#16a34a' : '#ea580c'}
+              strokeWidth="4"
+            />
+            <text
+              x={(hint.a.x + hint.b.x) / 2}
+              y={(hint.a.y + hint.b.y) / 2 - 45}
+              textAnchor="middle"
+              fontSize="27"
+              fontWeight="bold"
+              fill={hint.compatible ? '#166534' : '#9a3412'}
+              stroke="white"
+              strokeWidth="6"
+              paintOrder="stroke"
+            >
+              {hint.distanceMm.toFixed(1)} mm · {hint.rotation.toFixed(1)}° ·{' '}
+              {t(hint.compatible ? 'tools.aligned' : 'tools.checkDirection')}
+            </text>
+          </g>
+        )}
     </g>
   )
 }

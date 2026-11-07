@@ -1,0 +1,20 @@
+{
+  "language": "en",
+  "screenshots": [
+    {
+      "id": "01-lower-level",
+      "file": "01-lower-level.png",
+      "sha256": "313abc3f250205883c8d4e9398d823773f1c160dbdd970119cf5765f4fa39726"
+    },
+    {
+      "id": "02-upper-level-edit",
+      "file": "02-upper-level-edit.png",
+      "sha256": "36deba1c62fc7e549d8d3e6892f2f43fb4d147d38c7537b8f95054307f4d2d0f"
+    },
+    {
+      "id": "03-all-levels",
+      "file": "03-all-levels.png",
+      "sha256": "e5fcc1ecbbeac548668addbb66f17c42db30c4ce9983144712a5618169b29d7c"
+    }
+  ]
+}

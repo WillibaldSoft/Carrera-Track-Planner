@@ -33,5 +33,10 @@
     "both": "Both sides",
     "pit": "Attach pit lane shoulder",
     "pitHint": "Pit lane: shaped 20602 entrance/exit shoulders and 20560 straight shoulders. Select a pit piece, then attach a matching shoulder."
+  },
+  "layers": {
+    "edit": "Visible layer",
+    "isolated": "Only level {{level}} visible",
+    "group": "This assembly spans multiple levels. Ungroup it in All levels first."
   }
 }

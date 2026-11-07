@@ -13,6 +13,7 @@ export function layoutTrackHeightLabels({
   viewport,
   selected = -1,
   visibleLevel = null,
+  visibleDrawingLevel = null,
   preview = null,
 }) {
   const width = Math.max(1, viewport.width),
@@ -45,7 +46,11 @@ export function layoutTrackHeightLabels({
   }
   // Conservative corridor masks also protect shoulders, CU housings and pit rails.
   for (const s of model.segments) {
-    if (visibleLevel !== null && s.level !== visibleLevel) continue
+    if (
+      (visibleLevel !== null && s.level !== visibleLevel) ||
+      (visibleDrawingLevel !== null && s.level + (s.drawLayer ?? 0) !== visibleDrawingLevel)
+    )
+      continue
     const radius = (99 + (s.borders?.left || s.borders?.right ? BORDER_WIDTH_MM : 0)) * Math.max(sx, sy) + 4
     const pts = s.points[0].map(point)
     for (let i = 1; i < pts.length; i++) {
@@ -74,7 +79,11 @@ export function layoutTrackHeightLabels({
     return false
   }
   const candidates = model.segments
-    .filter((s) => visibleLevel === null || s.level === visibleLevel)
+    .filter(
+      (s) =>
+        (visibleLevel === null || s.level === visibleLevel) &&
+        (visibleDrawingLevel === null || s.level + (s.drawLayer ?? 0) === visibleDrawingLevel),
+    )
     .flatMap((s) => {
       const pts = s.points[0].map(point),
         visible = pts.map((p, i) => ({ ...p, i })).filter((p) => p.x >= 0 && p.x <= width && p.y >= 0 && p.y <= height)

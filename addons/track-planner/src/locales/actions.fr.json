@@ -33,5 +33,10 @@
     "both": "Des deux côtés",
     "pit": "Ajouter une bordure de stands",
     "pitHint": "Stands : bordures 20602 pour entrée/sortie et bordures droites 20560. Sélectionner un élément des stands, puis ajouter la bordure adaptée."
+  },
+  "layers": {
+    "edit": "Calque visible",
+    "isolated": "Niveau {{level}} uniquement",
+    "group": "Cet assemblage couvre plusieurs niveaux. Le dissocier d’abord dans Tous les niveaux."
   }
 }

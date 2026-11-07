@@ -277,9 +277,9 @@
     {
       "source": "packages/frontend/src/components/tracks/TrackPlanPreview.jsx",
       "export": "vendor/racehubos/ui/components/tracks/TrackPlanPreview.jsx",
-      "sha256": "edfb092066f35a0b6bb17ac5cd2b6d4c1b4b159b877c3e9cb48c75d7a10c409f",
+      "sha256": "925cd60addc80756cb4c29c30f3249f8c3f6adf226c55068f2325d206822faa2",
       "originalSha256": "4c445eb963013b812b12fa4af33aef3619f3c8c9d785461accca6cdbeb92590e",
-      "localModification": "Piece-local shoulder artwork: dark drift apron with narrow red/white bands following each straight, inner/outer curve and end piece. Existing footprint and dimensions retained; shared vector geometry for 2D, 3D and export.; pit shoulder artwork follows its outer edge"
+      "localModification": "Piece-local shoulder artwork: dark drift apron with narrow red/white bands following each straight, inner/outer curve and end piece. Existing footprint and dimensions retained; shared vector geometry for 2D, 3D and export.; pit shoulder artwork follows its outer edge; independent drawing-plane visibility filter without changing stacking or plan geometry"
     },
     {
       "source": "packages/frontend/src/i18n/locales/en/stats.json",

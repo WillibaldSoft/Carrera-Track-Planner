@@ -2,6 +2,7 @@
 
 [Deutsch](README.de.md) · **English** · [Français](README.fr.md)
 
+[1.1.5 · Ebenen ausblenden / Layer visibility / Visibilité des calques](docs/RELEASE-1.1.5.en.md)
 [1.1.4 · Randstreifen / Shoulders / Bordures](docs/RELEASE-1.1.4.en.md)
 Independent Carrera track planner, prepared for review and future RaceHubOS integration. It has its own source history, dependency lockfile and local data store. It runs without a RaceHubOS backend or database.
 
