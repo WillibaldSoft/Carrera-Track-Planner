@@ -10,6 +10,7 @@ for (const language of ['de', 'en', 'fr'])
     await page.getByTestId('planner-theme-toggle').click()
     await expect(page.locator('html')).toHaveClass(/dark/)
     await page.getByTestId('standalone-new').click()
+    await page.getByTestId('room-continue').click()
     await expect(page.getByTestId('planner-theme-toggle')).toHaveAttribute('data-theme', 'dark')
     await expect(page.locator('html')).toHaveClass(/dark/)
     await page.getByTestId('add-track-piece').click()
@@ -45,13 +46,15 @@ test('embedded adapter receives theme from its host and does not show a local th
     route.fulfill({
       contentType: 'text/html',
       body: `<html><body><iframe style="width:1440px;height:900px" src="${baseURL}/#host=${encodeURIComponent(baseURL)}"></iframe><script>addEventListener('message',e=>{if(e.data?.type==='ready')e.source.postMessage({channel:'racehubos:track-planner:1',type:'init',language:'de',dark:true,draft:${JSON.stringify(draft)}},'${baseURL}')})</script></body></html>`,
-    })
+    }),
   )
   await page.goto('/integration-harness.html')
   const frame = page.frameLocator('iframe')
   await expect(frame.getByTestId('track-plan-editor')).toBeVisible()
   await expect(frame.locator('html')).toHaveClass(/dark/)
   await expect(frame.getByTestId('planner-theme-toggle')).toHaveCount(0)
+  await expect(frame.getByTestId('room-footprint-editor')).toBeVisible()
+  await frame.getByTestId('room-continue').click()
   await frame.getByTestId('add-track-piece').click()
   await expect(frame.getByTestId('graph-track-canvas')).toHaveAttribute('data-piece-count', '1')
 })

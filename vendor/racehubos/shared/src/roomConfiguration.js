@@ -1,3 +1,4 @@
+import { validateRoomFootprint } from './roomFootprint.js';
 import { validateRailInventory } from './railInventory.js';
 export const DEFAULT_ROOM = Object.freeze({
   curveStyle: 'dynamic',
@@ -70,7 +71,7 @@ export function validateRoom(room) {
       throw new Error('Invalid search configuration');
     result.detailedSearch = { enabled: s.enabled, attempts: s.attempts, seed: s.seed, jointDegrees: s.jointDegrees };
   }
-  return result;
+  return { ...result, ...validateRoomFootprint(r) };
 }
 
 export function roomTrackArea(room) {

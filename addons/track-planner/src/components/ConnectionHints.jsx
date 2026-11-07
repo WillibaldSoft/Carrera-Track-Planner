@@ -16,7 +16,7 @@ export default function ConnectionHints({ plan, indices, endpointKey, onPort, wi
             aria-label={t('tools.portLabel', { part: p.index + 1, end: t(p.end ? 'tools.end' : 'tools.start') })}
             cx={p.x}
             cy={p.y}
-            r={Math.max(12, width / 100)}
+            r={Math.min(35, Math.max(12, width / 100))}
             fill={endpointKey === `${p.index}:${p.end}` ? '#eab308' : '#0d9488'}
             stroke="white"
             strokeWidth="3"

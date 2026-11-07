@@ -15,7 +15,7 @@ Die offizielle Plugin-Schnittstelle sowie Download, Updates, Berechtigungen und 
 
 ## Verifizierter Stand
 
-38 Unit-Fälle in sechs enthaltenen Dateien, 43 enthaltene Browserfälle und drei Aufnahme-Szenarien mit insgesamt 72 PNGs bestanden. Der eigenständige Vite-/Add-on-Build besteht; der Hinweis auf große Chunks bleibt. Reproduzierbar nach `npm ci` und `npx playwright install chromium`: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
+48 Unit-Fälle in sieben enthaltenen Dateien, 48 enthaltene Browserfälle und sechs Aufnahme-Szenarien mit insgesamt 84 PNGs bestanden. Der eigenständige Vite-/Add-on-Build besteht; der Hinweis auf große Chunks bleibt. Reproduzierbar nach `npm ci` und `npx playwright install chromium`: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
 [CU, einzelne Boxenteile und paralleles Andocken](CU-PIT-PARALLEL.de.md)
 
@@ -24,3 +24,6 @@ Die offizielle Plugin-Schnittstelle sowie Download, Updates, Berechtigungen und 
 Die offizielle API steht aus. JSON erhält den vollständigen Plan; freies Platzieren lässt sich nicht in altes TRK exportieren. Eine vollständige Autorennbahnplaner-2.0-Kompatibilität ist nicht bestätigt. AKS ist eine Einbauangabe, keine Elektroniksimulation. Geometrisches Zusammenfügen garantiert weder das Schließen weiterer Lücken noch reale Baubarkeit. Automatische Schließvorschläge sind noch nicht implementiert. Der Vite-Hinweis auf große Chunks bleibt. Windows-/macOS-Ausführung und entsprechende Installer wurden durch diese Veröffentlichung nicht neu geprüft.
 
 Lizenz und Herkunft: [LICENSE](../LICENSE), [Vendor-Lizenz](../vendor/racehubos/LICENSE), [PROVENANCE.json](../PROVENANCE.json).
+
+
+[Raumkontur und Einstieg über den Raumplaner](ROOM-FOOTPRINT.de.md)

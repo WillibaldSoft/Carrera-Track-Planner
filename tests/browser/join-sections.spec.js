@@ -13,6 +13,7 @@ async function open(page, lang = 'de') {
   await page.goto('/')
   await page.getByTestId('standalone-language').selectOption(lang)
   await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
   await page.locator('.planner-name').fill('Join demo')
   await page.getByTestId('planner-files-toggle').click()
   await page

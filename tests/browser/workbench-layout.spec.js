@@ -8,6 +8,7 @@ async function open(page, language = 'de', plan = fixture) {
   await page.goto('/')
   await page.getByTestId('standalone-language').selectOption(language)
   await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
   await page.locator('.planner-name').fill('Layout Demo')
   if (plan.pieces.length) {
     await page.getByTestId('planner-files-toggle').click()

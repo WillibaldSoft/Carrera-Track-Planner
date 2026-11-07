@@ -11,28 +11,28 @@
       "file": "01-start-setup.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "1a711ed7e951f8281bfa7b831bccac2f13f8c8e85a0110e2a5f130d2a648d434"
+      "sha256": "2679e5d47d886476d9951cd5eab607dcdfec7868d01a463446c15a58aa0028ea"
     },
     {
       "id": "02-start-cu-two-bays",
       "file": "02-start-cu-two-bays.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "6c4f3757f758701532643b79c1860846cf30ee2c4250d3b1e2f0f6c4a7b5d31f"
+      "sha256": "86a66ea4d799219154824ce949a5d06d5d8746e39a63b73970f7edb0cec41d28"
     },
     {
       "id": "03-readable-rotated-cu",
       "file": "03-readable-rotated-cu.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "1ebf60eadd82aa9c618b1588e07ebb7668530b077e003b1dcbf3a1af709d3196"
+      "sha256": "a5f3db01b85098fabfd2ae41b1de9bf0bf30ede49f6a9b92b211df18e3bffa51"
     },
     {
       "id": "04-cu-on-existing-straight",
       "file": "04-cu-on-existing-straight.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "f8efeb31fb1af5e419424c965de7fd9a6cb157aef4376c0c4ca73b9402203000"
+      "sha256": "3097da1dd1c4a45b0bde3bcbae332cf9d68741340b5c48abf4f9d180ff923e12"
     },
     {
       "id": "05-optional-aks-marker",
@@ -60,7 +60,7 @@
       "file": "08-connection-gap-direction.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "8b3b039fdb7f894c0b4cdf27a03f0120d8ecb2a84da5919b7ebb716ca6ac2a54"
+      "sha256": "f5277898adfab32c07cb4d6796242050ac5558967cd31494bb8181c4f9bf5811"
     },
     {
       "id": "09-assembly-templates",
@@ -74,21 +74,21 @@
       "file": "10-context-menu.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "8f6a0a28730979865d1a8215346f9ebcae146bc514461c2dfd0e9d80cd3e852e"
+      "sha256": "c024459d7021bd1ad1badc2dc7d2e818b481d5331781adee32735d9b6c54325a"
     },
     {
       "id": "11-build-check-and-missing-parts",
       "file": "11-build-check-and-missing-parts.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "56f124db9dfc4ac28e490a7fa32af0705b63bdff4da0352215ac01ddd9f981f7"
+      "sha256": "be230b6a341a182283dd22879aed35fc3846ab9cc986a50ce30a918d412c043f"
     },
     {
       "id": "12-highlighted-overlap",
       "file": "12-highlighted-overlap.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "29570bff40f876d802b712b5b37c86ff6854681162633958d6c88cb773000b97"
+      "sha256": "e47d60b0e03654b4afd493967918e186e4e64d85585e5ab0bb4699e45c52095b"
     },
     {
       "id": "13-open-pit-connection",
@@ -109,28 +109,28 @@
       "file": "15-replace-and-follow.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "e0256e6ff3c48050fcbf3698eb75039d1875ab071d1854cd18be57b407caeb5c"
+      "sha256": "a2339d92e42fb4f858cf10a11caa0e06682400588912b0336f408888ce5aa684"
     },
     {
       "id": "16-choose-cut-point",
       "file": "16-choose-cut-point.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "5d86f10a4adb99615e5b9b33135a67a7fe676471450eb4349f98f0d324af941e"
+      "sha256": "59667a5d7b4371e009f0a7df0996109dc59181fac60be276c17dc9e54cee178d"
     },
     {
       "id": "17-join-sections-preview",
       "file": "17-join-sections-preview.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "40f2f07331858dba428bf791b86eab7e38f700440f7153d30c15d012faa56aa5"
+      "sha256": "49ef7cd71b09ec76c89744599ccd60bd3d9b0bdfc18d6d4fa1b06754142563d1"
     },
     {
       "id": "18-joined-sections",
       "file": "18-joined-sections.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "59d3f2475ddd29f8ff158c40c9e690c168bdde86623c3464ad160c4da0d8d413"
+      "sha256": "4badb66fd5e07bf403fa0033332d2d69258f8511cbe402f0ce4e4b365849d58b"
     },
     {
       "id": "19-racehubos-dark-theme",
@@ -158,21 +158,21 @@
       "file": "22-parallel-multilane-preview.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "5bdbcee653433ecbbbaa52a4eb87295e26fe58ca89c8f00c5d93b7a6bb872c16"
+      "sha256": "a4403cd0bf84efd62e0ea2f4253221548327c567b3a21b400018920943832a94"
     },
     {
       "id": "23-parallel-multilane-applied",
       "file": "23-parallel-multilane-applied.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "cbaa8a742b79753ec8414a29494135bb11ebfdb2fb716231a83cccc9d51390f6"
+      "sha256": "e82021094fe29ae8fff35492bb092c59da016cfa82a4d64e790786d59981ff95"
     },
     {
       "id": "24-parallel-individual-pit",
       "file": "24-parallel-individual-pit.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "bd497bb99b4d8e4751df12ccd53c3a2e1325b483597a67567f0addd16f13cc43"
+      "sha256": "24f1cc711b5e100d7998b202140e913ce666348673baada22be338cd35f7ea96"
     }
   ]
 }

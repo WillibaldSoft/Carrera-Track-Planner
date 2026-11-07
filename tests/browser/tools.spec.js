@@ -4,6 +4,7 @@ import { emptyRailInventory, traceTrackPlan } from '../../vendor/racehubos/share
 async function start(page, name = 'Bauhilfen') {
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
   await page.locator('.planner-name').fill(name)
 }
 test('CU can replace an existing straight with undo and without moving neighbours', async ({ page }) => {
@@ -34,7 +35,7 @@ test('box assistant previews a single bay on the other side and applies it once'
   await page.screenshot({ path: '/tmp/planner-tools-box-preview.png', fullPage: true })
   await page.getByTestId('box-apply').click()
   await expect(page.getByTestId('graph-track-canvas')).toHaveAttribute('data-piece-count', '7')
-  await expect(page.locator('[data-testid^="fuel-detail-"]')).toHaveCount(1)
+  await expect(page.getByTestId('graph-track-canvas').locator('[data-testid^="fuel-detail-"]')).toHaveCount(1)
   await expect(page.locator('[data-testid^="open-port-"]')).toHaveCount(2)
   await page.getByTestId('track-undo').click()
   await expect(page.getByTestId('graph-track-canvas')).toHaveAttribute('data-piece-count', '1')
@@ -51,7 +52,7 @@ test('box assistant replaces six existing straights and retains the CU', async (
   await page.getByTestId('box-apply').click()
   await expect(page.getByTestId('graph-track-canvas')).toHaveAttribute('data-piece-count', '6')
   await expect(page.getByTestId('graph-track-canvas').locator('[data-unit-kind="Control_unit"]')).toHaveCount(1)
-  await expect(page.locator('[data-testid^="fuel-detail-"]')).toHaveCount(2)
+  await expect(page.getByTestId('graph-track-canvas').locator('[data-testid^="fuel-detail-"]')).toHaveCount(2)
 })
 test('assembly templates persist across reload, export, import and insert with undo', async ({ page }) => {
   await start(page)
@@ -67,6 +68,7 @@ test('assembly templates persist across reload, export, import and insert with u
   await page.getByTestId('tools-close').click()
   await page.reload()
   await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
   await page.getByTestId('tools-templates').click()
   await expect(page.getByTestId('template-select')).toContainText('Meine Startbox')
   await page.getByTestId('template-insert').click()

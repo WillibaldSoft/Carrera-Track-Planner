@@ -78,6 +78,7 @@ for (const [language, labels] of Object.entries(words)) {
       }
       await home()
       await page.getByTestId('standalone-new').click()
+      await page.getByTestId('room-continue').click()
       await page.locator('.planner-name').fill(labels.demo)
       await expect(page.getByTestId('start-pit-create')).toBeVisible()
       await shot('01-start-setup')

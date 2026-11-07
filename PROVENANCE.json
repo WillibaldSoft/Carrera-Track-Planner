@@ -500,7 +500,9 @@
     {
       "source": "packages/shared/src/roomConfiguration.js",
       "export": "vendor/racehubos/shared/src/roomConfiguration.js",
-      "sha256": "a60dc899bc8679f9115841aa0b4c33442421f3ea54da76917e05659abb92dd52"
+      "sha256": "2ebea2a495ae46594790eafb78c36e74c6e2a3c2485fc4eaee4682a01ff5cba6",
+      "originalSha256": "a60dc899bc8679f9115841aa0b4c33442421f3ea54da76917e05659abb92dd52",
+      "localModification": "Planner-owned room footprint and background-origin validation; original source hash retained."
     },
     {
       "source": "packages/shared/src/roomPlanner.js",
@@ -607,5 +609,9 @@
       "export": "vendor/racehubos/shared/src/trackUnitGeometry.js",
       "sha256": "c7d20d01ed0ce53646beac3d8cbcc17fa594f6edccccc221a7bc9b73a5914590"
     }
+  ],
+  "plannerOwnedAdditions": [
+    "vendor/racehubos/shared/src/roomFootprint.js",
+    "addons/track-planner/src/components/RoomPlanPreview.jsx (adapted from vendor/racehubos/ui/components/tracks/SavedRoomPlan.jsx)"
   ]
 }

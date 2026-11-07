@@ -1,3 +1,5 @@
+import { decodeLegacyRoom } from '../host/legacyBridge'
+import { withRoomAnchor } from './roomBackground'
 import { prepareIndividualPitParts } from './pitPartEditing'
 import './trackPlanner.css'
 import PlannerThemeToggle from './PlannerThemeToggle'
@@ -38,15 +40,15 @@ export default function TrackPlanEditor({
   const { t } = useTranslation('tracks')
   const fileInput = useRef(null)
   const [selected, setSelected] = useState(-1)
-  const [mode, setMode] = useState('editor')
+  const [mode, setMode] = useState(() => (!value?.pieces.length && !value?.roomPlan ? 'room' : 'editor'))
   const [past, setPast] = useState([])
   const [future, setFuture] = useState([])
   const [error, setError] = useState('')
-  const plan = value
+  const plan = value ? withRoomAnchor(value) : value
   const update = (next) => {
     if (plan) setPast((p) => [...p.slice(-49), plan])
     setFuture([])
-    onChange(prepareIndividualPitParts(next))
+    onChange(withRoomAnchor(prepareIndividualPitParts(next)))
     setError('')
   }
   function undo() {
@@ -78,7 +80,7 @@ export default function TrackPlanEditor({
         ? importTrackTrk(new TextDecoder('windows-1252').decode(buffer))
         : file.name.toLowerCase().endsWith('.sbp')
           ? importSoftyRoyal(JSON.parse(new TextDecoder().decode(buffer)))
-          : readTrackPlan(new TextDecoder().decode(buffer))
+          : decodeLegacyRoom(new TextDecoder().decode(buffer))
       if (!next) throw new Error()
       update(next)
       onImportNew?.(

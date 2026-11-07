@@ -1,0 +1,30 @@
+{
+  "language": "fr",
+  "syntheticData": true,
+  "viewport": {
+    "width": 1600,
+    "height": 1400
+  },
+  "screenshots": [
+    {
+      "id": "01-room-first",
+      "file": "01-room-first.png",
+      "sha256": "e6784755da95726276421b78ccf97263176d88b80aaa42886aef326ec4b18dbc"
+    },
+    {
+      "id": "02-room-shape-elements",
+      "file": "02-room-shape-elements.png",
+      "sha256": "3def194ac7a921fca7e6f2cedbf41278644fee1e7b1f1de90390044ff38dcdf5"
+    },
+    {
+      "id": "03-room-background-track",
+      "file": "03-room-background-track.png",
+      "sha256": "0c21d4826231ef13206f9d9be7b3df964e2221267de6ad50af0be9e73bf202c9"
+    },
+    {
+      "id": "04-reuse-room",
+      "file": "04-reuse-room.png",
+      "sha256": "2c448a9928b6e3d5f0e77bfdfb60e3ffb765e8f34576eb8fe55c07d6199136d1"
+    }
+  ]
+}

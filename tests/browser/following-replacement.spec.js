@@ -9,6 +9,7 @@ async function open(page, language = 'de') {
   await page.goto('/')
   await page.getByTestId('standalone-language').selectOption(language)
   await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
   await page.locator('.planner-name').fill('Replacement Demo')
   await page.getByTestId('planner-files-toggle').click()
   await page.getByTestId('track-plan-import').setInputFiles({

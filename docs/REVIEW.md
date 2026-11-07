@@ -16,7 +16,7 @@ The future official plugin interface, download/update mechanism, permissions and
 
 ## Verified state
 
-38 unit cases in six included files, 43 included browser cases and three capture scenarios producing 72 PNGs passed. The standalone Vite/add-on build passes; the large-chunk warning remains. Reproduce after `npm ci` and `npx playwright install chromium`: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
+48 unit cases in seven included files, 48 included browser cases and six capture scenarios producing 84 PNGs passed. The standalone Vite/add-on build passes; the large-chunk warning remains. Reproduce after `npm ci` and `npx playwright install chromium`: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
 [Fixed CU, individual pit parts and parallel docking](CU-PIT-PARALLEL.en.md)
 
@@ -25,3 +25,6 @@ The future official plugin interface, download/update mechanism, permissions and
 The official plugin contract is pending. Native JSON preserves the complete plan; legacy TRK export cannot represent free placement. Full Autorennbahnplaner 2.0 compatibility is not claimed. AKS records installation metadata and can display a marker; it does not simulate electronics. Geometric joining does not guarantee that another remaining gap closes or that a physical layout is buildable. Automatic closing-part recommendations remain a proposal. A Vite large-chunk warning remains. Windows/macOS execution and installers are not newly verified by this publication.
 
 License and upstream attribution are retained in [LICENSE](../LICENSE), [vendor license](../vendor/racehubos/LICENSE) and [PROVENANCE.json](../PROVENANCE.json).
+
+
+[Room footprint and room-first workflow](ROOM-FOOTPRINT.en.md)

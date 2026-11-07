@@ -43,7 +43,7 @@ Das bisherige experimentelle iframe-Protokoll ist als austauschbarer Adapter gek
 
 ![Planer mit zusammengefügten Abschnitten](docs/screenshots/track-planner/de/18-joined-sections.png)
 
-72 echte lokalisierte PNGs mit SHA-256-Manifesten. Enthalten und geprüft: sechs Unit-Testdateien mit 38 Fällen, 43 Browserfälle und drei Aufnahme-Szenarien. Automatische Schließvorschläge und die offizielle Plugin-API stehen weiterhin aus.
+84 echte lokalisierte PNGs mit SHA-256-Manifesten. Enthalten und geprüft: sieben Unit-Testdateien mit 48 Fällen und 48 Browserfälle. Automatische Schließvorschläge und die offizielle Plugin-API stehen weiterhin aus.
 
 ## Quellen und Lizenz
 
@@ -51,3 +51,6 @@ Apache-2.0. Benötigte RaceHubOS-UI- und Geometriequellen liegen mit Lizenz unte
 
 
 [CU, einzelne Boxenteile und paralleles Andocken](docs/CU-PIT-PARALLEL.de.md)
+
+
+[Raumkontur und Einstieg über den Raumplaner](docs/ROOM-FOOTPRINT.de.md)

@@ -1,3 +1,5 @@
+import { anchorRoom, withRoomAnchor, roomAndTrackBounds } from './roomBackground'
+import RoomFootprintDrawing from './RoomFootprintDrawing'
 import { prepareIndividualPitParts, updatePitPartWorld } from './pitPartEditing'
 import ParallelDockingPanel from './ParallelDockingPanel'
 import { trackSectionJoinOptions, joinTrackSections } from './joinTrackSections'
@@ -122,8 +124,10 @@ export default function GraphicalTrackEditor({
   planDetails,
 }) {
   const { t } = useTranslation('tracks')
+  const { t: rt } = useTranslation('plannerRoom')
+  const [showRoom, setShowRoom] = useState(true)
   const { t: te } = useTranslation('plannerEditing')
-  const storedPlan = useMemo(() => prepareIndividualPitParts(inputPlan), [inputPlan])
+  const storedPlan = useMemo(() => withRoomAnchor(prepareIndividualPitParts(inputPlan)), [inputPlan])
   const [dockPreview, setDockPreview] = useState(null)
   const [dockingSelection, setDockingSelection] = useState([])
   const [editNotice, setEditNotice] = useState('')
@@ -258,7 +262,15 @@ export default function GraphicalTrackEditor({
     active = selectedPitPart ? null : plan.pieces[selected],
     chosen = catalogue.find((p) => p.id === part)
   const bounds =
-    frame ?? (storedPlan.pieces.length ? trackBounds(storedPlan) : { x: -800, y: -600, width: 1600, depth: 1200 })
+    frame ??
+    (showRoom && storedPlan.roomPlan
+      ? roomAndTrackBounds(
+          storedPlan,
+          storedPlan.pieces.length ? trackBounds(storedPlan) : { x: 0, y: 0, width: 0, depth: 0 },
+        )
+      : storedPlan.pieces.length
+        ? trackBounds(storedPlan)
+        : { x: -800, y: -600, width: 1600, depth: 1200 })
   const calculatedBox = trackViewport(bounds, viewport, zoom, pan)
   const [, , w, h] = calculatedBox
   const box = dragging.current?.kind === 'pan' ? calculatedBox : (dragging.current?.box ?? calculatedBox)
@@ -1241,6 +1253,14 @@ export default function GraphicalTrackEditor({
                   />
                 </pattern>
               </defs>
+              {showRoom && plan.roomPlan && (
+                <g pointerEvents="none" data-testid="track-room-background">
+                  <RoomFootprintDrawing
+                    room={plan.roomPlan}
+                    origin={anchorRoom(plan.roomPlan, plan).backgroundOrigin}
+                  />
+                </g>
+              )}
               <rect x={box[0]} y={box[1]} width={w} height={h} fill={`url(#${gridId})`} />
               <TrackPlanPreview
                 plan={plan}
@@ -1886,6 +1906,48 @@ export default function GraphicalTrackEditor({
                 </Button>
               )}
             </div>
+            {plan.roomPlan && (
+              <details className="border rounded p-2" data-testid="room-background-controls" open>
+                <summary>{rt('room')}</summary>
+                <label>
+                  <input
+                    data-testid="room-background-visible"
+                    type="checkbox"
+                    checked={showRoom}
+                    onChange={(e) => {
+                      setShowRoom(e.target.checked)
+                      setFrame(null)
+                    }}
+                  />{' '}
+                  {rt('background')}
+                </label>
+                <p className="text-xs">{rt('backgroundNote')}</p>
+                {['xMm', 'yMm'].map((key, i) => (
+                  <label key={key}>
+                    {rt(i ? 'originY' : 'originX')}
+                    <input
+                      data-testid={`room-origin-${key}`}
+                      type="number"
+                      step="10"
+                      value={anchorRoom(plan.roomPlan, plan).backgroundOrigin[key]}
+                      onChange={(e) => {
+                        const n = Number(e.target.value)
+                        if (Number.isFinite(n) && Math.abs(n) <= 1e7) {
+                          onChange({
+                            ...storedPlan,
+                            roomPlan: {
+                              ...storedPlan.roomPlan,
+                              backgroundOrigin: { ...anchorRoom(plan.roomPlan, plan).backgroundOrigin, [key]: n },
+                            },
+                          })
+                          setFrame(null)
+                        }
+                      }}
+                    />
+                  </label>
+                ))}
+              </details>
+            )}
             <ParallelDockingPanel
               plan={storedPlan}
               selectionRefs={selected < 0 && !selectedPitPart ? [] : dockingSelection}

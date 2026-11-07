@@ -2,7 +2,7 @@
 
 [Deutsch](TRACK-PLANNER-GALLERY.de.md) · English · [Français](TRACK-PLANNER-GALLERY.fr.md)
 
-Actual screenshots of the standalone planner captured on 6 November 2026, with the English interface and synthetic demo data only. All images are 1600 × 1400 pixels. The rail appearance was not altered for the captures.
+Actual screenshots of the standalone planner captured on 7 November 2026, with the English interface and synthetic demo data only. All images are 1600 × 1400 pixels. The rail appearance was not altered for the captures.
 
 Operation and technical limits: [planner tools](../README.md) (German). Source comparison: [review](https://github.com/WillibaldSoft/RaceHubOS/blob/fa038fff3327b7796ea0c14d2797714c35359335/docs/TRACK-PLANNER-REVIEW-20261105.md) (German). Reproduction and verification: [gallery index](TRACK-PLANNER-GALLERY.md).
 

@@ -31,6 +31,7 @@ async function open(page, plan, language = 'de') {
   await page.goto('/')
   await page.getByTestId('standalone-language').selectOption(language)
   await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
   await page.locator('.planner-name').fill('CU and parallel demo')
   if (plan) {
     await page.getByTestId('planner-files-toggle').click()

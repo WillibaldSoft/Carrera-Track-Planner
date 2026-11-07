@@ -2,7 +2,7 @@
 
 Deutsch · [English](TRACK-PLANNER-GALLERY.en.md) · [Français](TRACK-PLANNER-GALLERY.fr.md)
 
-Echte Bildschirmaufnahmen des eigenständigen Planers vom 6. November 2026, mit deutscher Oberfläche und ausschließlich synthetischen Demodaten. Alle Bilder wurden bei 1600 × 1400 Pixeln aufgenommen. Die Schienenoptik wurde für die Aufnahmen nicht verändert.
+Echte Bildschirmaufnahmen des eigenständigen Planers vom 7. November 2026, mit deutscher Oberfläche und ausschließlich synthetischen Demodaten. Alle Bilder wurden bei 1600 × 1400 Pixeln aufgenommen. Die Schienenoptik wurde für die Aufnahmen nicht verändert.
 
 Bedienung und technische Grenzen: [Bedienhilfen](../README.de.md). Quellenvergleich: [Prüfbericht](https://github.com/WillibaldSoft/RaceHubOS/blob/fa038fff3327b7796ea0c14d2797714c35359335/docs/TRACK-PLANNER-REVIEW-20261105.md). Reproduktion und Prüfstand: [Galerieübersicht](TRACK-PLANNER-GALLERY.md).
 

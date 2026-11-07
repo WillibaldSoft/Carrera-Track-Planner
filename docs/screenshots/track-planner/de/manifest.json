@@ -11,21 +11,21 @@
       "file": "01-start-setup.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "1398dd8a86ed52b984c2994fef69e1f1bead4841284451011766f9f23469fe7d"
+      "sha256": "f69c5c1d10c70983d9bc9f86c0b31202c1d190813b4b64f4f927b29c770d1f6d"
     },
     {
       "id": "02-start-cu-two-bays",
       "file": "02-start-cu-two-bays.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "1e291724451e5e3205653aa6364500a379f318b582ea2e3b327bbb3e5dce7677"
+      "sha256": "36eae5eb9f834f73ccaed1e650f54ea274d68c6bf618d1dfb3b8059ea2d90ce4"
     },
     {
       "id": "03-readable-rotated-cu",
       "file": "03-readable-rotated-cu.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "3c1f4f5c088a2c1eb75a1c6cf041c6e3b8ca740866a629780233ffc875c09e28"
+      "sha256": "1842a8b70253ca9396e065b6a9c970dc91e68c4c4512456e091811b82b506653"
     },
     {
       "id": "04-cu-on-existing-straight",
@@ -39,7 +39,7 @@
       "file": "05-optional-aks-marker.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "31f9ce41d9567a7d911bd70f6ffafa8383346b5ef9a1a4d4c91af611309f7008"
+      "sha256": "c58cfe16455d41cee2afd1e1376384ca0f7052026e5348b9ebe2410b8e64dd25"
     },
     {
       "id": "06-pit-assistant-single-other-side",
@@ -60,7 +60,7 @@
       "file": "08-connection-gap-direction.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "dc13755b269eec91b3ea28daac7fa3fe4dd230465322acc9fcc3bfc39cd08032"
+      "sha256": "d74850e1814d8f5e6e764faf531f7372c47f936072e2ca2dac3d19fbbd1b0a7b"
     },
     {
       "id": "09-assembly-templates",
@@ -95,21 +95,21 @@
       "file": "13-open-pit-connection.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "723fb17dfd55d3a6c0f5309394c57c5c9e5da06a7a127ee2c14f8f543f174919"
+      "sha256": "11a9f068726bd008dd6fed4f34a04f715af244ad7c0b571e5e648e49e05fb22d"
     },
     {
       "id": "14-repeat-placement",
       "file": "14-repeat-placement.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "b47a7a65dac91cb0c09d587b7b954da12b4098101ced06d470ab2ad67325ba84"
+      "sha256": "17e0f08f5567b45a8223427262e01edf66433874b2b27f1a7e0dc1cd57c3d2e7"
     },
     {
       "id": "15-replace-and-follow",
       "file": "15-replace-and-follow.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "cff5f73af83fb3b0c46645131f0a97b7ccc3857a89345dcc9c684aa0251c33b1"
+      "sha256": "0d685d120f88ddcc7042c94a7b5e597623e551d4f8d91162251dd9efdfee9bbc"
     },
     {
       "id": "16-choose-cut-point",
@@ -123,14 +123,14 @@
       "file": "17-join-sections-preview.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "70b0642844a1218b206b092ba6d1979a03022e3482d456b363c756dca7f89227"
+      "sha256": "4e93a8a6d3fd16c7d75539340f96098b84a68782aba79b38b1fd90c52ade117c"
     },
     {
       "id": "18-joined-sections",
       "file": "18-joined-sections.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "b1bfa290136d5802434646433dcce003fb780b8db6876306e95f3a918dabae34"
+      "sha256": "80687f5c32d7fc6be06aa15df2aee37c34a31316a866d7774e38585d7e68b06a"
     },
     {
       "id": "19-racehubos-dark-theme",
@@ -144,7 +144,7 @@
       "file": "20-fixed-cu-driving-cut.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "52a4bc4d3835029c8258ace0f02b592d2b22d7c529cd3f92c0f2b73ff02a7e99"
+      "sha256": "5c88c04fff0ca522f6273706b27d74cfb0e07d1f8486f1536939e535f609b37f"
     },
     {
       "id": "21-individual-pit-parts",
@@ -158,21 +158,21 @@
       "file": "22-parallel-multilane-preview.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "8c92d26b263dc37cb76e9ab18dbe4b3ab6991a74f1ddd8a8a87a483473fef1fc"
+      "sha256": "5363103c5909f42f4fb9fd094c79e52bf84a279349f72886e41da168e5a7f6d4"
     },
     {
       "id": "23-parallel-multilane-applied",
       "file": "23-parallel-multilane-applied.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "c469ced613ae397c42713de653d1b20770783b9ce54f020a976bce78859a958e"
+      "sha256": "b54ce6249dd55cf9f073c777945efc45715462307809b6dcde61459c14b2c4b5"
     },
     {
       "id": "24-parallel-individual-pit",
       "file": "24-parallel-individual-pit.png",
       "width": 1600,
       "height": 1400,
-      "sha256": "5db96c2f8728a9a32c10f4e2046617164aa8ac42840b8f7f63ca759ca6d016dc"
+      "sha256": "2bdf263b09a7f6c2e29945ec99e830b4c38221481eb87b810e963fe1ccef164d"
     }
   ]
 }

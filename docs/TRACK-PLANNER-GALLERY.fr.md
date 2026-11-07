@@ -2,7 +2,7 @@
 
 [Deutsch](TRACK-PLANNER-GALLERY.de.md) · [English](TRACK-PLANNER-GALLERY.en.md) · Français
 
-Captures réelles du planificateur autonome réalisées le 6 novembre 2026, avec interface française et données de démonstration exclusivement synthétiques. Toutes les images mesurent 1600 × 1400 pixels. L’apparence des rails n’a pas été modifiée pour les captures.
+Captures réelles du planificateur autonome réalisées le 7 novembre 2026, avec interface française et données de démonstration exclusivement synthétiques. Toutes les images mesurent 1600 × 1400 pixels. L’apparence des rails n’a pas été modifiée pour les captures.
 
 Utilisation et limites techniques : [outils de planification](../README.fr.md) (allemand). Comparaison des sources : [rapport](https://github.com/WillibaldSoft/RaceHubOS/blob/fa038fff3327b7796ea0c14d2797714c35359335/docs/TRACK-PLANNER-REVIEW-20261105.md) (allemand). Reproduction et vérification : [index des galeries](TRACK-PLANNER-GALLERY.md).
 

@@ -11,3 +11,9 @@ import editingEn from './locales/editing.en.json'
 import editingFr from './locales/editing.fr.json'
 for (const [lang, words] of Object.entries({ de: editingDe, en: editingEn, fr: editingFr }))
   i18n.addResourceBundle(lang, 'plannerEditing', words, true, true)
+
+import roomDe from './locales/room.de.json'
+import roomEn from './locales/room.en.json'
+import roomFr from './locales/room.fr.json'
+for (const [lang, words] of Object.entries({ de: roomDe, en: roomEn, fr: roomFr }))
+  i18n.addResourceBundle(lang, 'plannerRoom', words, true, true)

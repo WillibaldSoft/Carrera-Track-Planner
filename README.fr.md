@@ -43,7 +43,7 @@ L’ancien protocole iframe expérimental est isolé dans un adaptateur remplaç
 
 ![Planificateur avec sections raccordées](docs/screenshots/track-planner/fr/18-joined-sections.png)
 
-72 captures PNG localisées avec manifestes SHA-256. Inclus et vérifiés : six fichiers de tests unitaires avec 38 cas, 43 cas navigateur et trois scénarios de capture. Les suggestions automatiques de fermeture et l’API officielle de plugin restent à réaliser.
+84 captures PNG localisées avec manifestes SHA-256. Inclus et vérifiés : sept fichiers de tests unitaires avec 48 cas et 48 cas navigateur. Les suggestions automatiques de fermeture et l’API officielle de plugin restent à réaliser.
 
 ## Sources et licence
 
@@ -51,3 +51,6 @@ Apache-2.0. Les sources UI et géométriques RaceHubOS nécessaires sont fournie
 
 
 [CU fixe, éléments des stands et alignement parallèle](docs/CU-PIT-PARALLEL.fr.md)
+
+
+[Contour de la pièce et choix du local en premier](docs/ROOM-FOOTPRINT.fr.md)

@@ -1,3 +1,4 @@
+import { decodeLegacyRoom } from './host/legacyBridge'
 import { prepareIndividualPitParts } from './components/pitPartEditing'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -29,7 +30,7 @@ export default function StandalonePlanner() {
     setError('')
     setSuccess('')
     const track = tracks.find((row) => row.id === value)
-    setPlan(prepareIndividualPitParts(readTrackPlan(track?.layout) || emptyTrackPlan()))
+    setPlan(prepareIndividualPitParts(decodeLegacyRoom(track?.layout) || emptyTrackPlan()))
     setName(track?.name || '')
     setOpened(true)
   }

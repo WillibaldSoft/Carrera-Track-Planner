@@ -15,7 +15,7 @@ L’interface officielle, le téléchargement, les mises à jour, les autorisati
 
 ## État vérifié
 
-38 cas unitaires dans six fichiers inclus, 43 cas navigateur inclus et trois scénarios produisant 72 PNG ont réussi. La compilation autonome Vite/add-on réussit ; l’avertissement sur les grands blocs reste présent. Après `npm ci` et `npx playwright install chromium` : `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
+48 cas unitaires dans sept fichiers inclus, 48 cas navigateur inclus et six scénarios produisant 84 PNG ont réussi. La compilation autonome Vite/add-on réussit ; l’avertissement sur les grands blocs reste présent. Après `npm ci` et `npx playwright install chromium` : `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
 [CU fixe, éléments des stands et alignement parallèle](CU-PIT-PARALLEL.fr.md)
 
@@ -24,3 +24,6 @@ L’interface officielle, le téléchargement, les mises à jour, les autorisati
 L’API officielle reste à définir. Le JSON conserve tout le circuit ; le placement libre ne peut pas être exporté en ancien TRK. Une compatibilité complète Autorennbahnplaner 2.0 n’est pas confirmée. L’AKS décrit une installation, sans simuler l’électronique. Un raccordement géométrique ne garantit ni la fermeture d’autres écarts ni la faisabilité réelle. Les suggestions automatiques de rails ne sont pas encore implémentées. L’avertissement Vite sur la taille des chunks demeure. Cette publication ne valide pas de nouvelle exécution ni d’installateur Windows/macOS.
 
 Licence et provenance : [LICENSE](../LICENSE), [licence des sources fournies](../vendor/racehubos/LICENSE), [PROVENANCE.json](../PROVENANCE.json).
+
+
+[Contour de la pièce et choix du local en premier](ROOM-FOOTPRINT.fr.md)

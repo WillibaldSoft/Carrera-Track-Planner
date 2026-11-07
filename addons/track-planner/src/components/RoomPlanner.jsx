@@ -1,15 +1,19 @@
+import { decodeLegacyRoom } from '../host/legacyBridge'
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { DEFAULT_ROOM, planRoom, trackBounds, readTrackPlan } from '@racehubos/shared'
+import { DEFAULT_ROOM, planRoom, trackBounds } from '@racehubos/shared'
 import { Button } from '@core/components/ui/button'
 import { TrackPlanPreview } from '@core/components/tracks/TrackPlanPreview'
 import TrackImageExport from '@core/components/tracks/TrackImageExport'
 import RailInventoryEditor, { RailRequirementsTable } from './RailInventoryEditor'
 
-import { RoomPlanPreview, CurveDynamics } from '@core/components/tracks/SavedRoomPlan'
-export { SavedRoomPlan } from '@core/components/tracks/SavedRoomPlan'
+import { RoomPlanPreview, CurveDynamics } from './RoomPlanPreview'
+import RoomFootprintEditor from './RoomFootprintEditor'
+import { anchorRoom } from './roomBackground'
+export { SavedRoomPlan } from './RoomPlanPreview'
 export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceName }) {
   const { t } = useTranslation('tracks')
+  const { t: rt } = useTranslation('plannerRoom')
   const [room, setRoom] = useState(initialRoom || DEFAULT_ROOM)
   const [result, setResult] = useState(null)
   const [error, setError] = useState(false)
@@ -24,7 +28,7 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
       workerRef.current?.terminate()
       workerRef.current = null
     },
-    []
+    [],
   )
   useEffect(() => {
     if (workerRef.current) {
@@ -66,7 +70,7 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
           })
           if (!res.ok) throw new Error('Track list')
           const data = await res.json()
-          tracks.push(...data.data.filter((track) => readTrackPlan(track.layout)?.pieces.length))
+          tracks.push(...data.data.filter((track) => decodeLegacyRoom(track.layout)?.pieces.length))
           if (!data.hasMore) break
         }
         if (!controller.signal.aborted) setReferences(tracks)
@@ -87,7 +91,7 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
       setRoom(next)
       return
     }
-    const bounds = trackBounds(readTrackPlan(track.layout))
+    const bounds = trackBounds(decodeLegacyRoom(track.layout))
     setRoom({
       ...room,
       reference: {
@@ -97,17 +101,7 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
       },
     })
   }
-  const fields = [
-    'widthM',
-    'depthM',
-    'drivers',
-    'driverWidthM',
-    'driverDepthM',
-    'aisleM',
-    'edgeM',
-    'levelHeightMm',
-    'maxGradePercent',
-  ]
+  const fields = ['drivers', 'driverWidthM', 'driverDepthM', 'aisleM', 'edgeM', 'levelHeightMm', 'maxGradePercent']
   const limits = {
     widthM: [1, 30],
     depthM: [1, 30],
@@ -122,7 +116,7 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
   function generate() {
     if (!search.enabled) {
       try {
-        setResult(planRoom(room))
+        setResult(planRoom({ ...room, backgroundOrigin: undefined }))
         setError(false)
       } catch {
         setError(true)
@@ -161,14 +155,14 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
           setError(true)
         }
       }
-      const reference = readTrackPlan(references.find((track) => track.id === referenceId)?.layout) || sourcePlan
+      const reference = decodeLegacyRoom(references.find((track) => track.id === referenceId)?.layout) || sourcePlan
       const seed =
         !repeatSearch && lastSeedRef.current === search.seed
           ? (Math.imul(search.seed, 1664525) + 1013904223) >>> 0 || 1
           : search.seed
       const searchRoom = { ...room, detailedSearch: { ...search, seed } }
       setRoom(searchRoom)
-      worker.postMessage({ room: searchRoom, sourcePlan: reference })
+      worker.postMessage({ room: { ...searchRoom, backgroundOrigin: undefined }, sourcePlan: reference })
     } catch {
       workerRef.current?.terminate()
       workerRef.current = null
@@ -181,6 +175,18 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
     <section data-testid="room-planner" className="space-y-3 border rounded p-3">
       <h3 className="font-bold">{t('room.title')}</h3>
       <p className="text-sm">{t('room.description')}</p>
+      <RoomFootprintEditor
+        room={room}
+        references={references
+          .filter((r) => decodeLegacyRoom(r.layout)?.roomPlan)
+          .map((r) => ({ id: 'track-' + r.id, name: r.name, room: decodeLegacyRoom(r.layout).roomPlan }))}
+        onChange={(next) => {
+          cancelSearch()
+          setRoom(next)
+        }}
+        onContinue={(next) => onApply({ ...sourcePlan, roomPlan: anchorRoom(next, sourcePlan) })}
+      />
+      {!!room.features?.length && <p role="status">{rt('searchNote')}</p>}
       <fieldset disabled={searching} className="space-y-3">
         <label className="block text-sm">
           {t('room.reference')}
@@ -288,7 +294,7 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
         </label>
         <RailInventoryEditor
           inventory={room.inventory}
-          sourcePlan={readTrackPlan(references.find((track) => track.id === referenceId)?.layout) || sourcePlan}
+          sourcePlan={decodeLegacyRoom(references.find((track) => track.id === referenceId)?.layout) || sourcePlan}
           sourceName={references.find((track) => track.id === referenceId)?.name || sourceName}
           onChange={(inventory) => {
             const next = { ...room }
@@ -433,7 +439,7 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
               ? 'search.noFit_inventory'
               : result.reason && ['source', 'levels', 'clearance', 'ramps', 'search'].includes(result.reason)
                 ? `search.noFit_${result.reason}`
-                : `room.noFit_${result.reason}`
+                : `room.noFit_${result.reason}`,
           )}
         </p>
       )}

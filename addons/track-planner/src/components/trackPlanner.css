@@ -1173,3 +1173,7 @@
   display: block;
   width: 100%;
 }
+
+.planner-room-shape input, .planner-room-shape select, [data-testid="room-background-controls"] input[type="number"] { display: block; width: 100%; padding: .4rem; border: 1px solid var(--border); border-radius: .4rem; }
+.room-shape-canvas { display: block; width: 100%; height: min(48vh, 460px); min-height: 260px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: .5rem; touch-action: none; }
+.planner-room-shape h3 { font-weight: 700; }
