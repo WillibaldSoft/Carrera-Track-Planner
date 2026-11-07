@@ -13,6 +13,7 @@ import {
   attachTrackAccessory,
   attachAutomaticBorders,
   nextAutomaticBorderTarget,
+  automaticBorderReversed,
 } from '../addons/track-planner/src/components/automaticAttachments.js'
 import { selectedTrackBounds } from '../addons/track-planner/src/components/selectionViewport.js'
 const straight = () => ({ ...emptyTrackPlan(), pieces: [{ type: 'Standardgerade', level: 0, jointDegrees: 0 }] })
@@ -182,4 +183,18 @@ test('rotated and curved shoulders have their own narrow shape-following colour 
       assert.ok(Math.abs(a[i].points[j][0] + b[i].points[j][0]) < 1e-6)
       assert.ok(Math.abs(a[i].points[j][1] + b[i].points[j][1]) < 1e-6)
     }
+})
+
+test('automatic direction accepts legacy plans with no cached connectivity and empty drafts', () => {
+  const legacy = straight()
+  assert.equal(automaticBorderReversed(legacy, 0, null), false)
+  assert.equal(automaticBorderReversed(emptyTrackPlan(), -1, null), false)
+  const backwards = {
+    ...enableFreePlacement(legacy),
+    pieces: [
+      { ...legacy.pieces[0], placement: { xMm: 0, yMm: 0, headingDegrees: 0 } },
+      { ...legacy.pieces[0], placement: { xMm: 690, yMm: 0, headingDegrees: 180 } },
+    ],
+  }
+  assert.equal(automaticBorderReversed(backwards, 1, null), true)
 })

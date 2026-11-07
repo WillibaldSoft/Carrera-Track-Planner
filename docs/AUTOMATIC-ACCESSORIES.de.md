@@ -18,7 +18,7 @@ Die zentrale Leiste enthält Bahn speichern, Import/Export, Boxenassistent, CU, 
 
 ![Markiertes Teil im Zoom zentriert](screenshots/automatic-attachments/de/03-centred-selection.png)
 
-# Version 1.1.2 – Randstreifen schienenweise fortsetzen
+# Version 1.1.3 – Randstreifen schienenweise fortsetzen
 
 Randstreifen erhalten eine schwarze Auslaufzone und einen schmalen rot-weißen Rand. Das Muster wird für jedes Teil separat entlang seiner Kontur berechnet: Gerade, Innenkurve, Außenkurve und Abschlussstück haben passende Farbsegmente. Bei der Standardgeraden orientiert sich die Teilung an den sechs roten Segmenten des offiziellen Produktfotos.
 

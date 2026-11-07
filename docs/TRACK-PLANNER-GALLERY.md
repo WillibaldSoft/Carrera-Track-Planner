@@ -10,7 +10,7 @@
 
 Scenes 20–24 show CU-preserving curve edits, individual pit parts, parallel multilane preview and application, and parallel docking of a single pit rail. Earlier scenes cover start/finish, two fuel bays, readable CU labels, optional AKS, pit assistance, templates, checks, repeat placement, fixed sidebars, replacement, cut points, joining and dark appearance.
 
-Reproduce from this repository: `npm ci`, `npx playwright install chromium`, `npm run screenshots`. The included generator is [track-planner.spec.mjs](../scripts/screenshots/track-planner.spec.mjs). All three capture scenarios passed. `npm test` covers 114 unit cases; `npm run test:browser` includes 89 browser cases. See the [review guide](REVIEW.md).
+Reproduce from this repository: `npm ci`, `npx playwright install chromium`, `npm run screenshots`. The included generator is [track-planner.spec.mjs](../scripts/screenshots/track-planner.spec.mjs). All three capture scenarios passed. `npm test` covers 115 unit cases; `npm run test:browser` includes 89 browser cases. See the [review guide](REVIEW.md).
 
 ## Room footprint · Raumkontur · Contour de la pièce
 

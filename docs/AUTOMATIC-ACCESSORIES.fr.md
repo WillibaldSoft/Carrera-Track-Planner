@@ -18,7 +18,7 @@ La barre centrale regroupe enregistrement, import/export, assistant des stands, 
 
 ![Sélection centrée](screenshots/automatic-attachments/fr/03-centred-selection.png)
 
-# Version 1.1.2 – Continuer les bordures rail par rail
+# Version 1.1.3 – Continuer les bordures rail par rail
 
 Les bordures reçoivent une zone de dégagement sombre et une bande extérieure rouge/blanc étroite. Les segments colorés suivent chaque pièce : droite, courbe intérieure/extérieure et extrémité. La droite reprend la répartition des six segments rouges de la photo officielle.
 

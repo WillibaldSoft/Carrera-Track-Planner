@@ -162,6 +162,8 @@ for (const side of ['left', 'right', 'both'])
 test('curve-specific shoulders continue with matching articles and export as individual vector artwork', async ({
   page,
 }) => {
+  const errors = []
+  page.on('pageerror', (error) => errors.push(error.message))
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
@@ -203,6 +205,7 @@ test('curve-specific shoulders continue with matching articles and export as ind
   await controls.getByTestId('export-image-pdf').click()
   const pdf = await pending
   await pdf.saveAs('test-results/curved-shoulders-vector.pdf')
+  expect(errors).toEqual([])
 })
 
 test('left stays left in driving direction on a reversed connected rail and repeated clicks do not paint the opposite side', async ({
@@ -221,13 +224,11 @@ test('left stays left in driving direction on a reversed connected rail and repe
       { xMm: 690, yMm: 0, headingDegrees: 0 },
     ].map((placement) => ({ type: 'Standardgerade', level: 0, jointDegrees: 0, placement })),
   }
-  await page
-    .getByTestId('track-plan-import')
-    .setInputFiles({
-      name: 'reversed-shoulder.json',
-      mimeType: 'application/json',
-      buffer: Buffer.from(JSON.stringify(source)),
-    })
+  await page.getByTestId('track-plan-import').setInputFiles({
+    name: 'reversed-shoulder.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(source)),
+  })
   await page.getByTestId('planner-mode').selectOption('editor')
   await page.getByTestId('track-auto-attachments').click()
   await page.getByTestId('auto-border-side').selectOption('left')

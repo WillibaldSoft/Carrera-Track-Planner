@@ -10,6 +10,7 @@ import {
   attachAutomaticBorders,
   nextAutomaticBorderTarget,
   canAttachAutomaticBorders,
+  automaticBorderReversed,
 } from './automaticAttachments.js'
 import { selectedTrackBounds } from './selectionViewport.js'
 import { placementCoordinates } from './placementCoordinates'
@@ -402,10 +403,7 @@ export default function GraphicalTrackEditor({
     )
   }, [automaticPlan, storedPlan, autoTarget])
   function automaticReverse(index) {
-    const route = trace.connectivity.route
-    const step = route.find((item) => item.index === index)
-    const cu = route.find((item) => storedPlan.pieces[item.index]?.type === 'Control_unit')
-    return !!step && step.reverse !== !!cu?.reverse
+    return automaticBorderReversed(storedPlan, index, trace.connectivity)
   }
   function addAutomatic(index = autoTarget, id = autoSide, fromCanvas = false) {
     if (!storedPlan.pieces[index]) return

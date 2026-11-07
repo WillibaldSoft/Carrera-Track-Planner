@@ -18,7 +18,7 @@ The central toolbar includes save, import/export, pit assistant, CU, templates, 
 
 ![Centred selection](screenshots/automatic-attachments/en/03-centred-selection.png)
 
-# Version 1.1.2 – Continue shoulders one rail at a time
+# Version 1.1.3 – Continue shoulders one rail at a time
 
 Shoulders have a dark drift apron and a narrow red/white outer band. Each piece receives its own contour-following colour segments: straight, inner curve, outer curve and end piece. Straight-track spacing follows the six red segments visible in the official product photo.
 

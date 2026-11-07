@@ -119,3 +119,10 @@ export function nextAutomaticBorderTarget(plan, index, side = 'both', reverse = 
   }
   return null
 }
+
+export function automaticBorderReversed(plan, index, connectivity = null) {
+  const route = (connectivity ?? analyseTrackConnections(traceTrackPlan(plan).segments)).route
+  const step = route.find((item) => item.index === index)
+  const cu = route.find((item) => plan.pieces[item.index]?.type === 'Control_unit')
+  return !!step && step.reverse !== !!cu?.reverse
+}
