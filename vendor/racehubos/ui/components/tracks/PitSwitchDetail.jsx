@@ -28,8 +28,10 @@ export function PitSwitchDetail({ entry, pose, materialId, realistic = true, nat
         {entry ? (
           <g data-pit-actuator="true">
             <path d="M18 49.5 L70 47 L70 51 Z" fill="#e1e5e8" stroke="#4b5157" strokeWidth="1.5" />
-            <rect x="80" y="65" width="17" height="13" rx="2" fill="#101214" stroke="#9ca3af" strokeWidth="2" />
-            <path d="M83 71H94" stroke="#c5cbd0" strokeWidth="2" />
+            <g data-testid="pit-switch-infrared-sensor" data-slot-y="49.5">
+              <rect x="80" y="28" width="17" height="13" rx="2" fill="#101214" stroke="#9ca3af" strokeWidth="2" />
+              <circle cx="88.5" cy="34.5" r="3.5" fill="#421721" stroke="#92646b" strokeWidth=".8" />
+            </g>
           </g>
         ) : (
           <g data-pit-fixed-merge="true">

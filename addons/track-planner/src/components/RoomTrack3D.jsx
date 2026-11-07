@@ -4,7 +4,8 @@ import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@core/components/ui/button'
 import TrackImageExport from './PlannerImageExport'
-import { UnitDetails, FuelDetail } from '@core/components/tracks/TrackUnitDetails'
+import { UnitDetails, FuelDetail, SwitchDiodeDetails } from '@core/components/tracks/TrackUnitDetails'
+import { PitSwitchDetail } from '@core/components/tracks/PitSwitchDetail'
 import { trackViewport } from './trackViewport'
 import { buildRoomScene, projectRoomScene } from './roomScene3d.js'
 const initial = { yaw: -35, pitch: 55, zoom: 1, pan: { x: 0, y: 0 } }
@@ -91,6 +92,8 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
       <g key={item.id} transform={item.matrix} pointerEvents="none" data-3d-art={item.kind}>
         {item.kind === 'fuel' ? (
           <FuelDetail index={`3d-${item.index}`} pose={{ xMm: 0, yMm: 0, headingDegrees: 0 }} article="30361" />
+        ) : item.kind === 'pit-switch' ? (
+          <PitSwitchDetail entry native pose={{ xMm: 0, yMm: 0, headingDegrees: 0 }} />
         ) : (
           <>
             <defs>
@@ -100,6 +103,10 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
             </defs>
             <g clipPath={`url(#${clip})`}>
               <UnitDetails segment={{ index: item.index, type: item.type, start: { x: 0, y: 0, h: 0 } }} />
+              {item.type === 'Pit_stop_weiche_anfang' && (
+                <PitSwitchDetail entry pose={{ xMm: 0, yMm: 0, headingDegrees: 0 }} />
+              )}
+              <SwitchDiodeDetails segment={{ index: item.index, type: item.type, start: { x: 0, y: 0, h: 0 } }} />
             </g>
           </>
         )}

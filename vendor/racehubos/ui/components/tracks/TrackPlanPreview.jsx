@@ -2,7 +2,7 @@ import { AntiCollisionMarker } from './AntiCollisionMarker'
 import { PitSwitchDetail } from './PitSwitchDetail'
 import { pitlaneComponents } from './pitlaneComponents'
 import { RailSlotPaths } from './RailSlotPaths'
-import { UnitDetails, FuelDetail } from './TrackUnitDetails'
+import { UnitDetails, FuelDetail, SwitchDiodeDetails } from './TrackUnitDetails'
 import { useId } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -58,7 +58,7 @@ export function TrackPlanPreview({
       all.push([
         entry.x + Math.cos(entry.h) * u - Math.sin(entry.h) * v,
         entry.y + Math.sin(entry.h) * u + Math.cos(entry.h) * v,
-      ])
+      ]),
     )
   }
   if (!all.length && embedded) return null
@@ -144,6 +144,15 @@ export function TrackPlanPreview({
                           fill="#15191e"
                           stroke="#747c83"
                           strokeWidth="1.5"
+                        />
+                        <circle
+                          data-testid="schematic-switch-infrared-sensor"
+                          cx={a + 73}
+                          cy={from + 20}
+                          r="3.5"
+                          fill="#421721"
+                          stroke="#92646b"
+                          strokeWidth=".8"
                         />
                       </g>
                     )}
@@ -493,6 +502,7 @@ export function TrackPlanPreview({
                 <AntiCollisionMarker id={`rail-${s.index}`} x={s.points[0][16][0]} y={s.points[0][16][1] - 75} />
               )}
               <UnitDetails segment={s} realistic={realistic} />
+              <SwitchDiodeDetails segment={s} profile={plan.geometryProfile} />
               <RailSlotPaths
                 paths={[1, 2].map((n) => line(s.points[n]))}
                 materialId={materialId}
@@ -548,7 +558,7 @@ export function TrackPlanPreview({
                 </text>
               )}
             </g>
-          )
+          ),
         )}
       {connector && (
         <g

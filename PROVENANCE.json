@@ -58,7 +58,9 @@
     {
       "source": "packages/frontend/src/components/tracks/PitSwitchDetail.jsx",
       "export": "vendor/racehubos/ui/components/tracks/PitSwitchDetail.jsx",
-      "sha256": "d54c494a702d694c9253a3efc3d53910348ba7698037b12c272b30b7495d2b5f"
+      "sha256": "a43a53215f7ed65e02572dc5be7093e279ad3f698796cc731b1179ef7d699b14",
+      "originalSha256": "d54c494a702d694c9253a3efc3d53910348ba7698037b12c272b30b7495d2b5f",
+      "localModification": "Planner-owned CU/start-finish, FUEL and active switch diode artwork; infrared sensors and FUEL markings left of each slot in driving direction, including rotated and native pit parts. Rail geometry unchanged."
     },
     {
       "source": "packages/frontend/src/i18n/locales/fr/extensions.json",
@@ -228,9 +230,9 @@
     {
       "source": "packages/frontend/src/components/tracks/TrackUnitDetails.jsx",
       "export": "vendor/racehubos/ui/components/tracks/TrackUnitDetails.jsx",
-      "sha256": "6b94a8cc7388f92c650197f6c189587e47f6a48802004eaad0e782dda0d4cf84",
+      "sha256": "59b1de331c12aa29775bab7b06f0f7b51d987f7522ad8e86780121cf7ab23813",
       "originalSha256": "9c325325f8c334228283715fec864937702f60370bf68f6754dd2d30096459a4",
-      "localModification": "Planner-owned CU/start-finish and striped fuel-sensor SVG illustration, readable rotated labels and legacy pit heading support."
+      "localModification": "Planner-owned CU/start-finish, FUEL and active switch diode artwork; infrared sensors and FUEL markings left of each slot in driving direction, including rotated and native pit parts. Rail geometry unchanged."
     },
     {
       "source": "packages/frontend/src/i18n/locales/en/common.json",
@@ -275,9 +277,9 @@
     {
       "source": "packages/frontend/src/components/tracks/TrackPlanPreview.jsx",
       "export": "vendor/racehubos/ui/components/tracks/TrackPlanPreview.jsx",
-      "sha256": "c30ec8a54bb46ee97fd6707a688874bc5e6af6e1b43fca0d1d2c71881a240fd1",
+      "sha256": "61c93d881eab8fc111b536253a06a59e73369f5d1c4919bb1a4901f835e155a5",
       "originalSha256": "4c445eb963013b812b12fa4af33aef3619f3c8c9d785461accca6cdbeb92590e",
-      "localModification": "Planner-owned CU/start-finish and striped fuel-sensor SVG illustration, readable rotated labels and legacy pit heading support."
+      "localModification": "Planner-owned CU/start-finish, FUEL and active switch diode artwork; infrared sensors and FUEL markings left of each slot in driving direction, including rotated and native pit parts. Rail geometry unchanged."
     },
     {
       "source": "packages/frontend/src/i18n/locales/en/stats.json",

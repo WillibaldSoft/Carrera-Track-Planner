@@ -15,7 +15,7 @@ L’interface officielle, le téléchargement, les mises à jour, les autorisati
 
 ## État vérifié
 
-111 cas unitaires dans seize fichiers ont réussi. La suite navigateur contient 83 cas : 82 ont réussi au passage complet ; le premier démarrage affecté par la compilation parallèle a ensuite réussi avec les 15 cas finaux de démarrage, export et intégration sur la compilation terminée. 18 scénarios réussis fournissent 150 PNG. L’ancien parseur hôte réel préserve hauteurs, rampes et positions manuelles via l’adaptateur. La compilation Vite/module réussit ; l’avertissement sur les gros blocs demeure. Commandes : `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
+111 cas unitaires dans seize fichiers et 13 cas navigateur ciblés ont été vérifiés pour la correction 1.1.1. 84 cas navigateur sont inclus ; les 83 précédents ont été couverts avec succès pour la version 1.1.0. 18 scénarios produisent maintenant 153 PNG ; les trois scénarios de détail ont été actualisés pour les diodes à gauche. Compilation, PDF vectoriel et positions enregistrées sont vérifiés. L’avertissement Vite existant demeure. Commandes : `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
 [CU fixe, éléments des stands et alignement parallèle](CU-PIT-PARALLEL.fr.md)
 

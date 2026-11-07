@@ -307,7 +307,10 @@ export function buildRoomScene(input, overrides = {}) {
         'unit',
         { rail: s.index },
       )
-    if (['Control_unit', 'AdapterUnit', 'Check_lane', 'Multistart'].includes(s.type)) {
+    if (
+      ['Control_unit', 'AdapterUnit', 'Check_lane', 'Multistart', 'Pit_stop_weiche_anfang'].includes(s.type) ||
+      /^(DigitaleDoppelweiche|Weiche_(links|rechts)|Kurvenweiche_(links|rechts)_(ai|ia))_1$/.test(s.type)
+    ) {
       art.push({
         id: `unit-road-${s.index}`,
         kind: 'unit-road',
@@ -384,6 +387,18 @@ export function buildRoomScene(input, overrides = {}) {
         kind: 'slot',
         extra: i,
       })
+    if (e.kind === 'pitEntry') {
+      const pose = extraWorldPose(e, segments)
+      art.push({
+        id: `pit-switch-${i}`,
+        kind: 'pit-switch',
+        x: pose.xMm,
+        y: pose.yMm,
+        heading: pose.headingDegrees,
+        z: z + 13,
+        index: i,
+      })
+    }
     if (fuel.has(i)) {
       const pose = extraWorldPose(e, segments)
       art.push({

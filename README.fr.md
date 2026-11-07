@@ -46,7 +46,7 @@ L’ancien protocole iframe expérimental est isolé dans un adaptateur remplaç
 
 ![Planificateur avec sections raccordées](docs/screenshots/track-planner/fr/18-joined-sections.png)
 
-150 captures PNG localisées avec manifestes SHA-256, issues de 18 scénarios. Inclus : 111 cas unitaires dans seize fichiers et 83 cas navigateur. La validation contrôle aussi les PDF vectoriels et l’ancien parseur hôte réellement installé. Les suggestions automatiques de fermeture et l’API officielle restent à réaliser.
+153 captures PNG localisées avec manifestes SHA-256, issues de 18 scénarios. Inclus : 111 cas unitaires dans seize fichiers et 84 cas navigateur. La validation contrôle aussi les PDF vectoriels et l’ancien parseur hôte réellement installé. Les suggestions automatiques de fermeture et l’API officielle restent à réaliser.
 
 ## Sources et licence
 
@@ -67,3 +67,5 @@ Apache-2.0. Les sources UI et géométriques RaceHubOS nécessaires sont fournie
 [Vue 3D dans la pièce](docs/ROOM-3D.fr.md) — 150 mm de passage libre, aperçu local.
 
 [Version 1.1.0](docs/RELEASE-1.1.0.fr.md)
+
+[Version 1.1.1](docs/RELEASE-1.1.1.fr.md)

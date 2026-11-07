@@ -5,17 +5,22 @@
     {
       "id": "01-cu-start-finish",
       "file": "01-cu-start-finish.png",
-      "sha256": "7ac38d6c8733300736328b72f4e1fe54e61bb3369d765a9220be07bfe6cb2c7b"
+      "sha256": "002e3a036e1f96a69b4d2c064f7bcfbcbce50af4edf692e010c3980e391c8a18"
     },
     {
       "id": "02-two-fuel-rails",
       "file": "02-two-fuel-rails.png",
-      "sha256": "f4f7ef3962fb63706eea99ca03ef84b0786638685b5bc559cb1a6c75aca71e6c"
+      "sha256": "a41b81c2e9743a5ac4a4611c612d6e50f709f08527f5fce9d172ccf0d5ea20b4"
     },
     {
       "id": "03-cu-and-pit-overview",
       "file": "03-cu-and-pit-overview.png",
-      "sha256": "c82e6d6e96ef394fe90bf57a138e40a6e31d62824f00d4935d7aba997fd371f7"
+      "sha256": "916028fb9c793ec2a0028ec8b504313876da7d75540c9aa1cd579fd67109ea0c"
+    },
+    {
+      "id": "04-switch-diodes-left",
+      "file": "04-switch-diodes-left.png",
+      "sha256": "6d36ee37162e0d0a0ca04b475a611deab22160525220c3b483bcbb41e866ebe9"
     }
   ]
 }

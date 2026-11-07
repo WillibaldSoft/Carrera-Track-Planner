@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import { switchGuidePaths } from '@racehubos/shared'
 // Keep lettering readable on screen while the housing and sensors follow the rail.
 function UnitText({ headingRadians, x, y, angle = 0, children, ...props }) {
   const heading = ((((headingRadians * 180) / Math.PI + angle) % 360) + 360) % 360
@@ -201,7 +202,7 @@ export function UnitDetails({ segment, realistic = true }) {
             >
               FINISH
             </UnitText>
-            {[-34.5, 64.5].map((y, i) => (
+            {[-64.5, 34.5].map((y, i) => (
               <g key={i} data-testid={`cu-track-sensor-${i}`}>
                 <rect x="215" y={y - 8} width="12" height="16" rx="3" fill="#0a0c0e" stroke="#4c5358" strokeWidth="1" />
                 <circle cx="221" cy={y} r="3.5" fill="#421721" stroke="#92646b" strokeWidth=".8" />
@@ -215,7 +216,7 @@ export function UnitDetails({ segment, realistic = true }) {
           <path d="M165 -96v192 M180 -96v192" stroke="#eee" strokeWidth="5" />
           {[-49.5, 49.5].map((y, i) => (
             <g key={i}>
-              {sensor(200, y, i)}
+              {sensor(200, type === 'Multistart' ? y - 15 : y, i)}
               <path d={`M120 ${y - 22}l27 22 -27 22z`} fill="#e5e7eb" />
             </g>
           ))}
@@ -265,7 +266,7 @@ export function FuelDetail({ pose, index, article, worldHeadingDegrees = pose.he
       data-fuel-artwork="striped-sensor"
       transform={`translate(${pose.xMm} ${pose.yMm}) rotate(${pose.headingDegrees})`}
     >
-      {/* Printed markings sit to one side of the live slot, as on the 30361. */}
+      {/* Sensor, striped printing and FUEL sit left of the slot in driving direction. */}
       <g fill="#e5e4de" data-testid="fuel-printed-markings">
         {[-44, 146].flatMap((x) =>
           [-41, 41].map((y) => (
@@ -284,21 +285,21 @@ export function FuelDetail({ pose, index, article, worldHeadingDegrees = pose.he
               x = 46 + side * distance,
               height = 2 + i * 2.1
             return (
-              <path key={`${side}-${i}`} d={`M${x} 8v${height}`} stroke="#e5e4de" strokeWidth={i < 4 ? 1.1 : 2.3} />
+              <path key={`${side}-${i}`} d={`M${x} -8v${-height}`} stroke="#e5e4de" strokeWidth={i < 4 ? 1.1 : 2.3} />
             )
           }),
         )}
       </g>
       <g data-testid="fuel-infrared-sensor">
-        <circle cx="46" cy="11" r="4.8" fill="#e1e2db" />
-        <circle cx="46" cy="11" r="3.2" fill="#0b0d0e" />
-        <circle cx="46" cy="11" r="1.9" fill="#a32936" />
-        <circle cx="45.5" cy="10.4" r=".6" fill="#eea29e" />
+        <circle cx="46" cy="-11" r="4.8" fill="#e1e2db" />
+        <circle cx="46" cy="-11" r="3.2" fill="#0b0d0e" />
+        <circle cx="46" cy="-11" r="1.9" fill="#a32936" />
+        <circle cx="45.5" cy="-10.4" r=".6" fill="#eea29e" />
       </g>
       <UnitText
         headingRadians={headingRadians}
         x="46"
-        y="29"
+        y="-29"
         angle={-90}
         fill="#e5e4de"
         fontSize="11"
@@ -308,6 +309,32 @@ export function FuelDetail({ pose, index, article, worldHeadingDegrees = pose.he
         FUEL
       </UnitText>
       {article && <title>{article} · FUEL</title>}
+    </g>
+  )
+}
+
+// Only the incoming module has receiving diodes; exit modules/merges are passive.
+export function SwitchDiodeDetails({ segment, profile = 'planner2022' }) {
+  if (!/^(DigitaleDoppelweiche|Weiche_(links|rechts)|Kurvenweiche_(links|rechts)_(ai|ia))_1$/.test(segment.type))
+    return null
+  const h = segment.start.h,
+    c = Math.cos(h),
+    s = Math.sin(h)
+  return (
+    <g
+      transform={`translate(${segment.start.x} ${segment.start.y}) rotate(${(h * 180) / Math.PI})`}
+      data-testid="switch-diode-details"
+    >
+      {switchGuidePaths(segment, profile).map((points, i) => {
+        const [x, y] = points[0]
+        const lane = -(x - segment.start.x) * s + (y - segment.start.y) * c
+        return (
+          <g key={i} data-testid="switch-infrared-sensor" data-slot-y={lane}>
+            <rect x="74" y={lane - 23} width="12" height="16" rx="3" fill="#0a0c0e" stroke="#4c5358" strokeWidth="1" />
+            <circle cx="80" cy={lane - 15} r="3.5" fill="#421721" stroke="#92646b" strokeWidth=".8" />
+          </g>
+        )
+      })}
     </g>
   )
 }

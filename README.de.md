@@ -46,7 +46,7 @@ Das bisherige experimentelle iframe-Protokoll ist als austauschbarer Adapter gek
 
 ![Planer mit zusammengefügten Abschnitten](docs/screenshots/track-planner/de/18-joined-sections.png)
 
-150 echte lokalisierte PNGs mit SHA-256-Manifesten aus 18 Aufnahme-Szenarien. Enthalten: 111 Unit-Fälle in sechzehn Dateien und 83 Browserfälle. Die Release-Prüfung umfasst außerdem Vektor-PDFs und den tatsächlich installierten älteren Host-Parser. Automatische Schließvorschläge und die offizielle Plugin-API stehen weiterhin aus.
+153 echte lokalisierte PNGs mit SHA-256-Manifesten aus 18 Aufnahme-Szenarien. Enthalten: 111 Unit-Fälle in sechzehn Dateien und 84 Browserfälle. Die Release-Prüfung umfasst außerdem Vektor-PDFs und den tatsächlich installierten älteren Host-Parser. Automatische Schließvorschläge und die offizielle Plugin-API stehen weiterhin aus.
 
 ## Quellen und Lizenz
 
@@ -67,3 +67,5 @@ Apache-2.0. Benötigte RaceHubOS-UI- und Geometriequellen liegen mit Lizenz unte
 [3D-Ansicht im Raum](docs/ROOM-3D.de.md) — 150 mm lichte Überfahrthöhe, lokale Vorschau.
 
 [Version 1.1.0](docs/RELEASE-1.1.0.de.md)
+
+[Version 1.1.1](docs/RELEASE-1.1.1.de.md)
