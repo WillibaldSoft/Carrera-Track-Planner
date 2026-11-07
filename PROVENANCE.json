@@ -277,9 +277,9 @@
     {
       "source": "packages/frontend/src/components/tracks/TrackPlanPreview.jsx",
       "export": "vendor/racehubos/ui/components/tracks/TrackPlanPreview.jsx",
-      "sha256": "61c93d881eab8fc111b536253a06a59e73369f5d1c4919bb1a4901f835e155a5",
+      "sha256": "fd6b42f1281cd5fa6e478c6fde0770f00fc929142e8c95d56ade10dc29800a2a",
       "originalSha256": "4c445eb963013b812b12fa4af33aef3619f3c8c9d785461accca6cdbeb92590e",
-      "localModification": "Planner-owned CU/start-finish, FUEL and active switch diode artwork; infrared sensors and FUEL markings left of each slot in driving direction, including rotated and native pit parts. Rail geometry unchanged."
+      "localModification": "Piece-local shoulder artwork: dark drift apron with narrow red/white bands following each straight, inner/outer curve and end piece. Existing footprint and dimensions retained; shared vector geometry for 2D, 3D and export."
     },
     {
       "source": "packages/frontend/src/i18n/locales/en/stats.json",
@@ -572,7 +572,9 @@
     {
       "source": "packages/shared/src/trackBorderGeometry.js",
       "export": "vendor/racehubos/shared/src/trackBorderGeometry.js",
-      "sha256": "662714ca7344aaac9f17a4fb8e14e46cd3a5c66811d28aa1d9b9c3f4edc51649"
+      "sha256": "a36dae8c9873fd984880f7315e3d8d592c26cd50ac9752521d37173304f03680",
+      "originalSha256": "662714ca7344aaac9f17a4fb8e14e46cd3a5c66811d28aa1d9b9c3f4edc51649",
+      "localModification": "Piece-local shoulder artwork: dark drift apron with narrow red/white bands following each straight, inner/outer curve and end piece. Existing footprint and dimensions retained; shared vector geometry for 2D, 3D and export."
     },
     {
       "source": "packages/shared/src/trackBorders.js",

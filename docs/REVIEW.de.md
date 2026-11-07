@@ -15,7 +15,7 @@ Die offizielle Plugin-Schnittstelle sowie Download, Updates, Berechtigungen und 
 
 ## Verifizierter Stand
 
-111 Unit-Fälle in sechzehn Dateien und 13 gezielte Browserfälle zur Korrektur 1.1.1 sind geprüft. Insgesamt sind 84 Browserfälle enthalten; die vorherigen 83 wurden zur Version 1.1.0 erfolgreich abgedeckt. 18 Aufnahme-Szenarien liefern nun 153 PNGs; die drei Detail-Szenarien wurden für linksseitige Dioden aktualisiert. Build, Vektor-PDF und Erhaltung der gespeicherten Positionen sind geprüft. Der bestehende Vite-Hinweis auf große Chunks bleibt. Reproduzierbar: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
+114 Unit-Fälle in sechzehn Dateien und 22 gezielte Browserfälle zur Korrektur 1.1.2 sind geprüft. Insgesamt sind 89 Browserfälle enthalten; die vorherigen 83 wurden zur Version 1.1.0 erfolgreich abgedeckt. 18 Aufnahme-Szenarien liefern nun 156 PNGs; die drei Detail-Szenarien wurden für linksseitige Dioden aktualisiert. Build, Vektor-PDF und Erhaltung der gespeicherten Positionen sind geprüft. Der bestehende Vite-Hinweis auf große Chunks bleibt. Reproduzierbar: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
 [CU, einzelne Boxenteile und paralleles Andocken](CU-PIT-PARALLEL.de.md)
 

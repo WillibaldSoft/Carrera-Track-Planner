@@ -1,7 +1,7 @@
 {
   "automatic": "Accessoires automatiques",
   "target": "Accessoires du rail {{number}}",
-  "hint": "Survoler une option pour prévisualiser, cliquer pour ajouter. Le rail cible reste surligné.",
+  "hint": "Les extrémités restent disponibles séparément avec aperçu.",
   "none": "Aucun autre accessoire compatible disponible.",
   "close": "Fermer",
   "strip": "Bordure",
@@ -20,5 +20,9 @@
   "pan": "Déplacer la vue",
   "toolbar": "Barre d’outils centrale",
   "save": "Enregistrer le circuit",
-  "files": "Importer / exporter"
+  "files": "Importer / exporter",
+  "side": "Côté dans le sens de circulation",
+  "both": "Deux côtés",
+  "continueHint": "Choisir un côté, survoler un rail et cliquer. Le choix reste actif ; le raccord suivant est proposé.",
+  "applyNext": "Ajouter les bordures et continuer"
 }

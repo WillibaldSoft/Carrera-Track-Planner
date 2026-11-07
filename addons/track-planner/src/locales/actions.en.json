@@ -1,7 +1,7 @@
 {
   "automatic": "Automatic accessories",
   "target": "Accessories for rail {{number}}",
-  "hint": "Hover an option to preview; click to attach. The target rail stays highlighted.",
+  "hint": "End pieces remain individually available with a preview.",
   "none": "No further matching accessories available.",
   "close": "Close",
   "strip": "Shoulder",
@@ -20,5 +20,9 @@
   "pan": "Pan view",
   "toolbar": "Central toolbar",
   "save": "Save track",
-  "files": "Import / export"
+  "files": "Import / export",
+  "side": "Side in driving direction",
+  "both": "Both sides",
+  "continueHint": "Choose a side, hover a rail and click. The choice stays active; the next matching connection follows.",
+  "applyNext": "Attach shoulders and continue"
 }

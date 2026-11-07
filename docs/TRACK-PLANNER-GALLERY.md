@@ -10,7 +10,7 @@
 
 Scenes 20–24 show CU-preserving curve edits, individual pit parts, parallel multilane preview and application, and parallel docking of a single pit rail. Earlier scenes cover start/finish, two fuel bays, readable CU labels, optional AKS, pit assistance, templates, checks, repeat placement, fixed sidebars, replacement, cut points, joining and dark appearance.
 
-Reproduce from this repository: `npm ci`, `npx playwright install chromium`, `npm run screenshots`. The included generator is [track-planner.spec.mjs](../scripts/screenshots/track-planner.spec.mjs). All three capture scenarios passed. `npm test` covers 111 unit cases; `npm run test:browser` includes 84 browser cases. See the [review guide](REVIEW.md).
+Reproduce from this repository: `npm ci`, `npx playwright install chromium`, `npm run screenshots`. The included generator is [track-planner.spec.mjs](../scripts/screenshots/track-planner.spec.mjs). All three capture scenarios passed. `npm test` covers 114 unit cases; `npm run test:browser` includes 89 browser cases. See the [review guide](REVIEW.md).
 
 ## Room footprint · Raumkontur · Contour de la pièce
 
@@ -38,8 +38,10 @@ Fifteen additional screenshots show the room, bridge clearance, top view, ramp l
 
 ## Heights and gradients in 2D
 
-Twenty-seven localized screenshots show clickable height/gradient labels, direct editing, hidden labels, individual bridge clearance, separated overview cards mobile density reduction, manual dragging, automatic reset and the current-view print/PDF preview. All galleries now contain 153 PNGs from eighteen capture scenarios. `npm run screenshots -- two-dimensional-heights` regenerates these views.
+Twenty-seven localized screenshots show clickable height/gradient labels, direct editing, hidden labels, individual bridge clearance, separated overview cards mobile density reduction, manual dragging, automatic reset and the current-view print/PDF preview. All galleries now contain 156 PNGs from eighteen capture scenarios. `npm run screenshots -- two-dimensional-heights` regenerates these views.
 
 [Deutsch](ROOM-3D.de.md#höhen-und-steigungen-in-2d) · [English](ROOM-3D.en.md#heights-and-gradients-in-2d) · [Français](ROOM-3D.fr.md#hauteurs-et-pentes-en-2d)
 
 [Left-side diodes on active switches](UNIT-APPEARANCE.md#weichendioden--switch-diodes--diodes-des-aiguillages) are shown in three additional localized screenshots.
+
+The refreshed automatic-accessory gallery shows persistent side selection and per-piece curved shoulder artwork.

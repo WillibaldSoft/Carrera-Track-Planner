@@ -1,7 +1,7 @@
 {
   "automatic": "Automatik: Anbauteile",
   "target": "Anbauteile für Schiene {{number}}",
-  "hint": "Option überfahren: Vorschau. Anklicken: anfügen. Die Zielschiene bleibt markiert.",
+  "hint": "Einzelne Abschlüsse lassen sich zusätzlich mit Vorschau anfügen.",
   "none": "Keine weiteren passenden Anbauteile verfügbar.",
   "close": "Schließen",
   "strip": "Randstreifen",
@@ -20,5 +20,9 @@
   "pan": "Ansicht verschieben",
   "toolbar": "Zentrale Werkzeugleiste",
   "save": "Bahn speichern",
-  "files": "Import / Export"
+  "files": "Import / Export",
+  "side": "Seite in Fahrtrichtung",
+  "both": "Beidseitig",
+  "continueHint": "Seite wählen, Schiene überfahren und anklicken. Die Auswahl bleibt aktiv; danach folgt der nächste passende Anschluss.",
+  "applyNext": "Randstreifen anfügen und fortsetzen"
 }

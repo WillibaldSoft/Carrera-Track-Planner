@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import {
   traceTrackPlan,
   borderShapes,
+  borderArtwork,
   trackFootprint,
   softyExtraGeometry,
   extraWorldPose,
@@ -242,16 +243,6 @@ export function TrackPlanPreview({
   const drawing = (
     <>
       <defs>
-        <pattern
-          id={`${materialId}-border`}
-          width="90"
-          height="90"
-          patternUnits="userSpaceOnUse"
-          patternTransform="rotate(35)"
-        >
-          <rect width="90" height="90" fill="#f8fafc" />
-          <rect width="45" height="90" fill="#dc2626" />
-        </pattern>
         <pattern id={`${materialId}-surface`} width="13" height="13" patternUnits="userSpaceOnUse">
           <rect width="13" height="13" fill="#292b2e" />
           <circle cx="2" cy="4" r=".8" fill="#55585b" />
@@ -290,25 +281,31 @@ export function TrackPlanPreview({
               {schematicDrawing}
             </g>
           ) : s.drawKind === 'border' ? (
-            <path
-              key={`border-${s.index}-${s.side}-${s.kind}`}
-              data-testid={`border-shape-${s.index}-${s.side}-${s.kind}`}
-              data-rail-index={s.index}
-              data-border-side={s.side}
-              data-draw-layer={s.level + s.drawLayer}
-              d={`${line(s.points)} Z`}
-              fill={`url(#${materialId}-border)`}
-              stroke="#64748b"
-              strokeWidth="2"
-              onClick={(e) => {
-                e.stopPropagation()
-                onSelectBorder?.(s.index, s.side, e)
-              }}
-            >
-              <title>
-                {s.article} · {t(`borders.${s.side}`)}
-              </title>
-            </path>
+            <g key={`border-${s.index}-${s.side}-${s.kind}`}>
+              <path
+                data-testid={`border-shape-${s.index}-${s.side}-${s.kind}`}
+                data-rail-index={s.index}
+                data-border-side={s.side}
+                data-draw-layer={s.level + s.drawLayer}
+                d={`${line(s.points)} Z`}
+                fill={realistic ? `url(#${materialId}-surface)` : '#292b2e'}
+                stroke="#151719"
+                strokeWidth="2"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onSelectBorder?.(s.index, s.side, e)
+                }}
+              >
+                <title>
+                  {s.article} · {t(`borders.${s.side}`)}
+                </title>
+              </path>
+              <g data-testid="border-artwork" pointerEvents="none">
+                {borderArtwork(s).map((patch, i) => (
+                  <path key={i} d={`${line(patch.points)} Z`} fill={patch.color} />
+                ))}
+              </g>
+            </g>
           ) : s.extra ? (
             (() => {
               const g = softyExtraGeometry(s, segments),
@@ -346,7 +343,9 @@ export function TrackPlanPreview({
                     d={`${line(g.polygon)} Z`}
                     fill={
                       g.border
-                        ? `url(#${materialId}-border)`
+                        ? realistic
+                          ? `url(#${materialId}-surface)`
+                          : '#292b2e'
                         : colorParts && part
                           ? part.color
                           : realistic
@@ -368,6 +367,17 @@ export function TrackPlanPreview({
                   />
                   {plan.showAntiCollision && s.antiCollision && (
                     <AntiCollisionMarker id={`extra-${s.extraIndex}`} x={g.pose.xMm} y={g.pose.yMm - 65} />
+                  )}
+                  {g.border && (
+                    <g data-testid="border-artwork" pointerEvents="none">
+                      {borderArtwork({
+                        points: g.polygon,
+                        kind: s.kind.startsWith('borderEnd') ? 'endCap' : 'strip',
+                        outerFirst: s.kind.startsWith('borderInner'),
+                      }).map((patch, i) => (
+                        <path key={i} d={`${line(patch.points)} Z`} fill={patch.color} />
+                      ))}
+                    </g>
                   )}
                   {fuelIndices.includes(s.extraIndex) && (
                     <FuelDetail pose={extraWorldPose(s, segments)} index={s.extraIndex} article="30361" />

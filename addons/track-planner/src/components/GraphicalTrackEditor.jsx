@@ -4,7 +4,13 @@ import { buildTrackElevationModel } from './trackElevationModel.js'
 import TrackHeightLabels from './TrackHeightLabels'
 import RailElevationEditor from './RailElevationEditor'
 import AutomaticAttachments from './AutomaticAttachments'
-import { attachmentOptions, attachTrackAccessory } from './automaticAttachments.js'
+import {
+  attachmentOptions,
+  attachTrackAccessory,
+  attachAutomaticBorders,
+  nextAutomaticBorderTarget,
+  canAttachAutomaticBorders,
+} from './automaticAttachments.js'
 import { selectedTrackBounds } from './selectionViewport.js'
 import { placementCoordinates } from './placementCoordinates'
 import { anchorRoom, withRoomAnchor, roomAndTrackBounds } from './roomBackground'
@@ -33,6 +39,7 @@ import {
   trackSelection,
   traceTrackPlan,
   borderShapes,
+  borderArtwork,
   trackBounds,
   enableFreePlacement,
   freeTrackSelection,
@@ -147,9 +154,13 @@ export default function GraphicalTrackEditor({
   const { t: t3 } = useTranslation('planner3D')
   const [autoAttachments, setAutoAttachments] = useState(false)
   const [autoTarget, setAutoTarget] = useState(-1)
+  const autoHoverLock = useRef(-1)
+  const autoHoverDirection = useRef(false)
+  const [autoSide, setAutoSide] = useState('both')
+  const [autoReverse, setAutoReverse] = useState(false)
   const [autoOption, setAutoOption] = useState(null)
   useEffect(() => {
-    setAutoTarget(-1)
+    setAutoTarget((current) => (inputPlan.pieces[current] ? current : -1))
     setAutoOption(null)
   }, [inputPlan])
   const storedPlan = useMemo(() => withRoomAnchor(prepareIndividualPitParts(inputPlan)), [inputPlan])
@@ -374,10 +385,12 @@ export default function GraphicalTrackEditor({
   )
   const automaticPlan = useMemo(
     () =>
-      autoAttachments && autoOption && storedPlan.pieces[autoTarget]
-        ? attachTrackAccessory(storedPlan, autoTarget, autoOption)
+      autoAttachments && storedPlan.pieces[autoTarget]
+        ? autoOption
+          ? attachTrackAccessory(storedPlan, autoTarget, autoOption)
+          : attachAutomaticBorders(storedPlan, autoTarget, autoSide, autoReverse)
         : null,
-    [storedPlan, autoAttachments, autoOption, autoTarget],
+    [storedPlan, autoAttachments, autoOption, autoTarget, autoSide, autoReverse],
   )
   const autoShapes = useMemo(() => {
     if (!automaticPlan) return []
@@ -388,6 +401,36 @@ export default function GraphicalTrackEditor({
         !oldShapes.some((old) => old.index === p.index && old.side === p.side && old.kind === p.kind),
     )
   }, [automaticPlan, storedPlan, autoTarget])
+  function automaticReverse(index) {
+    const route = trace.connectivity.route
+    const step = route.find((item) => item.index === index)
+    const cu = route.find((item) => storedPlan.pieces[item.index]?.type === 'Control_unit')
+    return !!step && step.reverse !== !!cu?.reverse
+  }
+  function addAutomatic(index = autoTarget, id = autoSide, fromCanvas = false) {
+    if (!storedPlan.pieces[index]) return
+    const strip = ['left', 'right', 'both'].includes(id)
+    const backwards =
+      index === autoTarget
+        ? autoReverse
+        : index === autoHoverLock.current
+          ? autoHoverDirection.current
+          : automaticReverse(index)
+    const next = strip
+      ? attachAutomaticBorders(storedPlan, index, id, backwards)
+      : attachTrackAccessory(storedPlan, index, id)
+    if (strip) setAutoSide(id)
+    if (next !== storedPlan) {
+      setFrame(bounds)
+      onChange(next)
+    }
+    const following = strip ? nextAutomaticBorderTarget(next, index, id, backwards) : null
+    autoHoverLock.current = fromCanvas && following ? index : -1
+    autoHoverDirection.current = backwards
+    setAutoTarget(following?.index ?? index)
+    setAutoReverse(following?.reverse ?? backwards)
+    setAutoOption(null)
+  }
   const nativePitSwitch = !!pitPart && ['entry', 'exit'].includes(pitPart.kind)
   const pitSwitchLocked = nativePitSwitch && plan.partGroups?.groups.some((g) => g.includes(pitPart.anchor))
   const pitReplacement =
@@ -897,7 +940,10 @@ export default function GraphicalTrackEditor({
           aria-pressed={autoAttachments}
           onClick={() => {
             setAutoAttachments(!autoAttachments)
-            setAutoTarget(-1)
+            if (!autoAttachments) setPanel('inspector')
+            setAutoReverse(automaticReverse(selected))
+            autoHoverLock.current = -1
+            setAutoTarget(!autoAttachments && storedPlan.pieces[selected] ? selected : -1)
             setAutoOption(null)
             setRepeatPlacement(false)
           }}
@@ -1287,22 +1333,6 @@ export default function GraphicalTrackEditor({
           </div>
         </aside>
         <div className="planner-stage">
-          {autoAttachments && plan.pieces[autoTarget] && (
-            <AutomaticAttachments
-              index={autoTarget}
-              options={attachmentOptions(storedPlan, autoTarget)}
-              onPreview={setAutoOption}
-              onClose={() => {
-                setAutoTarget(-1)
-                setAutoOption(null)
-              }}
-              onAdd={(id) => {
-                onChange(attachTrackAccessory(storedPlan, autoTarget, id))
-                setAutoTarget(-1)
-                setAutoOption(null)
-              }}
-            />
-          )}
           <TrackImageExport name={name} className="planner-image-export">
             <svg
               ref={canvasRef}
@@ -1361,9 +1391,28 @@ export default function GraphicalTrackEditor({
                 })
               }}
               onPointerLeave={() => {
+                autoHoverLock.current = -1
                 if (!dragging.current) setPlacementPoint(null)
               }}
+              onClickCapture={(e) => {
+                if (
+                  !autoAttachments ||
+                  repeatPlacement ||
+                  e.button !== 0 ||
+                  e.ctrlKey ||
+                  e.metaKey ||
+                  e.shiftKey ||
+                  e.target.closest('[data-pit-part-id]')
+                )
+                  return
+                const rail = e.target.closest('[data-rail-index]')
+                if (!rail) return
+                e.preventDefault()
+                e.stopPropagation()
+                addAutomatic(Number(rail.dataset.railIndex), autoSide, true)
+              }}
               onPointerDown={(e) => {
+                if (autoAttachments && e.button === 0 && !e.shiftKey && !e.ctrlKey && !e.metaKey) return
                 if (repeatPlacement && e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
                   e.preventDefault()
                   e.currentTarget.focus({ preventScroll: true })
@@ -1450,7 +1499,17 @@ export default function GraphicalTrackEditor({
                   const rail = e.target.closest('[data-rail-index]')
                   if (rail && !e.target.closest('[data-pit-part-id]')) {
                     const index = Number(rail.dataset.railIndex)
-                    if (Number.isInteger(index) && plan.pieces[index]) setAutoTarget(index)
+                    if (
+                      Number.isInteger(index) &&
+                      plan.pieces[index] &&
+                      index !== autoTarget &&
+                      index !== autoHoverLock.current
+                    ) {
+                      autoHoverLock.current = -1
+                      setAutoTarget(index)
+                      setAutoReverse(automaticReverse(index))
+                      setAutoOption(null)
+                    }
                   }
                 }
                 if (repeatPlacement && !dragging.current) setPlacementPoint(world(e))
@@ -1732,14 +1791,21 @@ export default function GraphicalTrackEditor({
               {autoShapes.length > 0 && (
                 <g data-testid="automatic-attachment-preview" pointerEvents="none">
                   {autoShapes.map((p, i) => (
-                    <path
-                      key={i}
-                      d={p.points.map((q, i) => `${i ? 'L' : 'M'}${q[0]} ${q[1]}`).join(' ') + 'Z'}
-                      fill="#60a5fa"
-                      fillOpacity=".5"
-                      stroke="#2563eb"
-                      strokeWidth="4"
-                    />
+                    <g key={i} opacity=".7">
+                      <path
+                        d={p.points.map((q, i) => `${i ? 'L' : 'M'}${q[0]} ${q[1]}`).join(' ') + 'Z'}
+                        fill="#292b2e"
+                        stroke="#2563eb"
+                        strokeWidth="4"
+                      />
+                      {borderArtwork(p).map((patch, j) => (
+                        <path
+                          key={j}
+                          d={patch.points.map((q, i) => `${i ? 'L' : 'M'}${q[0]} ${q[1]}`).join(' ') + 'Z'}
+                          fill={patch.color}
+                        />
+                      ))}
+                    </g>
                   ))}
                 </g>
               )}
@@ -1882,7 +1948,37 @@ export default function GraphicalTrackEditor({
           </p>
         </div>
         <aside className="planner-inspector" data-testid="planner-selection-sidebar" aria-label={t('layout.selection')}>
-          <div className="planner-selection-toolbar">
+          {autoAttachments && (
+            <AutomaticAttachments
+              index={autoTarget}
+              options={attachmentOptions(storedPlan, autoTarget)}
+              side={autoSide}
+              reverse={autoReverse}
+              onSideChange={(value) => {
+                setAutoSide(value)
+                setAutoOption(null)
+                autoHoverLock.current = -1
+              }}
+              canApply={
+                !!storedPlan.pieces[autoTarget] &&
+                canAttachAutomaticBorders(storedPlan, autoTarget, autoSide, autoReverse)
+              }
+              onApply={() => addAutomatic()}
+              onPreview={setAutoOption}
+              onClose={() => {
+                setAutoAttachments(false)
+                setAutoTarget(-1)
+                setAutoOption(null)
+              }}
+              onAdd={(id) =>
+                addAutomatic(
+                  autoTarget,
+                  autoReverse && ['left', 'right'].includes(id) ? (id === 'left' ? 'right' : 'left') : id,
+                )
+              }
+            />
+          )}
+          <div className="planner-selection-toolbar" style={{ display: autoAttachments ? 'none' : undefined }}>
             <strong className="text-sm" data-testid="selected-track-piece">
               {pitPart
                 ? `${pitPart.short} · ${t(`pitParts.${pitPart.kind}`)} · ${pitPart.article}`

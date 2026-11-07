@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { emptyTrackPlan } from '../../vendor/racehubos/shared/src/index.js'
 async function open(page, lang = 'de') {
   await page.goto('/')
   await page.getByTestId('standalone-language').selectOption(lang)
@@ -110,4 +111,142 @@ test('centring a grouped assembly includes every highlighted member', async ({ p
   const b = (await canvas.getAttribute('viewBox')).split(' ').map(Number)
   expect(b[2]).toBeGreaterThanOrEqual(1235)
   expect(b[0] + b[2] / 2).toBeCloseTo(517.5, 1)
+})
+
+for (const side of ['left', 'right', 'both'])
+  test(`automatic shoulder brush retains ${side} and continues one rail per click with undo`, async ({ page }) => {
+    await open(page)
+    await page.getByTestId('add-track-piece').click()
+    await page.getByTestId('add-track-piece').click()
+    await page.getByTestId('track-fit').click()
+    await page.getByTestId('track-auto-attachments').click()
+    await page.getByTestId('auto-border-side').selectOption(side)
+    await hoverRail(page, 0)
+    const boxBefore = await page.getByTestId('graph-track-canvas').getAttribute('viewBox')
+    await page.getByTestId('auto-attach-continue').click()
+    const canvas = page.getByTestId('graph-track-canvas')
+    await expect(canvas).toHaveAttribute('viewBox', boxBefore)
+    for (const edge of ['left', 'right'])
+      await expect(canvas.getByTestId(`border-shape-0-${edge}-strip`)).toHaveCount(
+        side === 'both' || side === edge ? 1 : 0,
+      )
+    await expect(page.getByTestId('automatic-attachments')).toContainText('2')
+    await expect(page.getByTestId('auto-border-side')).toHaveValue(side)
+    await page.getByTestId('auto-attach-continue').click()
+    for (const edge of ['left', 'right'])
+      await expect(canvas.getByTestId(`border-shape-1-${edge}-strip`)).toHaveCount(
+        side === 'both' || side === edge ? 1 : 0,
+      )
+    await expect(page.getByTestId('auto-border-side')).toHaveValue(side)
+    await page.getByTestId('track-undo').click()
+    await expect(canvas.locator('[data-testid^="border-shape-1-"]')).toHaveCount(0)
+    await page.getByTestId('track-redo').click()
+    await expect(canvas.locator('[data-testid^="border-shape-1-"]')).toHaveCount(side === 'both' ? 2 : 1)
+    // A direct click places the next rail, without selecting/dragging the track.
+    await hoverRail(page, 2)
+    const rail = canvas.getByTestId('rail-2')
+    const point = await rail
+      .locator('[data-slot-layer="groove"]')
+      .first()
+      .evaluate((path) => {
+        const p = path.getPointAtLength(path.getTotalLength() / 2)
+        const q = new DOMPoint(p.x, p.y + 15).matrixTransform(path.getScreenCTM())
+        return { x: q.x, y: q.y }
+      })
+    await page.mouse.click(point.x, point.y)
+    await expect(canvas.locator('[data-testid^="border-shape-2-"]')).toHaveCount(side === 'both' ? 2 : 1)
+    await expect(page.getByTestId('auto-border-side')).toHaveValue(side)
+    await expect(canvas.getByTestId('border-artwork').first()).toBeAttached()
+  })
+
+test('curve-specific shoulders continue with matching articles and export as individual vector artwork', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
+  await page.getByTestId('planner-files-toggle').click()
+  const source = {
+    ...emptyTrackPlan(),
+    pieces: ['Standardgerade', 'Kurve_1_60_rechts', 'Kurve_2_30_links'].map((type) => ({
+      type,
+      level: 0,
+      jointDegrees: 0,
+    })),
+  }
+  await page.getByTestId('track-plan-import').setInputFiles({
+    name: 'curved-shoulders.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(source)),
+  })
+  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('track-fit').click()
+  await page.getByTestId('track-auto-attachments').click()
+  await page.getByTestId('auto-border-side').selectOption('left')
+  await hoverRail(page, 0)
+  for (let i = 0; i < 3; i++) await page.getByTestId('auto-attach-continue').click()
+  const canvas = page.getByTestId('graph-track-canvas')
+  await expect(canvas.getByTestId('border-shape-1-left-strip').locator('title')).toContainText('20561')
+  await expect(canvas.getByTestId('border-shape-2-left-strip').locator('title')).toContainText('20591')
+  await expect(canvas.locator('[data-border-side="right"]')).toHaveCount(0)
+  await page.getByTestId('track-auto-attachments').click()
+  const controls = page.getByTestId('planner-image-export').filter({ has: canvas })
+  let pending = page.waitForEvent('download')
+  await controls.getByTestId('export-image-svg').click()
+  const svg = await (await pending).createReadStream()
+  const chunks = []
+  for await (const chunk of svg) chunks.push(chunk)
+  const xml = Buffer.concat(chunks).toString()
+  expect(xml).toContain('border-artwork')
+  expect(xml).not.toMatch(/<pattern[^>]+id="[^"]*-border"/)
+  pending = page.waitForEvent('download')
+  await controls.getByTestId('export-image-pdf').click()
+  const pdf = await pending
+  await pdf.saveAs('test-results/curved-shoulders-vector.pdf')
+})
+
+test('left stays left in driving direction on a reversed connected rail and repeated clicks do not paint the opposite side', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
+  await page.getByTestId('planner-files-toggle').click()
+  const source = {
+    ...emptyTrackPlan(),
+    freePlacement: true,
+    pieces: [
+      { xMm: 0, yMm: 0, headingDegrees: 0 },
+      { xMm: 690, yMm: 0, headingDegrees: 180 },
+      { xMm: 690, yMm: 0, headingDegrees: 0 },
+    ].map((placement) => ({ type: 'Standardgerade', level: 0, jointDegrees: 0, placement })),
+  }
+  await page
+    .getByTestId('track-plan-import')
+    .setInputFiles({
+      name: 'reversed-shoulder.json',
+      mimeType: 'application/json',
+      buffer: Buffer.from(JSON.stringify(source)),
+    })
+  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('track-auto-attachments').click()
+  await page.getByTestId('auto-border-side').selectOption('left')
+  await hoverRail(page, 1)
+  const canvas = page.getByTestId('graph-track-canvas')
+  const point = await canvas
+    .getByTestId('rail-1')
+    .locator('[data-slot-layer="groove"]')
+    .first()
+    .evaluate((path) => {
+      const p = path.getPointAtLength(path.getTotalLength() / 2),
+        q = new DOMPoint(p.x, p.y + 15).matrixTransform(path.getScreenCTM())
+      return { x: q.x, y: q.y }
+    })
+  await page.mouse.dblclick(point.x, point.y)
+  await expect(canvas.getByTestId('border-shape-1-right-strip')).toHaveCount(1)
+  await expect(canvas.getByTestId('border-shape-1-left-strip')).toHaveCount(0)
+  await expect(canvas.locator('[data-testid^="border-shape-2-"]')).toHaveCount(0)
+  await page.getByTestId('auto-attach-continue').click()
+  await expect(canvas.getByTestId('border-shape-2-left-strip')).toHaveCount(1)
+  await expect(page.getByTestId('auto-border-side')).toHaveValue('left')
 })

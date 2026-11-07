@@ -46,7 +46,7 @@ The current experimental iframe protocol is isolated behind a replaceable adapte
 
 ![Planner with joined sections](docs/screenshots/track-planner/en/18-joined-sections.png)
 
-153 real localized PNGs have SHA-256 manifests from 18 capture scenarios. Included: 111 unit cases in sixteen files and 84 browser cases. Release validation also checks vector PDFs and the actual older installed host parser. Automatic closing suggestions and the official plugin API remain pending.
+156 real localized PNGs have SHA-256 manifests from 18 capture scenarios. Included: 114 unit cases in sixteen files and 89 browser cases. Release validation also checks vector PDFs and the actual older installed host parser. Automatic closing suggestions and the official plugin API remain pending.
 
 ## Source and license
 
@@ -69,3 +69,5 @@ Apache-2.0. Required RaceHubOS UI and geometry snapshots live under `vendor/race
 [Version 1.1.0](docs/RELEASE-1.1.0.en.md)
 
 [Version 1.1.1](docs/RELEASE-1.1.1.en.md)
+
+[Version 1.1.2](docs/RELEASE-1.1.2.en.md)

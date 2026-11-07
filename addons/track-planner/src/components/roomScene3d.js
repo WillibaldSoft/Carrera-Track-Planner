@@ -4,6 +4,7 @@ import { DEFAULT_SCENE_HEIGHTS } from '../../../../vendor/racehubos/shared/src/t
 import {
   traceTrackPlan,
   borderShapes,
+  borderArtwork,
   softyExtraGeometry,
   extraWorldPose,
   editablePitlane,
@@ -341,27 +342,18 @@ export function buildRoomScene(input, overrides = {}) {
       b.points,
       (p) => heightAt(s, p) + 2,
       (p) => heightAt(s, p) + 12,
-      b.kind === 'strip' ? '#f1ece4' : '#e6dfd3',
+      '#292b2e',
       'border',
       { rail: b.index },
     )
-    if (b.kind === 'strip') {
-      const n = b.points.length
-      for (let i = 0; i < 32; i += 8) {
-        const poly = [
-          b.points[i],
-          b.points[Math.min(32, i + 4)],
-          b.points[n - 1 - Math.min(32, i + 4)],
-          b.points[n - 1 - i],
-        ]
-        face(
-          poly.map((p) => [...p, heightAt(s, p) + 13]),
-          '#d94a45',
-          'border-mark',
-        )
-      }
-    }
+    for (const patch of borderArtwork(b))
+      face(
+        patch.points.map((p) => [...p, heightAt(s, p) + 13]),
+        patch.color,
+        'border-mark',
+      )
   }
+
   const fuel = new Set(nativeFuelBayIndices(plan, segments))
   for (const [i, e] of (plan.trackExtras || []).entries()) {
     if (e.hidden) continue
@@ -374,10 +366,21 @@ export function buildRoomScene(input, overrides = {}) {
       poly.length >= 3 ? poly : g.polygon,
       z + 2,
       z + 12,
-      g.border ? '#ded7c8' : '#30363b',
+      g.border ? '#292b2e' : '#30363b',
       g.border ? 'border' : 'pit',
       { extra: i },
     )
+    if (g.border)
+      for (const patch of borderArtwork({
+        points: g.polygon,
+        kind: e.kind.startsWith('borderEnd') ? 'endCap' : 'strip',
+        outerFirst: e.kind.startsWith('borderInner'),
+      }))
+        face(
+          patch.points.map((p) => [...p, z + 13]),
+          patch.color,
+          'border-mark',
+        )
     for (const [j, points] of g.slots.entries())
       lines.push({
         id: `pit-slot-${i}-${j}`,

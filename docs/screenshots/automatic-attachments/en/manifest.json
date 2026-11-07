@@ -5,17 +5,22 @@
     {
       "id": "01-hover-and-toolbar",
       "file": "01-hover-and-toolbar.png",
-      "sha256": "996980f89462b451b982c9d316fd1901d6fadab761dfb53d73fc0187482a4e5c"
+      "sha256": "4f7f1cd0b32a2860da7cdf5dce0f2dc39b009bcbb9a256e85ecacdef6157f84b"
     },
     {
       "id": "02-accessory-preview",
       "file": "02-accessory-preview.png",
-      "sha256": "15afb5dada13b4a65c68157faf0bc1be29eec9c3c13ac266844dd9dc23a78001"
+      "sha256": "5ba13a72647fccc9f1bdc61b76d1d661eac8e6b16453158dae052044be9d91e3"
     },
     {
       "id": "03-centred-selection",
       "file": "03-centred-selection.png",
-      "sha256": "1f1cbd68c7ce41fc456ddc0d60eaa00e797ff653e524419b18398858b9c3a721"
+      "sha256": "0e4e0372160dc37c6ffd588157a38a68fcbdbbbd85c33e672d1e180b20d7da4d"
+    },
+    {
+      "id": "04-piece-specific-curve-colours",
+      "file": "04-piece-specific-curve-colours.png",
+      "sha256": "1f38185fb99422b197f80f95e4920c3d8864e37986c6fda378cae0a419fe46ee"
     }
   ]
 }

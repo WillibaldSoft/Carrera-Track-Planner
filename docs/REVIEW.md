@@ -16,7 +16,7 @@ The future official plugin interface, download/update mechanism, permissions and
 
 ## Verified state
 
-111 unit cases in sixteen files and 13 targeted browser cases were checked for correction 1.1.1. There are 84 included browser cases; the previous 83 were successfully covered for version 1.1.0. 18 capture scenarios now provide 153 PNGs; the three detail scenarios were refreshed for left-side diodes. Build, vector PDF and preservation of saved positions are checked. The existing Vite large-chunk warning remains. Reproduce: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
+114 unit cases in sixteen files and 22 targeted browser cases were checked for correction 1.1.2. There are 89 included browser cases; the previous 83 were successfully covered for version 1.1.0. 18 capture scenarios now provide 156 PNGs; the three detail scenarios were refreshed for left-side diodes. Build, vector PDF and preservation of saved positions are checked. The existing Vite large-chunk warning remains. Reproduce: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
 [Fixed CU, individual pit parts and parallel docking](CU-PIT-PARALLEL.en.md)
 
