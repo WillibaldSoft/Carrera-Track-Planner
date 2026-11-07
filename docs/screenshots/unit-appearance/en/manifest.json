@@ -1,0 +1,21 @@
+{
+  "language": "en",
+  "syntheticData": true,
+  "screenshots": [
+    {
+      "id": "01-cu-start-finish",
+      "file": "01-cu-start-finish.png",
+      "sha256": "7ac38d6c8733300736328b72f4e1fe54e61bb3369d765a9220be07bfe6cb2c7b"
+    },
+    {
+      "id": "02-two-fuel-rails",
+      "file": "02-two-fuel-rails.png",
+      "sha256": "f4f7ef3962fb63706eea99ca03ef84b0786638685b5bc559cb1a6c75aca71e6c"
+    },
+    {
+      "id": "03-cu-and-pit-overview",
+      "file": "03-cu-and-pit-overview.png",
+      "sha256": "c82e6d6e96ef394fe90bf57a138e40a6e31d62824f00d4935d7aba997fd371f7"
+    }
+  ]
+}

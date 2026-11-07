@@ -2,3 +2,6 @@ node_modules/
 addons/track-planner/dist/
 *.racehub-addon.json
 test-results/
+
+__pycache__/
+*.pyc

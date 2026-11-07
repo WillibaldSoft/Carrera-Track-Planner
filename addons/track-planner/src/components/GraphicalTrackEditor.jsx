@@ -1,3 +1,12 @@
+import { labelOffsetFromScreen, setHeightLabelOffset, resetHeightLabelOffsets } from './manualHeightLabels.js'
+import { layoutTrackHeightLabels } from './heightLabelLayout.js'
+import { buildTrackElevationModel } from './trackElevationModel.js'
+import TrackHeightLabels from './TrackHeightLabels'
+import RailElevationEditor from './RailElevationEditor'
+import AutomaticAttachments from './AutomaticAttachments'
+import { attachmentOptions, attachTrackAccessory } from './automaticAttachments.js'
+import { selectedTrackBounds } from './selectionViewport.js'
+import { placementCoordinates } from './placementCoordinates'
 import { anchorRoom, withRoomAnchor, roomAndTrackBounds } from './roomBackground'
 import RoomFootprintDrawing from './RoomFootprintDrawing'
 import { prepareIndividualPitParts, updatePitPartWorld } from './pitPartEditing'
@@ -23,6 +32,7 @@ import {
   editTrackPieces,
   trackSelection,
   traceTrackPlan,
+  borderShapes,
   trackBounds,
   enableFreePlacement,
   freeTrackSelection,
@@ -44,7 +54,7 @@ import {
 import { TrackPlanPreview } from '@core/components/tracks/TrackPlanPreview'
 import { labelTrackPart } from '@core/components/tracks/trackPartLabel'
 import { Button } from '@core/components/ui/button'
-import TrackImageExport from '@core/components/tracks/TrackImageExport'
+import TrackImageExport from './PlannerImageExport'
 import TrackPlanPrint, { TrackTypeLegend } from './TrackPlanPrint'
 
 const catalogue = [
@@ -122,11 +132,26 @@ export default function GraphicalTrackEditor({
   name,
   expanded = false,
   planDetails,
+  onOpenFiles,
+  onOpen3D,
+  saving = false,
 }) {
   const { t } = useTranslation('tracks')
   const { t: rt } = useTranslation('plannerRoom')
   const [showRoom, setShowRoom] = useState(true)
+  const [heightEditorOpen, setHeightEditorOpen] = useState(false)
+  const [heightLabelPreview, setHeightLabelPreview] = useState(null)
+  useEffect(() => setHeightLabelPreview(null), [inputPlan])
   const { t: te } = useTranslation('plannerEditing')
+  const { t: ta } = useTranslation('plannerActions')
+  const { t: t3 } = useTranslation('planner3D')
+  const [autoAttachments, setAutoAttachments] = useState(false)
+  const [autoTarget, setAutoTarget] = useState(-1)
+  const [autoOption, setAutoOption] = useState(null)
+  useEffect(() => {
+    setAutoTarget(-1)
+    setAutoOption(null)
+  }, [inputPlan])
   const storedPlan = useMemo(() => withRoomAnchor(prepareIndividualPitParts(inputPlan)), [inputPlan])
   const [dockPreview, setDockPreview] = useState(null)
   const [dockingSelection, setDockingSelection] = useState([])
@@ -277,8 +302,92 @@ export default function GraphicalTrackEditor({
   const trace = traceTrackPlan(plan),
     activeSegment = trace.segments[selected],
     join = side === 'before' ? trace.segments[selection[0]]?.start : trace.segments[selection.at(-1)]?.end
+  const elevationModel = useMemo(
+    () =>
+      plan.showElevationLabels || (heightEditorOpen && selected >= 0)
+        ? buildTrackElevationModel(plan, {}, trace.segments)
+        : null,
+    [plan, heightEditorOpen, selected],
+  )
+  const heightLabelLayout = useMemo(
+    () =>
+      plan.showElevationLabels && elevationModel
+        ? layoutTrackHeightLabels({
+            model: elevationModel,
+            plan,
+            box,
+            viewport,
+            selected,
+            visibleLevel: level === 'all' ? null : Number(level),
+            preview: heightLabelPreview,
+          })
+        : null,
+    [
+      elevationModel,
+      plan,
+      box[0],
+      box[1],
+      box[2],
+      box[3],
+      viewport.width,
+      viewport.height,
+      selected,
+      level,
+      heightLabelPreview,
+    ],
+  )
+  function commitHeightLabelMove(index, offset) {
+    const original = heightLabelLayout?.items.find((c) => c.index === index)
+    const resolved = layoutTrackHeightLabels({
+      model: elevationModel,
+      plan,
+      box,
+      viewport,
+      selected,
+      visibleLevel: level === 'all' ? null : Number(level),
+      preview: { index, offset, fallbackRect: original?.rect },
+    })
+    const card = resolved.items.find((c) => c.index === index)
+    setHeightLabelPreview(null)
+    if (card)
+      onChange(
+        setHeightLabelOffset(
+          plan,
+          index,
+          labelOffsetFromScreen(elevationModel, resolved, index, {
+            x: card.rect.x + card.width / 2,
+            y: card.rect.y + card.height / 2,
+          }),
+        ),
+      )
+  }
   const pitParts = pitlaneComponents(plan, trace.segments),
     pitPart = pitParts.find((p) => p.id === selectedPitPart)
+  const selectedBounds = useMemo(
+    () =>
+      selectedTrackBounds(
+        storedPlan,
+        selectedPitPart ? [] : motion,
+        pitPart?.extraIndex !== undefined ? [pitPart.extraIndex] : [],
+      ),
+    [storedPlan, selectedPitPart, selected, motion.join(','), pitPart?.extraIndex],
+  )
+  const automaticPlan = useMemo(
+    () =>
+      autoAttachments && autoOption && storedPlan.pieces[autoTarget]
+        ? attachTrackAccessory(storedPlan, autoTarget, autoOption)
+        : null,
+    [storedPlan, autoAttachments, autoOption, autoTarget],
+  )
+  const autoShapes = useMemo(() => {
+    if (!automaticPlan) return []
+    const oldShapes = borderShapes(storedPlan)
+    return borderShapes(automaticPlan).filter(
+      (p) =>
+        p.index === autoTarget &&
+        !oldShapes.some((old) => old.index === p.index && old.side === p.side && old.kind === p.kind),
+    )
+  }, [automaticPlan, storedPlan, autoTarget])
   const nativePitSwitch = !!pitPart && ['entry', 'exit'].includes(pitPart.kind)
   const pitSwitchLocked = nativePitSwitch && plan.partGroups?.groups.some((g) => g.includes(pitPart.anchor))
   const pitReplacement =
@@ -458,6 +567,12 @@ export default function GraphicalTrackEditor({
       ),
     })
   }
+  function centerMarked() {
+    if (!selectedBounds) return
+    setFrame(selectedBounds)
+    setZoom(1)
+    setPan({ x: 0, y: 0 })
+  }
   function fit() {
     setFrame(null)
     setZoom(1)
@@ -509,6 +624,10 @@ export default function GraphicalTrackEditor({
     if (e.key.toLowerCase() === 'r' && active) rotate(e.shiftKey ? -15 : 15)
     if (e.key.toLowerCase() === 'c') setColors((v) => !v)
     if (e.key.toLowerCase() === 'l') setLabels((v) => (v === 'none' ? 'both' : 'none'))
+    if (e.key.toLowerCase() === 'f') {
+      e.preventDefault()
+      centerMarked()
+    }
     if (e.key.toLowerCase() === 'a') fit()
     if (e.key === '+') setZoom((v) => Math.min(8, v * 1.25))
     if (e.key === '-') setZoom((v) => Math.max(0.4, v / 1.25))
@@ -567,21 +686,6 @@ export default function GraphicalTrackEditor({
       onKeyDown={keyboard}
       className={`planner-graphical ${expanded ? 'is-expanded' : ''}`}
     >
-      <PlannerTools
-        plan={storedPlan}
-        selected={selected}
-        indices={motion}
-        onChange={onChange}
-        onSelect={onSelect}
-        onSelectIndices={selectIndices}
-        fit={fit}
-        endpointKey={endpointKey}
-        onEndpoint={setEndpointKey}
-        onInspect={(indices, auxiliary) => {
-          setAuditMarks({ plan: storedPlan, indices, auxiliary })
-          setShowConnections(true)
-        }}
-      />
       {context && (
         <div
           className="planner-context-menu"
@@ -683,7 +787,66 @@ export default function GraphicalTrackEditor({
           </button>
         </div>
       )}
-      <div className="planner-toolbar">
+      <div className="planner-toolbar" role="toolbar" aria-label={ta('toolbar')}>
+        <Button
+          type="submit"
+          data-testid="toolbar-save-track"
+          disabled={saving || !storedPlan.pieces.length || !name?.trim()}
+        >
+          {ta('save')}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="toolbar-files"
+          disabled={!onOpenFiles}
+          onClick={onOpenFiles}
+        >
+          {ta('files')}
+        </Button>
+        <Button type="button" variant="outline" data-testid="toolbar-open-3d" disabled={!onOpen3D} onClick={onOpen3D}>
+          {t3('title')}
+        </Button>
+        <label>
+          <input
+            data-testid="show-track-elevations"
+            type="checkbox"
+            checked={!!plan.showElevationLabels}
+            onChange={(e) => onChange({ ...plan, showElevationLabels: e.target.checked })}
+          />
+          {t3('showHeights2D')}
+        </label>
+        {plan.showElevationLabels && (
+          <Button
+            type="button"
+            variant="outline"
+            data-testid="arrange-height-labels"
+            disabled={!plan.pieces.some((p) => p.heightLabelOffset)}
+            onClick={() => {
+              setHeightLabelPreview(null)
+              onChange(resetHeightLabelOffsets(plan))
+            }}
+          >
+            {t3('arrangeLabels')}
+          </Button>
+        )}
+        <TrackPlanPrint plan={plan} name={name} drawingRef={canvasRef} />
+        <PlannerTools
+          plan={storedPlan}
+          selected={selected}
+          indices={motion}
+          onChange={onChange}
+          onSelect={onSelect}
+          onSelectIndices={selectIndices}
+          fit={fit}
+          endpointKey={endpointKey}
+          onEndpoint={setEndpointKey}
+          onInspect={(indices, auxiliary) => {
+            setAuditMarks({ plan: storedPlan, indices, auxiliary })
+            setShowConnections(true)
+          }}
+        />
+
         <Button type="button" variant="outline" data-testid="track-undo" disabled={!canUndo} onClick={undo}>
           {t('graph.undo')}
         </Button>
@@ -717,6 +880,111 @@ export default function GraphicalTrackEditor({
         >
           +
         </Button>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="track-center-selection"
+          disabled={!selectedBounds}
+          onClick={centerMarked}
+          title={`${ta('center')} (F)`}
+        >
+          {ta('center')}
+        </Button>
+        <Button
+          type="button"
+          variant={autoAttachments ? 'default' : 'outline'}
+          data-testid="track-auto-attachments"
+          aria-pressed={autoAttachments}
+          onClick={() => {
+            setAutoAttachments(!autoAttachments)
+            setAutoTarget(-1)
+            setAutoOption(null)
+            setRepeatPlacement(false)
+          }}
+        >
+          {ta('automatic')}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="toolbar-repeat-placement"
+          aria-pressed={repeatPlacement}
+          onClick={() => {
+            setRepeatPlacement(!repeatPlacement)
+            setAutoAttachments(false)
+            setAutoTarget(-1)
+            setPlacementPoint(null)
+          }}
+        >
+          {ta('repeat')}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="toolbar-rotate-selection"
+          disabled={!active && pitPart?.extraIndex === undefined}
+          onClick={() => {
+            if (pitPart?.extraIndex !== undefined)
+              onChange(
+                updatePitPartWorld(storedPlan, pitPart.extraIndex, {
+                  headingDegrees: pitPart.pose.headingDegrees + 15,
+                }),
+              )
+            else rotate(15)
+          }}
+        >
+          {ta('rotate')}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="toolbar-delete-selection"
+          disabled={!active && pitPart?.extraIndex === undefined}
+          onClick={() => {
+            if (pitPart?.extraIndex !== undefined) {
+              const prepared = editablePitlane(plan)
+              onChange(deletePitComponent(prepared.plan, pitPart.extraIndex))
+            } else onChange(deleteTrackSelection(plan, motion))
+            onSelect(-1)
+          }}
+        >
+          {ta('delete')}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="toolbar-join"
+          disabled={!joinPair}
+          onClick={joinSelectedSections}
+        >
+          {ta('join')}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="toolbar-parallel"
+          onClick={() => {
+            const panel = canvasRef.current
+              ?.closest('.planner-graphical')
+              ?.querySelector('[data-testid="parallel-docking-controls"]')
+            if (panel) {
+              panel.open = true
+              panel.scrollIntoView({ block: 'nearest' })
+            }
+            setPanel('inspector')
+          }}
+        >
+          {ta('parallel')}
+        </Button>
+        <select
+          data-testid="toolbar-pointer-mode"
+          aria-label={ta('pointer')}
+          value={pointerMode}
+          onChange={(e) => setPointerMode(e.target.value)}
+        >
+          <option value="box">{ta('box')}</option>
+          <option value="pan">{ta('pan')}</option>
+        </select>
         <Button type="button" variant="outline" data-testid="track-fit" onClick={fit}>
           {t('graph.fit')}
         </Button>
@@ -788,6 +1056,7 @@ export default function GraphicalTrackEditor({
               />{' '}
               {t('free.realistic')}
             </label>
+
             <label>
               {t('graph.background')}{' '}
               <select value={background} onChange={(e) => setBackground(e.target.value)}>
@@ -837,7 +1106,7 @@ export default function GraphicalTrackEditor({
               />{' '}
               {t('tools.connections')}
             </label>
-            <TrackPlanPrint plan={plan} name={name} />
+
             <TrackPartsManager plan={plan} name={name} />
             <p className="planner-hint">{t('graph.help')}</p>
 
@@ -862,6 +1131,11 @@ export default function GraphicalTrackEditor({
               checked={repeatPlacement}
               onChange={(e) => {
                 setRepeatPlacement(e.target.checked)
+                if (e.target.checked) {
+                  setAutoAttachments(false)
+                  setAutoTarget(-1)
+                  setAutoOption(null)
+                }
                 setPlacementPoint(null)
                 setPlacementHeading((((join ?? trace.segments.at(-1)?.end)?.h ?? 0) * 180) / Math.PI)
                 suppressClick.current = false
@@ -1013,6 +1287,22 @@ export default function GraphicalTrackEditor({
           </div>
         </aside>
         <div className="planner-stage">
+          {autoAttachments && plan.pieces[autoTarget] && (
+            <AutomaticAttachments
+              index={autoTarget}
+              options={attachmentOptions(storedPlan, autoTarget)}
+              onPreview={setAutoOption}
+              onClose={() => {
+                setAutoTarget(-1)
+                setAutoOption(null)
+              }}
+              onAdd={(id) => {
+                onChange(attachTrackAccessory(storedPlan, autoTarget, id))
+                setAutoTarget(-1)
+                setAutoOption(null)
+              }}
+            />
+          )}
           <TrackImageExport name={name} className="planner-image-export">
             <svg
               ref={canvasRef}
@@ -1038,7 +1328,8 @@ export default function GraphicalTrackEditor({
                 const item = catalogue.find((p) => p.id === e.dataTransfer.getData('application/x-racehub-track-part'))
                 if (!item || plan.pieces.length + item.types.length > 2000) return
                 e.preventDefault()
-                const point = world(e)
+                const point = placementCoordinates(world(e))
+                if (!point) return
                 setFrame(bounds)
                 const result = editFreeParts(plan, -1, 'after', item.types, {
                   xMm: point.x,
@@ -1151,6 +1442,17 @@ export default function GraphicalTrackEditor({
                 e.currentTarget.setPointerCapture(e.pointerId)
               }}
               onPointerMove={(e) => {
+                if (autoAttachments && !dragging.current && !repeatPlacement) {
+                  if (e.target.closest('[data-pit-part-id]')) {
+                    setAutoTarget(-1)
+                    setAutoOption(null)
+                  }
+                  const rail = e.target.closest('[data-rail-index]')
+                  if (rail && !e.target.closest('[data-pit-part-id]')) {
+                    const index = Number(rail.dataset.railIndex)
+                    if (Number.isInteger(index) && plan.pieces[index]) setAutoTarget(index)
+                  }
+                }
                 if (repeatPlacement && !dragging.current) setPlacementPoint(world(e))
                 const d = dragging.current
                 if (!d) return
@@ -1262,6 +1564,17 @@ export default function GraphicalTrackEditor({
                 </g>
               )}
               <rect x={box[0]} y={box[1]} width={w} height={h} fill={`url(#${gridId})`} />
+              {autoAttachments && trace.segments[autoTarget] && (
+                <path
+                  data-testid="automatic-attachment-target"
+                  d={trace.segments[autoTarget].points[0].map((p, i) => `${i ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ')}
+                  fill="none"
+                  stroke="#3b82f6"
+                  strokeWidth="220"
+                  strokeOpacity=".2"
+                  pointerEvents="none"
+                />
+              )}
               <TrackPlanPreview
                 plan={plan}
                 embedded
@@ -1276,7 +1589,10 @@ export default function GraphicalTrackEditor({
                 labels={labels}
                 visibleLevel={level === 'all' ? null : Number(level)}
                 connector={
-                  !repeatPlacement && !dockPreview && plan.pieces.length + chosen.types.length <= 2000
+                  !repeatPlacement &&
+                  !autoAttachments &&
+                  !dockPreview &&
+                  plan.pieces.length + chosen.types.length <= 2000
                     ? connector
                     : null
                 }
@@ -1296,6 +1612,24 @@ export default function GraphicalTrackEditor({
                 }
                 onConnect={() => edit(side)}
               />
+              {plan.showElevationLabels && elevationModel && (
+                <TrackHeightLabels
+                  model={elevationModel}
+                  selected={selected}
+                  layout={heightLabelLayout}
+                  onPreview={setHeightLabelPreview}
+                  onCommit={commitHeightLabelMove}
+                  onReset={(i) => {
+                    setHeightLabelPreview(null)
+                    onChange(resetHeightLabelOffsets(plan, i))
+                  }}
+                  onPick={(i) => {
+                    onSelect(i)
+                    setHeightEditorOpen(true)
+                    setPanel('inspector')
+                  }}
+                />
+              )}
               {dockPreview && (
                 <g data-testid="parallel-docking-preview" pointerEvents="none" opacity="0.55">
                   {traceTrackPlan(dockPreview.plan)
@@ -1395,7 +1729,21 @@ export default function GraphicalTrackEditor({
                   />
                 </g>
               )}
-              {showConnections && (
+              {autoShapes.length > 0 && (
+                <g data-testid="automatic-attachment-preview" pointerEvents="none">
+                  {autoShapes.map((p, i) => (
+                    <path
+                      key={i}
+                      d={p.points.map((q, i) => `${i ? 'L' : 'M'}${q[0]} ${q[1]}`).join(' ') + 'Z'}
+                      fill="#60a5fa"
+                      fillOpacity=".5"
+                      stroke="#2563eb"
+                      strokeWidth="4"
+                    />
+                  ))}
+                </g>
+              )}
+              {showConnections && !autoAttachments && (
                 <g pointerEvents={repeatPlacement ? 'none' : undefined}>
                   <ConnectionHints
                     plan={plan}
@@ -1469,7 +1817,7 @@ export default function GraphicalTrackEditor({
                   pointerEvents="none"
                 />
               )}
-              {handle && pivot && !repeatPlacement && (
+              {handle && pivot && !repeatPlacement && !autoAttachments && (
                 <g>
                   <line
                     x1={pivot.x}
@@ -1518,6 +1866,11 @@ export default function GraphicalTrackEditor({
               })}
             </p>
           )}
+          {heightLabelLayout && (
+            <p data-testid="height-label-density-status" role="status" className="height-label-layout-status">
+              {t3('labelDensity', { shown: heightLabelLayout.items.length, total: heightLabelLayout.visibleCount })}
+            </p>
+          )}
           <p data-testid="graphic-track-status" className="text-sm">
             {t(plan.freePlacement && !trace.connectivity.closed ? 'free.material' : 'editor.lanes')}:{' '}
             {trace.laneLengthsM.map((n) => n.toFixed(3)).join(' / ')} m ·{' '}
@@ -1537,6 +1890,31 @@ export default function GraphicalTrackEditor({
                   ? `${selected + 1}. ${labelTrackPart(active.type)}${['Standardgerade', 'Startampel_3spur_hinten'].includes(active.type) ? ` · ${t('pitParts.twoLane')}` : ''}`
                   : t('graph.noSelection')}
             </strong>
+            {active && !pitPart && (
+              <>
+                {!heightEditorOpen && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    data-testid="two-open-height-editor"
+                    onClick={() => setHeightEditorOpen(true)}
+                  >
+                    {t3('heightEdit2D')}
+                  </Button>
+                )}
+                {elevationModel && (
+                  <RailElevationEditor
+                    key={selected}
+                    plan={plan}
+                    index={selected}
+                    model={elevationModel}
+                    onChange={onChange}
+                    open={heightEditorOpen}
+                    onOpen={setHeightEditorOpen}
+                  />
+                )}
+              </>
+            )}
             {(nativePitSwitch || (active && /weiche/i.test(active.type))) && (
               <label className="text-sm">
                 <input
@@ -1928,8 +2306,8 @@ export default function GraphicalTrackEditor({
                     <input
                       data-testid={`room-origin-${key}`}
                       type="number"
-                      step="10"
-                      value={anchorRoom(plan.roomPlan, plan).backgroundOrigin[key]}
+                      step="any"
+                      value={Number(anchorRoom(plan.roomPlan, plan).backgroundOrigin[key].toFixed(3))}
                       onChange={(e) => {
                         const n = Number(e.target.value)
                         if (Number.isFinite(n) && Math.abs(n) <= 1e7) {

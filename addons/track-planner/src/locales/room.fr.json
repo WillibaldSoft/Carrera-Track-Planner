@@ -25,5 +25,7 @@
   "originX": "Origine de la pièce X (mm)",
   "originY": "Origine de la pièce Y (mm)",
   "backgroundNote": "Échelle 1:1 en mm. Bleu : surface utilisable ; hachures : inutilisable. La pièce reste fixe pendant la modification de la piste.",
-  "searchNote": "Les propositions automatiques utilisent encore le rectangle de base. Vérifier ensuite renfoncements et obstacles dans le planificateur."
+  "searchNote": "La recherche tient compte des renfoncements, des zones inutilisables, des marges, des pilotes et du passage. Elle vérifie les surfaces réelles, bordures, stands et boîtier CU compris.",
+  "noFit": "Aucune piste adaptée à ce contour n’a été trouvée. Ajuster les renfoncements, zones bloquées, marges ou l’espace des pilotes.",
+  "searching": "Vérification des surfaces de la piste dans la pièce …"
 }

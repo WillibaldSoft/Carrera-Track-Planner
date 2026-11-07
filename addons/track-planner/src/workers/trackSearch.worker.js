@@ -1,6 +1,10 @@
-import { searchDetailedTrackVariants } from '@racehubos/shared'
+import { planRoom, searchDetailedTrackVariants } from '@racehubos/shared'
 self.onmessage = ({ data }) => {
   try {
+    if (data.mode === 'room') {
+      self.postMessage({ type: 'result', result: planRoom(data.room) })
+      return
+    }
     const generator = searchDetailedTrackVariants(data.room, {
       sourcePlan: data.sourcePlan,
     })

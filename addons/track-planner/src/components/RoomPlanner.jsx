@@ -114,7 +114,7 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
     maxGradePercent: [1, 25],
   }
   function generate() {
-    if (!search.enabled) {
+    if (!search.enabled && !room.features?.length) {
       try {
         setResult(planRoom({ ...room, backgroundOrigin: undefined }))
         setError(false)
@@ -162,7 +162,11 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
           : search.seed
       const searchRoom = { ...room, detailedSearch: { ...search, seed } }
       setRoom(searchRoom)
-      worker.postMessage({ room: { ...searchRoom, backgroundOrigin: undefined }, sourcePlan: reference })
+      worker.postMessage({
+        mode: search.enabled ? 'detailed' : 'room',
+        room: { ...searchRoom, backgroundOrigin: undefined },
+        sourcePlan: reference,
+      })
     } catch {
       workerRef.current?.terminate()
       workerRef.current = null
@@ -419,12 +423,14 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
       </Button>
       {searching && (
         <div role="status" data-testid="search-progress">
-          <progress className="w-full" max="1" value={progress} />
+          <progress className="w-full" max="1" value={search.enabled ? progress : undefined} />
           <p>
-            {t('search.progress', {
-              percent: Math.round(progress * 100),
-              accepted,
-            })}
+            {search.enabled
+              ? t('search.progress', {
+                  percent: Math.round(progress * 100),
+                  accepted,
+                })
+              : rt('searching')}
           </p>
           <Button data-testid="cancel-track-search" type="button" variant="outline" onClick={cancelSearch}>
             {t('search.cancel')}
@@ -434,13 +440,15 @@ export default function RoomPlanner({ onApply, initialRoom, sourcePlan, sourceNa
       {error && <p role="alert">{t('room.invalid')}</p>}
       {result && !result.proposals.length && (
         <p role="alert">
-          {t(
-            search.enabled && result.reason === 'inventory'
-              ? 'search.noFit_inventory'
-              : result.reason && ['source', 'levels', 'clearance', 'ramps', 'search'].includes(result.reason)
-                ? `search.noFit_${result.reason}`
-                : `room.noFit_${result.reason}`,
-          )}
+          {result.reason === 'roomShape'
+            ? rt('noFit')
+            : t(
+                search.enabled && result.reason === 'inventory'
+                  ? 'search.noFit_inventory'
+                  : result.reason && ['source', 'levels', 'clearance', 'ramps', 'search'].includes(result.reason)
+                    ? `search.noFit_${result.reason}`
+                    : `room.noFit_${result.reason}`,
+              )}
         </p>
       )}
       {result?.proposals.length > 0 && search.enabled && result.proposals.length < 3 && (

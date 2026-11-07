@@ -25,5 +25,7 @@
   "originX": "Raumursprung X (mm)",
   "originY": "Raumursprung Y (mm)",
   "backgroundNote": "Maßstab 1:1 in mm. Blau: nutzbare Fläche; schraffiert: nicht nutzbar. Der Raum bleibt beim Bearbeiten der Bahn fest.",
-  "searchNote": "Automatische Streckenvorschläge verwenden weiterhin das Grundrechteck. Nischen und Hindernisse anschließend im Bahnplaner prüfen."
+  "searchNote": "Die Streckensuche berücksichtigt Nischen, nicht nutzbare Flächen, Randabstand sowie Fahrerplätze und Gang. Geprüft werden die tatsächlichen Schienenflächen einschließlich Randstreifen, Boxengasse und CU-Gehäuse.",
+  "noFit": "Keine passende Bahn für diese Raumkontur gefunden. Nischen, gesperrte Flächen, Randabstand und Fahrerbereich lassen sich anpassen.",
+  "searching": "Bahnflächen werden gegen den Raumgrundriss geprüft …"
 }

@@ -30,6 +30,8 @@ export default defineConfig({
             if (fs.statSync(file).isFile()) notice += fs.readFileSync(file, 'utf8') + '\n';
           }
         }
+        const pdfFontNotice=path.join(import.meta.dirname,'src/assets/pdf-fonts/LICENSE.txt');
+        if(fs.existsSync(pdfFontNotice)) notice += '\n\n===== Vector PDF font derivatives =====\n'+fs.readFileSync(pdfFontNotice,'utf8');
         if (process.env.RACEHUBOS_PLANNER_SOURCE_LIST) {
           const root = path.resolve(import.meta.dirname, '../..');
           const sources = [...this.getModuleIds()]

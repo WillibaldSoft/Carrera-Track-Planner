@@ -15,15 +15,13 @@ for (const lang of ['de', 'en', 'fr'])
     await page.goto('/')
     await page.getByTestId('standalone-language').selectOption(lang)
     await page.getByTestId('standalone-new').click()
-    await page
-      .locator('.planner-name')
-      .fill(
-        {
-          de: 'Demoraum mit Kamin und Fensternische',
-          en: 'Demo room with chimney and window alcove',
-          fr: 'Pièce de démonstration avec cheminée et renfoncement',
-        }[lang],
-      )
+    await page.locator('.planner-name').fill(
+      {
+        de: 'Demoraum mit Kamin und Fensternische',
+        en: 'Demo room with chimney and window alcove',
+        fr: 'Pièce de démonstration avec cheminée et renfoncement',
+      }[lang],
+    )
     await page
       .getByTestId('room-template-name')
       .fill({ de: 'Wohnzimmer · Demo', en: 'Living room · Demo', fr: 'Séjour · Démonstration' }[lang])
@@ -44,12 +42,29 @@ for (const lang of ['de', 'en', 'fr'])
     await expect(page.getByTestId('track-room-background')).toBeVisible()
     await shot('03-room-background-track')
     await page.getByTestId('planner-mode').selectOption('room')
-    await page
-      .getByTestId('room-template-select')
-      .selectOption({
-        label: { de: 'Wohnzimmer · Demo', en: 'Living room · Demo', fr: 'Séjour · Démonstration' }[lang],
-      })
+    await page.getByTestId('room-template-select').selectOption({
+      label: { de: 'Wohnzimmer · Demo', en: 'Living room · Demo', fr: 'Séjour · Démonstration' }[lang],
+    })
     await shot('04-reuse-room')
+    await page.getByTestId('room-widthM').fill('1.2')
+    await page.getByTestId('room-drivers').fill('1')
+    await page.getByTestId('room-driverWidthM').fill('0.4')
+    await page.locator('[data-room-feature="extension"]').focus()
+    await page.locator('[data-room-feature="extension"]').press('Enter')
+    await page.getByTestId('room-feature-xM').fill('1.2')
+    await page.getByTestId('room-feature-yM').fill('0')
+    await page.getByTestId('room-feature-widthM').fill('3')
+    await page.getByTestId('room-feature-depthM').fill('3.2')
+    await page.locator('[data-room-feature="obstacle"]').focus()
+    await page.locator('[data-room-feature="obstacle"]').press('Enter')
+    await page.getByTestId('room-feature-widthM').fill('0.6')
+    await page.getByTestId('generate-room-plan').click()
+    await expect(page.getByTestId('room-proposal-oval')).toBeVisible({ timeout: 45000 })
+    await page.getByTestId('room-proposal-oval').scrollIntoViewIfNeeded()
+    await shot('05-contour-aware-search')
+    await page.getByTestId('apply-room-oval').click()
+    expect(await page.locator('form').evaluate((form) => form.checkValidity())).toBe(true)
+    await shot('06-fitting-track-ready-to-save')
     await fs.writeFile(
       path.join(output, 'manifest.json'),
       JSON.stringify(

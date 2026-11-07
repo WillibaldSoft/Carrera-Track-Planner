@@ -1,11 +1,33 @@
 import { readTrackPlan } from '@racehubos/shared'
 export const LEGACY_CHANNEL = 'racehubos:track-planner:1'
 
-// Older hosts validate roomPlan against their rectangular schema. Their existing
-// native pit metadata remains extensible. Keep the lossless room snapshot only
-// at this legacy boundary; the editor and native export use roomPlan normally.
+// Older hosts discard newer top-level and per-rail fields, while native pit
+// metadata remains extensible. Keep snapshots only at this legacy boundary;
+// the editor and native export retain the normal validated plan schema.
+const sceneKeys = ['sceneHeights', 'sceneRamps', 'showElevationLabels']
+const railKeys = ['elevation', 'heightLabelOffset']
+const pick = (value, keys) => Object.fromEntries(keys.filter((k) => value[k] !== undefined).map((k) => [k, value[k]]))
 export function encodeLegacyRoom(plan) {
-  return plan?.roomPlan ? { ...plan, pit: { ...plan.pit, plannerRoomV1: plan.roomPlan } } : plan
+  if (!plan) return plan
+  const hasScene =
+    sceneKeys.some((k) => plan[k] !== undefined) || plan.pieces.some((p) => railKeys.some((k) => p[k] !== undefined))
+  if (!plan.roomPlan && !hasScene) return plan
+  return {
+    ...plan,
+    pit: {
+      ...plan.pit,
+      ...(plan.roomPlan ? { plannerRoomV1: plan.roomPlan } : {}),
+      ...(hasScene
+        ? {
+            plannerSceneV1: {
+              version: 1,
+              ...pick(plan, sceneKeys),
+              pieces: plan.pieces.map((p) => ({ type: p.type, ...pick(p, railKeys) })),
+            },
+          }
+        : {}),
+    },
+  }
 }
 export function decodeLegacyRoom(value) {
   if (typeof value === 'string') {
@@ -15,9 +37,28 @@ export function decodeLegacyRoom(value) {
       return null
     }
   }
-  if (!value?.pit?.plannerRoomV1) return readTrackPlan(value)
-  const { plannerRoomV1, ...pit } = value.pit
-  return readTrackPlan({ ...value, pit, roomPlan: plannerRoomV1 })
+  if (!value?.pit) return readTrackPlan(value)
+  const { plannerRoomV1, plannerSceneV1: scene, ...pit } = value.pit
+  if (
+    scene &&
+    (scene.version !== 1 ||
+      !Array.isArray(scene.pieces) ||
+      !Array.isArray(value.pieces) ||
+      scene.pieces.length !== value.pieces.length ||
+      scene.pieces.some((p, i) => !p || p.type !== value.pieces[i]?.type))
+  )
+    return null
+  return readTrackPlan({
+    ...value,
+    pit,
+    ...(plannerRoomV1 ? { roomPlan: plannerRoomV1 } : {}),
+    ...(scene
+      ? {
+          ...pick(scene, sceneKeys),
+          pieces: value.pieces.map((p, i) => ({ ...p, ...pick(scene.pieces[i], railKeys) })),
+        }
+      : {}),
+  })
 }
 
 // Compatibility adapter for the current experimental integration. This is not

@@ -8,7 +8,7 @@ Up to 40 room templates are kept in this browser. Continuing updates a selected 
 
 The complete footprint appears to scale behind the track. Blue indicates usable floor; hatching marks unusable areas. Fit-all includes room and track. The right sidebar can hide the background or edit its origin in millimetres. Track edits leave the room fixed. Origin changes support undo. Rail artwork is unchanged.
 
-Automatic track suggestions still use the original base rectangle and do not constrain their search by alcoves or obstacles. Check the track against the visible footprint yourself. This does not provide automatic collision or physical-buildability approval.
+Automatic search accounts for the actual room footprint, alcoves and unusable areas. Rails, shoulders, pit roads and CU housing must fit entirely in usable floor space; wall clearance, driver places and the aisle remain reserved. The search tries a bounded set of shapes and placements. No result does not prove that no layout is possible. Check physical buildability separately.
 
 ## New track: choose a room first
 
@@ -25,3 +25,15 @@ Automatic track suggestions still use the original base rectangle and do not con
 ## Reuse an existing room
 
 ![Reuse an existing room](screenshots/room-planner/en/04-reuse-room.png)
+
+## Automatic search using the room contour
+
+The example base room is only 1.2 m wide; the extra alcove makes the proposal possible. Suggestions account for alcoves, chimneys and the reserved driver area. Preview and applied track use the same position.
+
+![Automatic search using the room contour](screenshots/room-planner/en/05-contour-aware-search.png)
+
+## Track ready to save immediately
+
+Dropped or applied tracks can be saved without manually correcting their coordinates.
+
+![Track ready to save immediately](screenshots/room-planner/en/06-fitting-track-ready-to-save.png)

@@ -9,13 +9,15 @@ export function anchorRoom(room, plan) {
   return {
     ...room,
     backgroundOrigin: {
-      xMm: b.x - edge - (room.widthM * 1000 - 2 * edge - b.width) / 2,
-      yMm: b.y - edge - (availableDepth - b.depth) / 2,
+      xMm: Math.round((b.x - edge - (room.widthM * 1000 - 2 * edge - b.width) / 2) * 1000) / 1000,
+      yMm: Math.round((b.y - edge - (availableDepth - b.depth) / 2) * 1000) / 1000,
     },
   }
 }
 export function withRoomAnchor(plan) {
-  return plan.roomPlan && !plan.roomPlan.backgroundOrigin ? { ...plan, roomPlan: anchorRoom(plan.roomPlan, plan) } : plan
+  return plan.roomPlan && !plan.roomPlan.backgroundOrigin
+    ? { ...plan, roomPlan: anchorRoom(plan.roomPlan, plan) }
+    : plan
 }
 export function roomAndTrackBounds(plan, track) {
   if (!plan.roomPlan) return track

@@ -1,0 +1,124 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import {
+  emptyTrackPlan,
+  traceTrackPlan,
+  validateTrackPlan,
+  readTrackPlan,
+} from '../vendor/racehubos/shared/src/trackPlan.js'
+import { buildRampProfiles } from '../addons/track-planner/src/components/rampProfiles.js'
+const plan = () => ({
+  ...emptyTrackPlan(),
+  pieces: Array.from({ length: 12 }, (_, i) => ({ type: 'Standardgerade', level: i < 6 ? 0 : 1 })),
+})
+test('configured ramp length changes actual profile and computes mean and peak gradients', () => {
+  const s = traceTrackPlan(plan()).segments
+  const a = buildRampProfiles(s, { ascentLengthMm: 1000, descentLengthMm: 800 })
+  const b = buildRampProfiles(s, { ascentLengthMm: 2000, descentLengthMm: 800 })
+  assert.equal(a.ramps[0].lengthMm, 1000)
+  assert.equal(a.ramps[0].meanPercent, 16)
+  assert.equal(a.ramps[0].maxPercent, 30)
+  assert.equal(b.ramps[0].meanPercent, 8)
+  assert.notEqual(a.profiles[5].sample(0), b.profiles[5].sample(0))
+  for (let i = 0; i < s.length - 1; i++) assert.ok(Math.abs(a.profiles[i].end - a.profiles[i + 1].start) < 1e-8)
+})
+test('descent uses its own length and long ramps report restricted space while preserving crossing plateaus', () => {
+  const p = plan()
+  p.pieces.forEach((q) => (q.level = 1 - q.level))
+  const s = traceTrackPlan(p).segments
+  const a = buildRampProfiles(s, { ascentLengthMm: 1000, descentLengthMm: 600 })
+  assert.equal(a.ramps[0].lengthMm, 600)
+  assert.equal(a.ramps[0].up, false)
+  const b = buildRampProfiles(s, { ascentLengthMm: 20000, descentLengthMm: 20000 }, 160, 0, new Set([4, 7]))
+  assert.equal(b.ramps[0].clipped, true)
+  assert.equal(b.profiles[4].start, 160)
+  assert.equal(b.profiles[4].end, 160)
+  assert.equal(b.profiles[7].start, 0)
+  assert.equal(b.profiles[7].end, 0)
+})
+test('native validation saves ramp settings and rejects invalid values without changing old plans', () => {
+  const p = plan(),
+    r = { ascentLengthMm: 1200, descentLengthMm: 900 }
+  assert.deepEqual(readTrackPlan(JSON.stringify(validateTrackPlan({ ...p, sceneRamps: r }))).sceneRamps, r)
+  assert.equal(validateTrackPlan(p).sceneRamps, undefined)
+  for (const bad of [-1, 0, 99, 20001, NaN, Infinity, '1000'])
+    assert.throws(() => validateTrackPlan({ ...p, sceneRamps: { ...r, ascentLengthMm: bad } }))
+})
+
+test('saved lengths drive the rendered road geometry without altering XY coordinates', async () => {
+  const { buildRoomScene } = await import('../addons/track-planner/src/components/roomScene3d.js')
+  const p = plan(),
+    before = JSON.stringify(p)
+  const a = buildRoomScene({ ...p, sceneRamps: { ascentLengthMm: 1000, descentLengthMm: 800 } })
+  const b = buildRoomScene({ ...p, sceneRamps: { ascentLengthMm: 2000, descentLengthMm: 800 } })
+  assert.equal(a.ramps[0].lengthMm, 1000)
+  assert.notDeepEqual(
+    a.faces.filter((f) => f.rail === 4),
+    b.faces.filter((f) => f.rail === 4),
+  )
+  assert.equal(JSON.stringify(p), before)
+})
+
+test('real course with small joint adjustments has both ascent and descent and keeps crossing heights', async () => {
+  const { readFile } = await import('node:fs/promises')
+  const { buildRoomScene } = await import('../addons/track-planner/src/components/roomScene3d.js')
+  const p = JSON.parse(
+    await readFile(new URL('../addons/track-planner/public/track-plans/froehlichring.json', import.meta.url)),
+  )
+  const scene = buildRoomScene({ ...p, sceneRamps: { ascentLengthMm: 1000, descentLengthMm: 1000 } })
+  assert.ok(scene.ramps.some((r) => r.up))
+  assert.ok(scene.ramps.some((r) => !r.up))
+  for (const rail of [2, 33, 10, 36, 22, 38]) {
+    const tops = scene.faces.filter((f) => f.kind === 'track' && f.top && f.rail === rail)
+    const expected = (p.pieces[rail].level ?? 0) * 160 + 12
+    for (const f of tops) for (const point of f.points) assert.ok(Math.abs(point[2] - expected) < 1e-6)
+  }
+})
+
+test('individual rail heights create multi-stage ramps with a final flat rail and survive save', async () => {
+  const { buildRoomScene } = await import('../addons/track-planner/src/components/roomScene3d.js')
+  const p = plan()
+  p.pieces.forEach((q) => (q.level = 0))
+  for (const [index, heightMm, flat] of [
+    [0, 0, false],
+    [4, 200, true],
+    [7, 350, true],
+    [11, 0, true],
+  ])
+    p.pieces[index].elevation = { heightMm, flat }
+  const saved = readTrackPlan(JSON.stringify(validateTrackPlan(p)))
+  assert.deepEqual(saved.pieces[7].elevation, { heightMm: 350, flat: true })
+  const s = traceTrackPlan(saved).segments,
+    anchors = new Map(saved.pieces.flatMap((p, i) => (p.elevation ? [[i, p.elevation]] : [])))
+  const model = buildRampProfiles(s, undefined, 160, 0, new Set(), anchors)
+  assert.equal(model.ramps.length, 3)
+  for (const [index, height] of [
+    [4, 200],
+    [7, 350],
+    [11, 0],
+  ]) {
+    assert.equal(model.profiles[index].start, height)
+    assert.equal(model.profiles[index].end, height)
+  }
+  assert.ok(model.profiles[1].sample(0.5) > 0)
+  for (let i = 0; i < s.length - 1; i++) assert.ok(Math.abs(model.profiles[i].end - model.profiles[i + 1].start) < 1e-6)
+  assert.equal(buildRoomScene(saved).ramps.length, 3)
+  for (const bad of [-1, 3001, NaN, '200'])
+    assert.throws(() =>
+      validateTrackPlan({ ...p, pieces: [{ ...p.pieces[0], elevation: { heightMm: bad, flat: true } }] }),
+    )
+})
+
+test('crossing clearance follows individual heights even on rails with the same legacy level', async () => {
+  const { readFile } = await import('node:fs/promises')
+  const { buildRoomScene } = await import('../addons/track-planner/src/components/roomScene3d.js')
+  const p = JSON.parse(
+    await readFile(new URL('../addons/track-planner/public/track-plans/froehlichring.json', import.meta.url)),
+  )
+  p.pieces.forEach((q) => (q.level = 0))
+  p.pieces[33].elevation = { heightMm: 210, flat: true }
+  const scene = buildRoomScene(p)
+  const crossing = scene.lines.find((l) => l.id === 'clearance-0')
+  assert.ok(crossing)
+  assert.ok(scene.lines.some((l) => l.kind === 'clearance' && Math.abs(l.points[1][2] - l.points[0][2] - 200) < 1e-6))
+})

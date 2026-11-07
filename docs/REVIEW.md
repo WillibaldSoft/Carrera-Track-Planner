@@ -16,7 +16,7 @@ The future official plugin interface, download/update mechanism, permissions and
 
 ## Verified state
 
-48 unit cases in seven included files, 48 included browser cases and six capture scenarios producing 84 PNGs passed. The standalone Vite/add-on build passes; the large-chunk warning remains. Reproduce after `npm ci` and `npx playwright install chromium`: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
+111 unit cases in sixteen files passed. The browser suite contains 83 cases: 82 passed in the full run; the first startup case affected by the parallel build then passed with all 15 final startup, export and integration cases against the completed build. 18 successful capture scenarios provide 150 PNGs. The actual older host parser preserves heights, ramps and manual positions through the adapter. The Vite/add-on build passes; the large-chunk warning remains. Reproduce: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
 [Fixed CU, individual pit parts and parallel docking](CU-PIT-PARALLEL.en.md)
 
@@ -28,3 +28,11 @@ License and upstream attribution are retained in [LICENSE](../LICENSE), [vendor 
 
 
 [Room footprint and room-first workflow](ROOM-FOOTPRINT.en.md)
+
+
+[CU, start/finish and fuel rails](UNIT-APPEARANCE.md)
+
+
+[Automatic accessories and central toolbar](AUTOMATIC-ACCESSORIES.en.md)
+
+[3D room view](ROOM-3D.en.md) — 150 mm bridge clearance, local preview.

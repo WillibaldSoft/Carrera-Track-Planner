@@ -25,5 +25,7 @@
   "originX": "Room origin X (mm)",
   "originY": "Room origin Y (mm)",
   "backgroundNote": "Scale 1:1 in mm. Blue: usable area; hatched: unusable. The room stays fixed while editing the track.",
-  "searchNote": "Automatic track suggestions still use the base rectangle. Check alcoves and obstacles in the track planner afterwards."
+  "searchNote": "Track search accounts for alcoves, unusable areas, wall clearance, driver places and the aisle. It checks actual rail surfaces including shoulders, pit lane and CU housing.",
+  "noFit": "No track fitting this room footprint was found. Adjust alcoves, blocked areas, clearance or the driver area.",
+  "searching": "Checking track surfaces against the room footprint …"
 }

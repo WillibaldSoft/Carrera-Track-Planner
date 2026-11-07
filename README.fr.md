@@ -28,6 +28,9 @@ Le lanceur ouvre `http://127.0.0.1:3180` et écoute uniquement en local. Garder 
 - Raccordement de deux sections sélectionnées par leurs extrémités libres choisies ; annuler/rétablir.
 - Zone de dessin fixe et panneaux défilant séparément ; allemand, anglais, français et thèmes Système/Clair/Sombre.
 - Échange JSON natif, variantes Softyroyal/TRK prises en charge, export d’images, inventaire et vérification géométrique du montage.
+- Recherche adaptée à la pièce, accessoires automatiques et barre centrale.
+- Hauteurs 3D enregistrées, rampes douces réglables et étiquettes 2D déplaçables.
+- PDF vectoriel avec polices intégrées ; impression, PNG et SVG conservent les positions manuelles.
 
 ## Intégration à examiner par Anselme
 
@@ -43,7 +46,7 @@ L’ancien protocole iframe expérimental est isolé dans un adaptateur remplaç
 
 ![Planificateur avec sections raccordées](docs/screenshots/track-planner/fr/18-joined-sections.png)
 
-84 captures PNG localisées avec manifestes SHA-256. Inclus et vérifiés : sept fichiers de tests unitaires avec 48 cas et 48 cas navigateur. Les suggestions automatiques de fermeture et l’API officielle de plugin restent à réaliser.
+150 captures PNG localisées avec manifestes SHA-256, issues de 18 scénarios. Inclus : 111 cas unitaires dans seize fichiers et 83 cas navigateur. La validation contrôle aussi les PDF vectoriels et l’ancien parseur hôte réellement installé. Les suggestions automatiques de fermeture et l’API officielle restent à réaliser.
 
 ## Sources et licence
 
@@ -54,3 +57,13 @@ Apache-2.0. Les sources UI et géométriques RaceHubOS nécessaires sont fournie
 
 
 [Contour de la pièce et choix du local en premier](docs/ROOM-FOOTPRINT.fr.md)
+
+
+[CU, départ/arrivée et ravitaillement](docs/UNIT-APPEARANCE.md)
+
+
+[Accessoires automatiques et barre d’outils centrale](docs/AUTOMATIC-ACCESSORIES.fr.md)
+
+[Vue 3D dans la pièce](docs/ROOM-3D.fr.md) — 150 mm de passage libre, aperçu local.
+
+[Version 1.1.0](docs/RELEASE-1.1.0.fr.md)

@@ -1,3 +1,8 @@
+import {
+  roomFitContext,
+  roomPolygonsFit,
+  trackRoomPolygons,
+} from '../../../../vendor/racehubos/shared/src/roomTrackFit.js'
 import { anchorRoom, roomFootprint } from './roomBackground'
 import RoomFootprintDrawing from './RoomFootprintDrawing'
 import { RailRequirementsTable } from '@core/components/tracks/RailRequirementsTable'
@@ -12,7 +17,7 @@ export function RoomPlanPreview({ proposal, room, title }) {
     edge = room.edgeM * 1000
   const driverY = depth - edge - room.driverDepthM * 1000
   const bounds = proposal.bounds
-  const anchored = anchorRoom(room, proposal.plan),
+  const anchored = anchorRoom(proposal.plan.roomPlan || room, proposal.plan),
     origin = anchored.backgroundOrigin,
     footprint = roomFootprint(room).bounds
   const dx = -origin.xMm
@@ -68,13 +73,20 @@ export function SavedRoomPlan({ plan, name }) {
   const room = plan.roomPlan,
     bounds = trackBounds(plan)
   const available = roomTrackArea(room)
-  const fits = bounds.width <= available.width && bounds.depth <= available.depth
+  const origin = anchorRoom(room, plan).backgroundOrigin
+  const fits = room.features?.length
+    ? roomPolygonsFit(trackRoomPolygons(plan), roomFitContext(room), -origin.xMm, -origin.yMm)
+    : bounds.width <= available.width && bounds.depth <= available.depth
   return (
     <details className="border rounded p-2" data-testid="saved-room-plan">
       <summary>
         {t('room.title')} · {room.widthM} × {room.depthM} m · {room.drivers} {t('room.driversShort')}
       </summary>
-      {!fits && <p role="alert">{t('room.changed')}</p>}
+      {!fits && (
+        <p data-testid="saved-room-fit-warning" role="alert">
+          {t('room.changed')}
+        </p>
+      )}
       <TrackImageExport name={`${name}-Raumplan`}>
         <RoomPlanPreview proposal={{ bounds, plan }} room={room} title={name} />
       </TrackImageExport>

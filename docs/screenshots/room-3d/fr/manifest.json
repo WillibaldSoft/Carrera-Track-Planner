@@ -1,0 +1,31 @@
+{
+  "language": "fr",
+  "syntheticData": true,
+  "screenshots": [
+    {
+      "id": "01-room-and-track",
+      "file": "01-room-and-track.png",
+      "sha256": "060dd6d085c60d3ee9fc32b2e52c846d70c1bfabd146db92f8d20f0079d173cb"
+    },
+    {
+      "id": "02-crossing-clearance",
+      "file": "02-crossing-clearance.png",
+      "sha256": "e009eb6eda1066224471f9e6df43c07e419c056e88482dac4af9337ffa668cc5"
+    },
+    {
+      "id": "03-top-view",
+      "file": "03-top-view.png",
+      "sha256": "55a17743c216eff8bec670b4709f373da49dfa9942bf86ba9a0d5bdcb1874aed"
+    },
+    {
+      "id": "04-ramp-lengths-and-gradients",
+      "file": "04-ramp-lengths-and-gradients.png",
+      "sha256": "62612185856e98e8be6cf78d87a30b66a8871ecea0b31c32b1d302e59c6a9f81"
+    },
+    {
+      "id": "05-individual-heights",
+      "file": "05-individual-heights.png",
+      "sha256": "2a965ab4ce143932a81430bed0425d6cb6948cbbee616fb99298db0f71ad2fb5"
+    }
+  ]
+}

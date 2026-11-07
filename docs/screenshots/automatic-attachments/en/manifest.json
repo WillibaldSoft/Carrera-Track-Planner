@@ -1,0 +1,21 @@
+{
+  "language": "en",
+  "syntheticData": true,
+  "screenshots": [
+    {
+      "id": "01-hover-and-toolbar",
+      "file": "01-hover-and-toolbar.png",
+      "sha256": "996980f89462b451b982c9d316fd1901d6fadab761dfb53d73fc0187482a4e5c"
+    },
+    {
+      "id": "02-accessory-preview",
+      "file": "02-accessory-preview.png",
+      "sha256": "15afb5dada13b4a65c68157faf0bc1be29eec9c3c13ac266844dd9dc23a78001"
+    },
+    {
+      "id": "03-centred-selection",
+      "file": "03-centred-selection.png",
+      "sha256": "1f1cbd68c7ce41fc456ddc0d60eaa00e797ff653e524419b18398858b9c3a721"
+    }
+  ]
+}

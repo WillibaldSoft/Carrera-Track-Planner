@@ -1,0 +1,51 @@
+{
+  "language": "de",
+  "syntheticData": true,
+  "screenshots": [
+    {
+      "id": "01-heights-on-rails",
+      "file": "01-heights-on-rails.png",
+      "sha256": "6f72a33a2bdce0b973310738471a1fc0d7a29c9f0736f0fb6616df3759a457d5"
+    },
+    {
+      "id": "02-edit-height-and-gradient",
+      "file": "02-edit-height-and-gradient.png",
+      "sha256": "734536f6842ff53b4200fef71f1400adc603ee00ca8df9192167ba7afb07be77"
+    },
+    {
+      "id": "03-values-hidden",
+      "file": "03-values-hidden.png",
+      "sha256": "b0088d2f9f0f3dec37635ed73b820a7f6d95110475c37bfda3b8ea6d5652fbbe"
+    },
+    {
+      "id": "04-edit-bridge-clearance",
+      "file": "04-edit-bridge-clearance.png",
+      "sha256": "652bbbfb78e200748d4de77940df47cb7706c329252b1ef947ca8200445fa09d"
+    },
+    {
+      "id": "05-overview-label-spacing",
+      "file": "05-overview-label-spacing.png",
+      "sha256": "f9e94eb13b223419aff3dac0ec720e6012c84d7379c1d0eb12eb469859b48c74"
+    },
+    {
+      "id": "06-mobile-label-density",
+      "file": "06-mobile-label-density.png",
+      "sha256": "d1aeab3fd787a8bbc755d5398624ddb2c69808f8e7b5a3b8fee449165bd5bc8c"
+    },
+    {
+      "id": "07-manual-label-position",
+      "file": "07-manual-label-position.png",
+      "sha256": "5d6c2222d96c4c8662a4bff890179c814ff93c8932db9be3150a6460aaddead9"
+    },
+    {
+      "id": "08-automatic-label-reset",
+      "file": "08-automatic-label-reset.png",
+      "sha256": "e947256cd8cac8c7ea6aa881144e67a1ca098a8d5c10da4d40bf4747c0457ae2"
+    },
+    {
+      "id": "09-current-view-print-pdf",
+      "file": "09-current-view-print-pdf.png",
+      "sha256": "1df652129077c580eccd5d829ed75a1c7e926e2c62796f126b73b210ab5f89d7"
+    }
+  ]
+}

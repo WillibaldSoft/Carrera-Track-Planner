@@ -18,6 +18,7 @@ parser.add_argument('--node-license',required=True)
 args=parser.parse_args()
 root=Path(__file__).resolve().parents[1]
 source=root/'addons/track-planner'
+version=json.loads((root/'package.json').read_text())['version']
 output=Path(args.output).resolve()
 output.mkdir(parents=True,exist_ok=True)
 stage=Path(tempfile.mkdtemp(prefix='planner-packaging-',dir=root.parent))
@@ -53,7 +54,7 @@ launcher.write_text('#!/bin/sh\nexec /opt/racehubos-track-planner/node /opt/race
 desktop=deb/'usr/share/applications/racehubos-track-planner.desktop';desktop.parent.mkdir(parents=True)
 desktop.write_text('[Desktop Entry]\nType=Application\nName=RaceHubOS Track Planner\nName[de]=RaceHubOS Streckenplaner\nExec=racehubos-track-planner\nTerminal=true\nCategories=Game;Graphics;\n')
 control=deb/'DEBIAN';control.mkdir()
-(control/'control').write_text('Package: racehubos-track-planner\nVersion: 1.0.0\nArchitecture: amd64\nSection: games\nPriority: optional\nMaintainer: RaceHubOS contributors <noreply@localhost>\nDepends: libc6 (>= 2.28), libstdc++6, libgcc-s1, xdg-utils\nDescription: Independent offline track planner for Carrera layouts\n Separate optional planner with its own local plans and stock.\n No RaceHubOS installation or Python runtime required.\n')
-subprocess.run(['dpkg-deb','--threads-max=1','-Zgzip','-z1','--root-owner-group','--build',str(deb),str(output/'racehubos-track-planner_1.0.0_amd64.deb')],check=True)
+(control/'control').write_text(f'Package: racehubos-track-planner\nVersion: {version}\nArchitecture: amd64\nSection: games\nPriority: optional\nMaintainer: RaceHubOS contributors <noreply@localhost>\nDepends: libc6 (>= 2.28), libstdc++6, libgcc-s1, xdg-utils\nDescription: Independent offline track planner for Carrera layouts\n Separate optional planner with its own local plans and stock.\n No RaceHubOS installation or Python runtime required.\n')
+subprocess.run(['dpkg-deb','--threads-max=1','-Zgzip','-z1','--root-owner-group','--build',str(deb),str(output/f'racehubos-track-planner_{version}_amd64.deb')],check=True)
 shutil.copy2(source/'track-planner.racehub-addon.json',output/'track-planner.racehub-addon.json')
 print(output)

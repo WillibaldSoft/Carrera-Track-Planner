@@ -1,4 +1,4 @@
-import { prepareIndividualPitParts } from './pitPartEditing'
+import { prepareIndividualPitParts } from './pitPartEditing.js'
 import { emptyTrackPlan, validateTrackPlan, enableFreePlacement } from '@racehubos/shared'
 
 // Six 345 mm modules: entry + common lane + three bay modules + exit.

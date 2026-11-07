@@ -1,0 +1,25 @@
+{
+  "fontTools": "4.68.0",
+  "sources": {
+    "node_modules/@fontsource-variable/inter/files/inter-cyrillic-ext-wght-normal.woff2": "ca157063339ac4ad418f214f3abfed119b0798ab4d377386ce5c9e5a7a435ebd",
+    "node_modules/@fontsource-variable/inter/files/inter-cyrillic-wght-normal.woff2": "71d5ee93cc1e9f1d520a3a8b66456de18c7879d8df09d57fcd2eaff75fef0075",
+    "node_modules/@fontsource-variable/inter/files/inter-greek-ext-wght-normal.woff2": "6e9e020a25f9b56d418f2c085b1d3c09725a4da23fe693a5b463064606732190",
+    "node_modules/@fontsource-variable/inter/files/inter-greek-wght-normal.woff2": "1be3448e292fbf05ffe176fe1e43f135013d50b1e7d324ad1a558f623d3bb6f6",
+    "node_modules/@fontsource-variable/inter/files/inter-latin-ext-wght-normal.woff2": "34b9c504cab7a73e37b746343a449132e56cf7b5481af2cb81dc74dcff25c956",
+    "node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62",
+    "node_modules/@fontsource-variable/inter/files/inter-vietnamese-wght-normal.woff2": "5c66f9e07e90c6d4ac4922cc68d60de26c17b1858e677fb5e603fce3952b3ff2"
+  },
+  "fallbackSource": "Liberation Sans Regular, OFL-1.1; missing symbol subset; supplied in fallback-symbols.ttf",
+  "generated": {
+    "CarreraPlanner100.ttf": "de056af1685158b918f86c6b2ac26e5e2a350bdc08f2d3039c224ae92ddf0de8",
+    "CarreraPlanner200.ttf": "4e8848718365557f7898f4c1e9900ce402dde57dc410a677ec35410664d0c571",
+    "CarreraPlanner300.ttf": "432af63e2526d13e3dda8ecaaf666282883ba934d20f6821edce6a8f7783f925",
+    "CarreraPlanner400.ttf": "8f2e637d072ec0d5205aaec5ac3b22a5c802440f8182f89c93e9cf4c95ade915",
+    "CarreraPlanner500.ttf": "598afc2424e4f359d5a36cc2a6ef31636657203d9a740da4c340f4c81c7a4c8a",
+    "CarreraPlanner600.ttf": "08e51981b17f361c0844e84556bf4296424069be695f799f3d28b32a261e2656",
+    "CarreraPlanner700.ttf": "ed445bdfd4efae33a6921f0e60ae89ac2b757f1ae82284f698f9516893d2e75d",
+    "CarreraPlanner800.ttf": "2ad6034ef5d7e80d5bb61465d6c8488e15ad19a711f56f4845c4d524adaa85d8",
+    "CarreraPlanner900.ttf": "a4e830b9306a6c863539dc10e9c97a409d51e5e9a0f7a3a767f13678ceb1258b",
+    "fallback-symbols.ttf": "6d62712c9a767998413d02f973cc6325bdbefad230d1b7019b71bc60dd2dc714"
+  }
+}

@@ -15,7 +15,7 @@ L’interface officielle, le téléchargement, les mises à jour, les autorisati
 
 ## État vérifié
 
-48 cas unitaires dans sept fichiers inclus, 48 cas navigateur inclus et six scénarios produisant 84 PNG ont réussi. La compilation autonome Vite/add-on réussit ; l’avertissement sur les grands blocs reste présent. Après `npm ci` et `npx playwright install chromium` : `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
+111 cas unitaires dans seize fichiers ont réussi. La suite navigateur contient 83 cas : 82 ont réussi au passage complet ; le premier démarrage affecté par la compilation parallèle a ensuite réussi avec les 15 cas finaux de démarrage, export et intégration sur la compilation terminée. 18 scénarios réussis fournissent 150 PNG. L’ancien parseur hôte réel préserve hauteurs, rampes et positions manuelles via l’adaptateur. La compilation Vite/module réussit ; l’avertissement sur les gros blocs demeure. Commandes : `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
 [CU fixe, éléments des stands et alignement parallèle](CU-PIT-PARALLEL.fr.md)
 
@@ -27,3 +27,11 @@ Licence et provenance : [LICENSE](../LICENSE), [licence des sources fournies](..
 
 
 [Contour de la pièce et choix du local en premier](ROOM-FOOTPRINT.fr.md)
+
+
+[CU, départ/arrivée et ravitaillement](UNIT-APPEARANCE.md)
+
+
+[Accessoires automatiques et barre d’outils centrale](AUTOMATIC-ACCESSORIES.fr.md)
+
+[Vue 3D dans la pièce](ROOM-3D.fr.md) — 150 mm de passage libre, aperçu local.

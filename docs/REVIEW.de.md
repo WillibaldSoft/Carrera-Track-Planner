@@ -15,7 +15,7 @@ Die offizielle Plugin-Schnittstelle sowie Download, Updates, Berechtigungen und 
 
 ## Verifizierter Stand
 
-48 Unit-Fälle in sieben enthaltenen Dateien, 48 enthaltene Browserfälle und sechs Aufnahme-Szenarien mit insgesamt 84 PNGs bestanden. Der eigenständige Vite-/Add-on-Build besteht; der Hinweis auf große Chunks bleibt. Reproduzierbar nach `npm ci` und `npx playwright install chromium`: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
+111 Unit-Fälle in sechzehn Dateien bestanden. Die Browser-Suite enthält 83 Fälle: 82 bestanden im vollständigen Lauf; der durch den parallelen Build betroffene erste Startfall bestand anschließend mit allen 15 abschließenden Start-, Export- und Integrationsfällen gegen den fertigen Build. 18 erfolgreiche Aufnahme-Szenarien liefern 150 PNGs. Der echte ältere Host-Parser erhält über den Adapter Höhen, Rampen und manuelle Positionen. Der Vite-/Add-on-Build besteht; der Hinweis auf große Chunks bleibt. Reproduzierbar: `npm test`, `npm run test:browser`, `npm run screenshots`, `npm run build`.
 
 [CU, einzelne Boxenteile und paralleles Andocken](CU-PIT-PARALLEL.de.md)
 
@@ -27,3 +27,11 @@ Lizenz und Herkunft: [LICENSE](../LICENSE), [Vendor-Lizenz](../vendor/racehubos/
 
 
 [Raumkontur und Einstieg über den Raumplaner](ROOM-FOOTPRINT.de.md)
+
+
+[CU, Start/Ziel und Tankschienen](UNIT-APPEARANCE.md)
+
+
+[Automatische Anbauteile und zentrale Werkzeugleiste](AUTOMATIC-ACCESSORIES.de.md)
+
+[3D-Ansicht im Raum](ROOM-3D.de.md) — 150 mm lichte Überfahrthöhe, lokale Vorschau.

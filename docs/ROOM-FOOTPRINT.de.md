@@ -8,7 +8,7 @@ Raumvorlagen liegen in diesem Browser, maximal 40. Beim Weitergehen wird eine ge
 
 Im Bahnplaner ist die vollständige Kontur maßstäblich im Hintergrund sichtbar. Blau bezeichnet nutzbare Fläche, Schraffur nicht nutzbare Fläche. „Alles einpassen“ berücksichtigt Raum und Bahn. In der rechten Seitenleiste kann der Hintergrund ausgeblendet oder sein Ursprung in Millimetern eingestellt werden. Schienenänderungen verschieben den Raum nicht. Eine Änderung des Raumursprungs lässt sich rückgängig machen. Die Schienenoptik bleibt unverändert.
 
-Automatische Streckenvorschläge verwenden weiterhin das bisherige Grundrechteck und berücksichtigen Nischen und Hindernisse nicht als Suchbedingungen. Die Bahn muss anhand der sichtbaren Kontur kontrolliert werden. Eine automatische Kollisions- oder Baubarkeitsfreigabe ist damit nicht verbunden.
+Die automatische Suche berücksichtigt die tatsächliche Raumkontur, Nischen und nicht nutzbare Flächen. Schienen, Randstreifen, Boxengasse und CU-Gehäuse müssen vollständig in der nutzbaren Fläche liegen; Randabstand, Fahrerplätze und Gang bleiben frei. Die Suche probiert eine begrenzte Zahl von Formen und Positionen. Ein fehlendes Ergebnis beweist deshalb nicht, dass keine Bahn möglich ist. Eine Kontrolle der realen Baubarkeit bleibt erforderlich.
 
 ## Neue Bahn: zuerst Raum wählen
 
@@ -25,3 +25,15 @@ Automatische Streckenvorschläge verwenden weiterhin das bisherige Grundrechteck
 ## Vorhandenen Raum wiederverwenden
 
 ![Vorhandenen Raum wiederverwenden](screenshots/room-planner/de/04-reuse-room.png)
+
+## Automatische Suche mit Raumkontur
+
+Im Beispiel ist der Grundraum nur 1,2 m breit; die zusätzliche Nische macht den Vorschlag erst möglich. Die Vorschläge berücksichtigen Nischen, Kaminflächen und den reservierten Fahrerbereich. Die Vorschau verwendet dieselbe Position wie die anschließend übernommene Bahn.
+
+![Automatische Suche mit Raumkontur](screenshots/room-planner/de/05-contour-aware-search.png)
+
+## Bahn direkt speicherbereit
+
+Nach dem Ablegen oder Übernehmen sind die Koordinaten ohne manuelle Nachkorrektur speicherbar.
+
+![Bahn direkt speicherbereit](screenshots/room-planner/de/06-fitting-track-ready-to-save.png)

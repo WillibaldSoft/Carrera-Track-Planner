@@ -17,3 +17,13 @@ import roomEn from './locales/room.en.json'
 import roomFr from './locales/room.fr.json'
 for (const [lang, words] of Object.entries({ de: roomDe, en: roomEn, fr: roomFr }))
   i18n.addResourceBundle(lang, 'plannerRoom', words, true, true)
+
+import actionsDe from './locales/actions.de.json'
+import actionsEn from './locales/actions.en.json'
+import actionsFr from './locales/actions.fr.json'
+for (const [lang,words] of Object.entries({de:actionsDe,en:actionsEn,fr:actionsFr})) i18n.addResourceBundle(lang,'plannerActions',words,true,true)
+
+import threeDe from './locales/three.de.json'
+import threeEn from './locales/three.en.json'
+import threeFr from './locales/three.fr.json'
+for(const [lang,words] of Object.entries({de:threeDe,en:threeEn,fr:threeFr}))i18n.addResourceBundle(lang,'planner3D',words,true,true)

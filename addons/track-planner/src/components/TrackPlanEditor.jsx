@@ -1,3 +1,4 @@
+import RoomTrack3D from './RoomTrack3D'
 import { decodeLegacyRoom } from '../host/legacyBridge'
 import { withRoomAnchor } from './roomBackground'
 import { prepareIndividualPitParts } from './pitPartEditing'
@@ -38,6 +39,7 @@ export default function TrackPlanEditor({
   onImportNew,
 }) {
   const { t } = useTranslation('tracks')
+  const { t: t3 } = useTranslation('planner3D')
   const fileInput = useRef(null)
   const [selected, setSelected] = useState(-1)
   const [mode, setMode] = useState(() => (!value?.pieces.length && !value?.roomPlan ? 'room' : 'editor'))
@@ -232,7 +234,7 @@ export default function TrackPlanEditor({
                   className="border w-24"
                   type="number"
                   min="0.001"
-                  step="0.001"
+                  step="any"
                   max="10000"
                   value={plan.measuredLaneLengthsM[i]}
                   onChange={(e) =>
@@ -287,6 +289,7 @@ export default function TrackPlanEditor({
             onChange={(e) => setMode(e.target.value)}
           >
             <option value="editor">{t('editor.title')}</option>
+            <option value="3d">{t3('title')}</option>
             <option value="room">{t('room.title')}</option>
             <option value="files">{t('work.files')}</option>
           </select>
@@ -357,8 +360,21 @@ export default function TrackPlanEditor({
             name={trackName}
             expanded={expanded}
             planDetails={planDetails}
+            onOpenFiles={() => setMode('files')}
+            onOpen3D={() => setMode('3d')}
+            saving={saving}
           />
         </div>
+        {mode === '3d' && (
+          <RoomTrack3D
+            initialSelected={selected}
+            onChange={update}
+            plan={plan}
+            name={trackName}
+            onEditor={() => setMode('editor')}
+            onRoom={() => setMode('room')}
+          />
+        )}
         {mode === 'room' && (
           <div className="planner-room">
             <RoomPlanner

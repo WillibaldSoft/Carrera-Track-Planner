@@ -1,3 +1,4 @@
+import {roomSearchArea,roomFitContext,fitTrackInRoom} from './roomTrackFit.js';
 import { unitHousingPolygon } from './trackUnitGeometry.js';
 import { nativeExtraPoints } from './softyExtraGeometry.js';
 import { borderShapes, borderConflicts } from './trackBorderGeometry.js';
@@ -125,11 +126,14 @@ function bridge(k) {
 }
 export function planRoom(input) {
   const room = validateRoom(input);
-  const available = roomTrackArea(room);
+  const available = roomSearchArea(room);
+  const context = room.features?.length ? roomFitContext(room) : null;
   if (room.drivers * room.driverWidthM > room.widthM - 2 * room.edgeM || available.depth <= 0)
     return { room, proposals: [], reason: 'people' };
+  if(context?.usableArea===0)return {room,proposals:[],reason:'roomShape'};
   const proposals = [];
   let stockRejected = false;
+  let shapeRejected = false;
   function consider(plan, kind, extra = {}) {
     if (room.borderMode)
       plan = applyTrackBorders(
@@ -152,8 +156,10 @@ export function planRoom(input) {
       if (kind === 'bridge' && rotated.pieces.some((p) => p.borders) && borderConflicts(rotated).length) continue;
       const trace = traceTrackPlan(rotated);
       if (trace.gapMm > 0.1 || Math.abs(trace.headingErrorDegrees) > 0.01) continue;
+      const fittedRoom = context ? fitTrackInRoom(rotated, room, context) : {room};
+      if (!fittedRoom) {shapeRejected=true;continue;}
       proposals.push({
-        plan: { ...rotated, roomPlan: room },
+        plan: { ...rotated, roomPlan: fittedRoom.room },
         kind,
         dynamics: analyseCurveDynamics(rotated),
         bounds,
@@ -235,6 +241,6 @@ export function planRoom(input) {
   return {
     room,
     proposals: [...bestOvals, bestBridge].filter(Boolean),
-    reason: proposals.length ? null : stockRejected ? 'inventory' : 'space',
+    reason: proposals.length ? null : shapeRejected ? 'roomShape' : stockRejected ? 'inventory' : 'space',
   };
 }

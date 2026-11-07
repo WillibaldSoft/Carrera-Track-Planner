@@ -1,3 +1,5 @@
+import { snapshotDrawing } from './drawingSnapshot.js'
+import { downloadSnapshotPdf } from './PlannerImageExport'
 import { pitlaneLegend } from '@core/components/tracks/pitlaneComponents'
 import { BorderPartsList } from './TrackBorders'
 import { useState } from 'react'
@@ -49,10 +51,27 @@ export function TrackTypeLegend({ plan, visibleLevel = null }) {
     </ul>
   )
 }
-export default function TrackPlanPrint({ plan, name }) {
+export default function TrackPlanPrint({ plan, name, drawingRef }) {
   const { t } = useTranslation('tracks')
+  const { t: t3 } = useTranslation('planner3D')
+  const [snapshot, setSnapshot] = useState(null),
+    [busy, setBusy] = useState(false),
+    [snapshotError, setSnapshotError] = useState(false)
+  async function openPrint() {
+    setBusy(true)
+    setSnapshotError(false)
+    try {
+      setSnapshot(await snapshotDrawing(drawingRef.current))
+      setView('current')
+      setOpen(true)
+    } catch {
+      setSnapshotError(true)
+    } finally {
+      setBusy(false)
+    }
+  }
   const [open, setOpen] = useState(false),
-    [view, setView] = useState('colors'),
+    [view, setView] = useState('current'),
     [format, setFormat] = useState('A4'),
     [orientation, setOrientation] = useState('landscape'),
     [rotation, setRotation] = useState('0')
@@ -65,11 +84,12 @@ export default function TrackPlanPrint({ plan, name }) {
         type="button"
         variant="outline"
         data-testid="track-print-preview"
-        disabled={!plan.pieces.length}
-        onClick={() => setOpen(true)}
+        disabled={!plan.pieces.length || busy}
+        onClick={openPrint}
       >
         {t('print.open')}
       </Button>
+      {snapshotError && <p role="alert">{t3('snapshotError')}</p>}
       {open &&
         createPortal(
           <div
@@ -90,9 +110,9 @@ export default function TrackPlanPrint({ plan, name }) {
               <label>
                 {t('print.view')}{' '}
                 <select data-testid="track-print-view" value={view} onChange={(e) => setView(e.target.value)}>
-                  {['overview', 'colors', 'assembly', 'levels'].map((k) => (
+                  {['current', 'overview', 'colors', 'assembly', 'levels'].map((k) => (
                     <option key={k} value={k}>
-                      {t(`print.${k}`)}
+                      {k === 'current' ? t3('currentDrawing') : t(`print.${k}`)}
                     </option>
                   ))}
                 </select>
@@ -110,7 +130,7 @@ export default function TrackPlanPrint({ plan, name }) {
                 <select value={orientation} onChange={(e) => setOrientation(e.target.value)}>
                   {['landscape', 'portrait'].map((k) => (
                     <option key={k} value={k}>
-                      {t(`print.${k}`)}
+                      {k === 'current' ? t3('currentDrawing') : t(`print.${k}`)}
                     </option>
                   ))}
                 </select>
@@ -119,6 +139,7 @@ export default function TrackPlanPrint({ plan, name }) {
                 {t('graph.rotation')}{' '}
                 <select
                   data-testid="track-print-rotation"
+                  disabled={view === 'current'}
                   value={rotation}
                   onChange={(e) => setRotation(e.target.value)}
                 >
@@ -128,18 +149,54 @@ export default function TrackPlanPrint({ plan, name }) {
                 </select>{' '}
                 °
               </label>
-              <Button type="button" data-testid="track-print-now" onClick={() => window.print()}>
+              {view === 'current' && (
+                <Button
+                  type="button"
+                  data-testid="track-print-pdf"
+                  disabled={busy}
+                  onClick={async () => {
+                    setBusy(true)
+                    try {
+                      await downloadSnapshotPdf(snapshot, name, { paper: format, orientation })
+                    } catch {
+                      setSnapshotError(true)
+                    } finally {
+                      setBusy(false)
+                    }
+                  }}
+                >
+                  {t3('exportPdf')}
+                </Button>
+              )}
+              <Button
+                type="button"
+                data-testid="track-print-now"
+                onClick={async () => {
+                  setBusy(true)
+                  try {
+                    await Promise.all(
+                      [...document.querySelectorAll('.track-print-portal img')].map((img) => img.decode()),
+                    )
+                    window.print()
+                  } catch {
+                    setSnapshotError(true)
+                  } finally {
+                    setBusy(false)
+                  }
+                }}
+              >
                 {t('print.print')}
               </Button>
               <Button type="button" variant="outline" data-testid="track-print-close" onClick={() => setOpen(false)}>
                 {t('print.close')}
               </Button>
-              <p className="text-sm">{t('print.note')}</p>
+              <p className="text-sm">{view === 'current' ? t3('snapshotPrintNote') : t('print.note')}</p>
+              {snapshotError && <p role="alert">{t3('snapshotError')}</p>}
             </div>
             {pages.map((level) => (
               <section key={level ?? 'all'} className="track-print-page space-y-3" data-testid="track-print-page">
                 <h1 className="text-xl font-bold">
-                  {name} · {t(`print.${view}`)}
+                  {name} · {view === 'current' ? t3('currentDrawing') : t(`print.${view}`)}
                   {level !== null ? ` · ${t('editor.level')} ${level}` : ''}
                 </h1>
                 <p>
@@ -148,13 +205,27 @@ export default function TrackPlanPrint({ plan, name }) {
                   {plan.freePlacement && !data.connectivity.closed ? '—' : data.gapMm.toFixed(2)} mm ·{' '}
                   {plan.pieces.length} {t('room.parts')}
                 </p>
-                <TrackPlanPreview
-                  plan={rotateTrackPlan(plan, Number(rotation))}
-                  colorParts={view !== 'overview'}
-                  labels={view === 'overview' ? 'none' : view === 'assembly' ? 'both' : 'types'}
-                  visibleLevel={level}
-                  light
-                />
+                {view === 'current' ? (
+                  <div
+                    className="track-print-snapshot"
+                    style={{ height: orientation === 'landscape' ? '145mm' : '215mm', width: '100%' }}
+                  >
+                    <img
+                      data-testid="track-print-snapshot"
+                      src={snapshot.url}
+                      alt={t3('currentDrawing')}
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    />
+                  </div>
+                ) : (
+                  <TrackPlanPreview
+                    plan={rotateTrackPlan(plan, Number(rotation))}
+                    colorParts={view !== 'overview'}
+                    labels={view === 'overview' ? 'none' : view === 'assembly' ? 'both' : 'types'}
+                    visibleLevel={level}
+                    light
+                  />
+                )}
                 <TrackTypeLegend plan={plan} visibleLevel={level} />
                 <BorderPartsList plan={plan} visibleLevel={level} />
                 {view === 'assembly' && (
@@ -176,7 +247,7 @@ export default function TrackPlanPrint({ plan, name }) {
               </section>
             ))}
           </div>,
-          document.body
+          document.body,
         )}
     </>
   )

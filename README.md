@@ -28,6 +28,9 @@ The launcher opens `http://127.0.0.1:3180` and binds only to loopback. Keep its 
 - Join two selected sections through chosen free connections, with undo/redo.
 - Fixed drawing area with independently scrolling sidebars; DE/EN/FR and System/Light/Dark appearance.
 - Native JSON exchange, supported Softyroyal/TRK variants, image export, inventory and geometric build checks.
+- Room-aware automatic layout search, automatic accessories and a central toolbar.
+- Saved 3D elevations, adjustable smooth ramps and editable/movable 2D height labels.
+- Vector PDF with embedded fonts; print, PNG and SVG preserve visible manual positions.
 
 ## Integration for Anselme's review
 
@@ -43,7 +46,7 @@ The current experimental iframe protocol is isolated behind a replaceable adapte
 
 ![Planner with joined sections](docs/screenshots/track-planner/en/18-joined-sections.png)
 
-84 real localized PNGs have SHA-256 manifests. Included and verified: seven unit-test files with 48 cases and 48 browser cases. Automatic closing suggestions and the official plugin API remain pending.
+150 real localized PNGs have SHA-256 manifests from 18 capture scenarios. Included: 111 unit cases in sixteen files and 83 browser cases. Release validation also checks vector PDFs and the actual older installed host parser. Automatic closing suggestions and the official plugin API remain pending.
 
 ## Source and license
 
@@ -54,3 +57,13 @@ Apache-2.0. Required RaceHubOS UI and geometry snapshots live under `vendor/race
 
 
 [Room footprint and room-first workflow](docs/ROOM-FOOTPRINT.en.md)
+
+
+[CU, start/finish and fuel rails](docs/UNIT-APPEARANCE.md)
+
+
+[Automatic accessories and central toolbar](docs/AUTOMATIC-ACCESSORIES.en.md)
+
+[3D room view](docs/ROOM-3D.en.md) — 150 mm bridge clearance, local preview.
+
+[Version 1.1.0](docs/RELEASE-1.1.0.en.md)

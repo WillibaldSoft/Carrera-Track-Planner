@@ -1,3 +1,4 @@
+import {roomSearchArea,roomFitContext,fitTrackInRoom} from './roomTrackFit.js';
 import { borderConflicts } from './trackBorderGeometry.js';
 import { applyTrackBorders } from './trackBorders.js';
 import { analyseCurveDynamics, curveDynamicsScore } from './curveDynamics.js';
@@ -214,12 +215,15 @@ function rampsFit(p, room) {
   const runs = [reserve(lo - 1, -1), reserve(hi + 1, 1)];
   return runs.every((n) => n > 0 && (room.levelHeightMm / n) * 100 <= room.maxGradePercent) ? runs : null;
 }
-function orient(p, area) {
+function orient(p, area, room, context) {
   const original = p.startHeadingDegrees;
   for (const offset of Array.from({ length: 72 }, (_, i) => i * 2.5)) {
     p.startHeadingDegrees = ((((original + offset + 180) % 360) + 360) % 360) - 180;
     const b = trackBounds(p);
-    if (b.width <= area.width && b.depth <= area.depth) return b;
+    if (b.width <= area.width && b.depth <= area.depth) {
+      const fit=context?fitTrackInRoom(p,room,context):{room};
+      if(fit)return {bounds:b,room:fit.room};
+    }
   }
   return null;
 }
@@ -269,9 +273,11 @@ export function* searchDetailedTrackVariants(input, options = {}) {
   )
     return { room, proposals: [], reason: 'source' };
   if (room.maxLevels < 2) return { room, proposals: [], reason: 'levels' };
-  const area = roomTrackArea(room);
+  const area = roomSearchArea(room);
+  const context=room.features?.length ? roomFitContext(room) : null;
   if (room.drivers * room.driverWidthM > room.widthM - 2 * room.edgeM || area.depth <= 0)
     return { room, proposals: [], reason: 'people' };
+  if(context?.usableArea===0)return {room,proposals:[],reason:'roomShape'};
   const stock = room.inventory?.counts;
   if (!stock) return { room, proposals: [], reason: 'inventory' };
   const protectedParts = pitProtected(source);
@@ -322,8 +328,9 @@ export function* searchDetailedTrackVariants(input, options = {}) {
       Object.keys(requirements.counts).some((id) => requirements.counts[id] > (stock[id] || 0))
     )
       continue;
-    const bounds = orient(p, area);
-    if (!bounds) continue;
+    const fitted = orient(p, area, room, context);
+    if (!fitted) continue;
+    const bounds=fitted.bounds;
     const geometry = checkDetailedGeometry(p);
     if (
       geometry.overlaps.length ||
@@ -366,7 +373,7 @@ export function* searchDetailedTrackVariants(input, options = {}) {
     if (similar.some((candidate) => candidate.score >= score)) continue;
     for (const candidate of similar) best.splice(best.indexOf(candidate), 1);
     best.push({
-      plan: { ...p, roomPlan: room },
+      plan: { ...p, roomPlan: fitted.room },
       kind: 'detailed',
       dynamics,
       bounds,

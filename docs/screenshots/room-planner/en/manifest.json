@@ -14,17 +14,27 @@
     {
       "id": "02-room-shape-elements",
       "file": "02-room-shape-elements.png",
-      "sha256": "03fb005c1fd7dcdac5c0a214708e34c68c544eaba3712f5d1db7686726267a55"
+      "sha256": "7c1ba1b7441bad50b1def4df1c200865fe47497dc0b310be4c3803c69f96555f"
     },
     {
       "id": "03-room-background-track",
       "file": "03-room-background-track.png",
-      "sha256": "e8350126f4b0d6281dd08ff26a3fcbb99ddf9f062d8ff2c8aa8f477edefa2e12"
+      "sha256": "9fe24c4a17f5e4ee31db143044d99137557f972a18a6bbb4a1f6ceaa94287635"
     },
     {
       "id": "04-reuse-room",
       "file": "04-reuse-room.png",
-      "sha256": "8ec52c9cde8253a9afbd4396461dd076742d6b6fa5fcebf29d40bfeaed1bfc42"
+      "sha256": "16109b4b710d84c5f1d8551289e0669f19cf79d8f736878de02f0bfdbfa86c50"
+    },
+    {
+      "id": "05-contour-aware-search",
+      "file": "05-contour-aware-search.png",
+      "sha256": "667163fe179cc402655dcf68f737f8db601e99e28ae560fcea242ec5b67c31d5"
+    },
+    {
+      "id": "06-fitting-track-ready-to-save",
+      "file": "06-fitting-track-ready-to-save.png",
+      "sha256": "00a8ddc8867857f672f18f7fe28e370526bb65e94e91469f588e553d1a4fc42f"
     }
   ]
 }

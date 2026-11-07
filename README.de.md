@@ -28,6 +28,9 @@ Der Starter öffnet `http://127.0.0.1:3180` und lauscht nur lokal. Das Startterm
 - Zwei markierte Streckenabschnitte an gewählten freien Anschlüssen zusammenfügen; Rückgängig/Wiederholen.
 - Feste Bahnfläche mit unabhängig scrollenden Seitenbereichen; Deutsch, Englisch und Französisch sowie System/Hell/Dunkel.
 - Nativer JSON-Austausch, unterstützte Softyroyal-/TRK-Varianten, Bildexport, Bestand und geometrische Aufbauprüfung.
+- Raumabhängige Streckensuche, automatisches Zubehör und zentrale Werkzeugleiste.
+- Gespeicherte 3D-Höhen, einstellbare sanfte Rampen und verschiebbare 2D-Höhenbeschriftungen.
+- Vektor-PDF mit eingebetteten Schriften; Druck, PNG und SVG übernehmen sichtbare manuelle Positionen.
 
 ## Integration zur Prüfung durch Anselme
 
@@ -43,7 +46,7 @@ Das bisherige experimentelle iframe-Protokoll ist als austauschbarer Adapter gek
 
 ![Planer mit zusammengefügten Abschnitten](docs/screenshots/track-planner/de/18-joined-sections.png)
 
-84 echte lokalisierte PNGs mit SHA-256-Manifesten. Enthalten und geprüft: sieben Unit-Testdateien mit 48 Fällen und 48 Browserfälle. Automatische Schließvorschläge und die offizielle Plugin-API stehen weiterhin aus.
+150 echte lokalisierte PNGs mit SHA-256-Manifesten aus 18 Aufnahme-Szenarien. Enthalten: 111 Unit-Fälle in sechzehn Dateien und 83 Browserfälle. Die Release-Prüfung umfasst außerdem Vektor-PDFs und den tatsächlich installierten älteren Host-Parser. Automatische Schließvorschläge und die offizielle Plugin-API stehen weiterhin aus.
 
 ## Quellen und Lizenz
 
@@ -54,3 +57,13 @@ Apache-2.0. Benötigte RaceHubOS-UI- und Geometriequellen liegen mit Lizenz unte
 
 
 [Raumkontur und Einstieg über den Raumplaner](docs/ROOM-FOOTPRINT.de.md)
+
+
+[CU, Start/Ziel und Tankschienen](docs/UNIT-APPEARANCE.md)
+
+
+[Automatische Anbauteile und zentrale Werkzeugleiste](docs/AUTOMATIC-ACCESSORIES.de.md)
+
+[3D-Ansicht im Raum](docs/ROOM-3D.de.md) — 150 mm lichte Überfahrthöhe, lokale Vorschau.
+
+[Version 1.1.0](docs/RELEASE-1.1.0.de.md)

@@ -8,7 +8,7 @@ Jusqu’à 40 modèles de pièces sont conservés dans ce navigateur. Continuer 
 
 Le contour complet apparaît à l’échelle derrière la piste. Le bleu indique la surface utilisable, les hachures les zones inutilisables. L’ajustement de la vue inclut pièce et piste. La barre latérale droite permet de masquer le fond ou de régler son origine en millimètres. Les modifications de rails laissent la pièce fixe. Le changement d’origine peut être annulé. L’aspect des rails est conservé.
 
-La recherche automatique de pistes utilise toujours le rectangle de base et ne tient pas compte des renfoncements ou obstacles comme contraintes. Contrôler la piste par rapport au contour affiché. Aucune validation automatique des collisions ou de la faisabilité physique n’est fournie.
+La recherche automatique tient compte du contour réel, des renfoncements et des zones inutilisables. Rails, bordures, stands et boîtier CU doivent rester entièrement dans la surface utilisable ; les marges, pilotes et passage sont réservés. La recherche essaie un ensemble limité de formes et de positions. L’absence de résultat ne prouve pas qu’aucune piste n’est possible. La faisabilité physique doit être contrôlée séparément.
 
 ## Nouvelle piste : choisir la pièce
 
@@ -25,3 +25,15 @@ La recherche automatique de pistes utilise toujours le rectangle de base et ne t
 ## Réutiliser une pièce existante
 
 ![Réutiliser une pièce existante](screenshots/room-planner/fr/04-reuse-room.png)
+
+## Recherche automatique selon le contour réel
+
+Dans l’exemple, le rectangle de base ne mesure que 1,2 m de large ; le renfoncement rend la proposition possible. Les propositions tiennent compte des renfoncements, cheminées et de la zone des pilotes. L’aperçu et la piste appliquée utilisent la même position.
+
+![Recherche automatique selon le contour réel](screenshots/room-planner/fr/05-contour-aware-search.png)
+
+## Piste immédiatement enregistrable
+
+Les pistes déposées ou appliquées peuvent être enregistrées sans correction manuelle des coordonnées.
+
+![Piste immédiatement enregistrable](screenshots/room-planner/fr/06-fitting-track-ready-to-save.png)

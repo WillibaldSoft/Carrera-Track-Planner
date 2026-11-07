@@ -6,6 +6,35 @@ import { validateTrackExtras, validateSoftyImport } from './softyNativeCatalog.j
 import { validateBorders } from './trackBorders.js';
 import { analyseTrackConnections } from './trackConnections.js';
 import { validateRoom } from './roomConfiguration.js';
+export const DEFAULT_SCENE_HEIGHTS = Object.freeze({ wallHeight: 2400, obstacleHeight: 1200, baseHeight: 0, clearance: 150 });
+export function validateSceneHeights(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid scene heights');
+  const result = {};
+  for (const [key, min, max] of [['wallHeight',500,4000],['obstacleHeight',50,4000],['baseHeight',0,1500],['clearance',50,500]]) {
+    const n = value[key] ?? DEFAULT_SCENE_HEIGHTS[key];
+    if (!Number.isFinite(n) || n < min || n > max) throw new Error('Invalid scene height: ' + key);
+    result[key] = n;
+  }
+  return result;
+}
+export function validateSceneRamps(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid scene ramps');
+  const result = {};
+  for (const key of ['ascentLengthMm', 'descentLengthMm']) {
+    const n = value[key] ?? 1000;
+    if (!Number.isFinite(n) || n < 100 || n > 20000) throw new Error('Invalid ramp length');
+    result[key] = n;
+  }
+  return result;
+}
+export function validateRailElevation(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || !Number.isFinite(value.heightMm) || value.heightMm < 0 || value.heightMm > 3000 || typeof value.flat !== 'boolean') throw new Error('Invalid rail elevation');
+  return { heightMm: value.heightMm, flat: value.flat };
+}
+export function validateHeightLabelOffset(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || ![value.alongMm, value.acrossMm].every(n => Number.isFinite(n) && Math.abs(n) <= 1000000)) throw new Error('Invalid height label position');
+  return { alongMm: value.alongMm, acrossMm: value.acrossMm };
+}
 // Millimetres and degrees. Original Autorennbahnplaner 2022 centre radii;
 // catalogue dimensions are nominal, not a survey of a physically adjusted track.
 export const TRACK_PLAN_KIND = 'racehubos.track-plan';
@@ -105,6 +134,8 @@ export function validateTrackPlan(value) {
     if (value.freePlacement === true && !placement) throw new Error('Missing free placement');
     if (placement && value.freePlacement !== true) throw new Error('Unexpected placement');
     return {
+      ...(p.heightLabelOffset !== undefined ? { heightLabelOffset: validateHeightLabelOffset(p.heightLabelOffset) } : {}),
+      ...(p.elevation !== undefined ? { elevation: validateRailElevation(p.elevation) } : {}),
       ...(p.antiCollision !== undefined ? { antiCollision: p.antiCollision } : {}),
       ...(p.drawLayer !== undefined ? { drawLayer: p.drawLayer } : {}),
       ...(p.paintOrder !== undefined ? { paintOrder: p.paintOrder } : {}),
@@ -119,6 +150,7 @@ export function validateTrackPlan(value) {
     throw new Error('Invalid placement mode');
   if (value.showAntiCollision !== undefined && typeof value.showAntiCollision !== 'boolean')
     throw new Error('Invalid anti-collision display');
+  if (value.showElevationLabels !== undefined && typeof value.showElevationLabels !== 'boolean') throw new Error('Invalid elevation label display');
   const pit = { ...emptyTrackPlan().pit, ...value.pit };
   if (
     typeof pit.enabled !== 'boolean' ||
@@ -151,6 +183,7 @@ export function validateTrackPlan(value) {
   return {
     kind: TRACK_PLAN_KIND,
     version: 1,
+    ...(value.showElevationLabels !== undefined ? {showElevationLabels:value.showElevationLabels} : {}),
     ...(value.showAntiCollision !== undefined ? { showAntiCollision: value.showAntiCollision } : {}),
     ...(partGroups ? { partGroups } : {}),
     ...(trackExtras ? { trackExtras } : {}),
@@ -161,6 +194,8 @@ export function validateTrackPlan(value) {
     measuredLaneLengthsM: measured,
     geometryProfile: value.geometryProfile ?? 'planner2022',
     startHeadingDegrees: value.startHeadingDegrees ?? 0,
+    ...(value.sceneRamps !== undefined ? { sceneRamps: validateSceneRamps(value.sceneRamps) } : {}),
+    ...(value.sceneHeights !== undefined ? { sceneHeights: validateSceneHeights(value.sceneHeights) } : {}),
     ...(value.roomPlan ? { roomPlan: validateRoom(value.roomPlan) } : {}),
   };
 }

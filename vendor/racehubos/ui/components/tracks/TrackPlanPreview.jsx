@@ -156,6 +156,7 @@ export function TrackPlanPreview({
                       <FuelDetail
                         pose={{ xMm: split + pit.bayLengthMm / 2, yMm: offset, headingDegrees: 0 }}
                         index={`bay-${i}`}
+                        worldHeadingDegrees={(entry.h * 180) / Math.PI}
                         article="30361"
                       />
                     </g>

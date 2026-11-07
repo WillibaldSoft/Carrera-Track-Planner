@@ -9,22 +9,32 @@
     {
       "id": "01-room-first",
       "file": "01-room-first.png",
-      "sha256": "e6784755da95726276421b78ccf97263176d88b80aaa42886aef326ec4b18dbc"
+      "sha256": "8da32c602a9b0d78a7b066effb6d8405e0779539aa5228144154f25f06ea26bf"
     },
     {
       "id": "02-room-shape-elements",
       "file": "02-room-shape-elements.png",
-      "sha256": "3def194ac7a921fca7e6f2cedbf41278644fee1e7b1f1de90390044ff38dcdf5"
+      "sha256": "06911436f6317d1dc20e079dbbdf4cf9f1ad33a207cda0e3711d2142b2067522"
     },
     {
       "id": "03-room-background-track",
       "file": "03-room-background-track.png",
-      "sha256": "0c21d4826231ef13206f9d9be7b3df964e2221267de6ad50af0be9e73bf202c9"
+      "sha256": "306e42cfbf6b4af49d2b2e4b725e040245145cd4c8620a951a3f5b5e22285744"
     },
     {
       "id": "04-reuse-room",
       "file": "04-reuse-room.png",
-      "sha256": "2c448a9928b6e3d5f0e77bfdfb60e3ffb765e8f34576eb8fe55c07d6199136d1"
+      "sha256": "d23c3b095a5c143deceba9354f4b23065bb752877e5d40a3570f1cca30f1b1b9"
+    },
+    {
+      "id": "05-contour-aware-search",
+      "file": "05-contour-aware-search.png",
+      "sha256": "efb8841d27c0a903e79e6109a0d21f6f468003bcc9ba81be3cb170f4d68a18a8"
+    },
+    {
+      "id": "06-fitting-track-ready-to-save",
+      "file": "06-fitting-track-ready-to-save.png",
+      "sha256": "def9363c927b3f1291be7b706061fb41ca8180cfeb8d261c02a42d70e90857bd"
     }
   ]
 }

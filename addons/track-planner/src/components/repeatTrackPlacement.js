@@ -1,3 +1,4 @@
+import { placementCoordinates } from './placementCoordinates.js'
 import {
   emptyTrackPlan,
   enableFreePlacement,
@@ -12,8 +13,9 @@ export function repeatedTrackPreview(
   input,
   types,
   point,
-  { headingDegrees = 0, level = 0, snap = true, distanceMm = 55 } = {}
+  { headingDegrees = 0, level = 0, snap = true, distanceMm = 55 } = {},
 ) {
+  point = placementCoordinates(point)
   if (!point || !types.length || input.pieces.length + types.length > 2000) return null
   const trace = traceTrackPlan(input)
   const ports = snap ? analyseTrackConnections(trace.segments).openPorts.filter((p) => p.level === level) : []
@@ -34,7 +36,7 @@ export function repeatedTrackPreview(
   const preview = transformFreeParts(
     local,
     local.pieces.map((_, i) => i),
-    { degrees: pose.headingDegrees, dx: pose.xMm, dy: pose.yMm }
+    { degrees: pose.headingDegrees, dx: pose.xMm, dy: pose.yMm },
   )
   const expected = traceTrackPlan(preview).segments
   const occupied = expected.every((p) =>
@@ -43,8 +45,8 @@ export function repeatedTrackPreview(
         s.type === p.type &&
         s.level === p.level &&
         Math.hypot(s.start.x - p.start.x, s.start.y - p.start.y) < 1 &&
-        Math.abs(degrees(((s.start.h - p.start.h) * 180) / Math.PI)) < 1
-    )
+        Math.abs(degrees(((s.start.h - p.start.h) * 180) / Math.PI)) < 1,
+    ),
   )
   return { plan: preview, pose, level, occupied, snapped: !!nearest }
 }

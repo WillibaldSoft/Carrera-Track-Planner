@@ -228,7 +228,9 @@
     {
       "source": "packages/frontend/src/components/tracks/TrackUnitDetails.jsx",
       "export": "vendor/racehubos/ui/components/tracks/TrackUnitDetails.jsx",
-      "sha256": "9c325325f8c334228283715fec864937702f60370bf68f6754dd2d30096459a4"
+      "sha256": "6b94a8cc7388f92c650197f6c189587e47f6a48802004eaad0e782dda0d4cf84",
+      "originalSha256": "9c325325f8c334228283715fec864937702f60370bf68f6754dd2d30096459a4",
+      "localModification": "Planner-owned CU/start-finish and striped fuel-sensor SVG illustration, readable rotated labels and legacy pit heading support."
     },
     {
       "source": "packages/frontend/src/i18n/locales/en/common.json",
@@ -273,7 +275,9 @@
     {
       "source": "packages/frontend/src/components/tracks/TrackPlanPreview.jsx",
       "export": "vendor/racehubos/ui/components/tracks/TrackPlanPreview.jsx",
-      "sha256": "4c445eb963013b812b12fa4af33aef3619f3c8c9d785461accca6cdbeb92590e"
+      "sha256": "c30ec8a54bb46ee97fd6707a688874bc5e6af6e1b43fca0d1d2c71881a240fd1",
+      "originalSha256": "4c445eb963013b812b12fa4af33aef3619f3c8c9d785461accca6cdbeb92590e",
+      "localModification": "Planner-owned CU/start-finish and striped fuel-sensor SVG illustration, readable rotated labels and legacy pit heading support."
     },
     {
       "source": "packages/frontend/src/i18n/locales/en/stats.json",
@@ -460,7 +464,9 @@
     {
       "source": "packages/shared/src/detailedTrackSearch.js",
       "export": "vendor/racehubos/shared/src/detailedTrackSearch.js",
-      "sha256": "ed598f26d3969eebbae332a2a9e437592405a2093e0656f6c61cdea77f270297"
+      "sha256": "939ec0f2dc795727eaa58232b07769424542c94f6ed52bb16b66d2fef4238b38",
+      "originalSha256": "ed598f26d3969eebbae332a2a9e437592405a2093e0656f6c61cdea77f270297",
+      "localModification": "Planner-owned contour-aware track placement for alcoves, obstacles and reserved driver areas."
     },
     {
       "source": "packages/shared/src/freeTrackEditing.js",
@@ -507,7 +513,9 @@
     {
       "source": "packages/shared/src/roomPlanner.js",
       "export": "vendor/racehubos/shared/src/roomPlanner.js",
-      "sha256": "300153da0b5b8abb66b89cdc458d13a5e8899e0efe6f986a1922da9517f95436"
+      "sha256": "d25698bd26b0e3426283fb502b6217d09f6a1efe3d5dafdeeeb78b528149c2f4",
+      "originalSha256": "300153da0b5b8abb66b89cdc458d13a5e8899e0efe6f986a1922da9517f95436",
+      "localModification": "Planner-owned contour-aware track placement for alcoves, obstacles and reserved driver areas."
     },
     {
       "source": "packages/shared/src/sessionStatus.js",
@@ -587,7 +595,8 @@
     {
       "source": "packages/shared/src/trackPlan.js",
       "export": "vendor/racehubos/shared/src/trackPlan.js",
-      "sha256": "47375ae779f8752463623e6a199f6c2b3411267bebe9bb25f44181ddee957483"
+      "sha256": "e6a6a9de10381240bc0d49a6b61d5ddf7a69cf7b4f0be82dce1fec0fab261632",
+      "localAdaptation": "Optional sceneHeights, sceneRamps, per-piece elevation and rail-local heightLabelOffset, plus showElevationLabels, validated and retained in native plans."
     },
     {
       "source": "packages/shared/src/trackPlannerTools.js",
@@ -612,6 +621,7 @@
   ],
   "plannerOwnedAdditions": [
     "vendor/racehubos/shared/src/roomFootprint.js",
-    "addons/track-planner/src/components/RoomPlanPreview.jsx (adapted from vendor/racehubos/ui/components/tracks/SavedRoomPlan.jsx)"
+    "addons/track-planner/src/components/RoomPlanPreview.jsx (adapted from vendor/racehubos/ui/components/tracks/SavedRoomPlan.jsx)",
+    "vendor/racehubos/shared/src/roomTrackFit.js"
   ]
 }
