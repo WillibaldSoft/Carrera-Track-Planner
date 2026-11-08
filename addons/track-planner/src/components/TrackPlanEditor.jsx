@@ -281,6 +281,7 @@ export default function TrackPlanEditor({
           </div>
         </div>
         <div className="planner-header-actions">
+          <a className="text-xs underline" href="https://github.com/WillibaldSoft/Carrera-Track-Planner/tree/v1.1.7" target="_blank" rel="noreferrer">AGPL-3.0 · Source</a>
           <PlannerThemeToggle />
           <select
             data-testid="planner-mode"
