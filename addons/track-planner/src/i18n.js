@@ -27,3 +27,8 @@ import threeDe from './locales/three.de.json'
 import threeEn from './locales/three.en.json'
 import threeFr from './locales/three.fr.json'
 for(const [lang,words] of Object.entries({de:threeDe,en:threeEn,fr:threeFr}))i18n.addResourceBundle(lang,'planner3D',words,true,true)
+
+import updatesDe from './locales/updates.de.json'
+import updatesEn from './locales/updates.en.json'
+import updatesFr from './locales/updates.fr.json'
+for(const [lang,words] of Object.entries({de:updatesDe,en:updatesEn,fr:updatesFr})) i18n.addResourceBundle(lang,'plannerUpdates',words,true,true)

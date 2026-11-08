@@ -23,7 +23,7 @@ for (const language of ['de', 'en', 'fr'])
       return equal
     })
     expect(match).toBe(true)
-    const readable = await page.getByTestId('free-part-x').evaluate((el) => {
+    const readable = await page.locator('.planner-name').evaluate((el) => {
       const probe = document.createElement('span')
       probe.style.color = 'var(--foreground)'
       el.parentElement.appendChild(probe)

@@ -23,6 +23,9 @@ await fs.writeFile(
 for (const name of ['LICENSE', 'NOTICE']) await fs.copyFile(path.join(root, name), path.join(dist, name))
 await fs.mkdir(path.join(dist, 'LICENSES'), { recursive: true })
 await fs.copyFile(path.join(root, 'LICENSES/Apache-2.0.txt'), path.join(dist, 'LICENSES/Apache-2.0.txt'))
+await fs.mkdir(path.join(dist, 'update-guides'), { recursive: true })
+for (const language of ['de', 'en', 'fr'])
+  await fs.copyFile(path.join(root, `docs/UPDATES.${language}.md`), path.join(dist, `update-guides/${language}.txt`))
 const manifest = {
   id: 'track-planner',
   hostApi: 1,
@@ -49,3 +52,5 @@ await collect(dist)
 const output = path.join(root, 'addons/track-planner/track-planner.racehub-addon.json')
 await fs.writeFile(output, JSON.stringify({ manifest, files }))
 console.log(output)
+
+await import('./build-update-bundle.mjs')

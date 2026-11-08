@@ -1,0 +1,25 @@
+{
+  "language": "fr",
+  "screenshots": [
+    {
+      "id": "01-optional-check-and-release",
+      "file": "01-optional-check-and-release.png",
+      "sha256": "26f643f5d9ad915ab58822d2fe5ecf4ff8b2770ff3175b6887ce5a9168e30873"
+    },
+    {
+      "id": "02-checksum-failure-blocked",
+      "file": "02-checksum-failure-blocked.png",
+      "sha256": "61904fbb87ce0256dac5bc0c50c648b5f63475730da484b2c37cdd92d2c7a68a"
+    },
+    {
+      "id": "03-unsaved-changes-protected",
+      "file": "03-unsaved-changes-protected.png",
+      "sha256": "65df5cf49769d3694a8c98d2907442a6b09b520fdbb493a686557e65eff2d2d4"
+    },
+    {
+      "id": "04-addon-host-installation",
+      "file": "04-addon-host-installation.png",
+      "sha256": "3d76d54c266deb0ee8e0ba2064a77a5b77833367821a9f26de33739510e4b288"
+    }
+  ]
+}

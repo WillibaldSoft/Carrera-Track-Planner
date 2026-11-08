@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Package already built planner and supplied Node runtimes. Never install."""
-INSTALLER_VERSION = 3
+INSTALLER_VERSION = 4
 import argparse
 import json
 from pathlib import Path
@@ -26,6 +26,8 @@ stage=Path(tempfile.mkdtemp(prefix='planner-packaging-',dir=root.parent))
 def common(target):
  target.mkdir(parents=True)
  shutil.copytree(source/'dist',target/'dist')
+ shutil.copytree(source/'updater',target/'updater')
+ (target/'update-installation.json').write_text(json.dumps({'application':'carrera-track-planner','distribution':'portable','format':1})+'\n')
  for name in ['standalone-server.mjs','launcher.mjs','README.md']:shutil.copy2(source/name,target/name)
  shutil.copy2(root/'LICENSE',target/'LICENSE')
  shutil.copy2(root/'NOTICE',target/'NOTICE')
@@ -52,6 +54,7 @@ if args.windows_node:
 deb=stage/'deb'
 app=deb/'opt/racehubos-track-planner'
 shutil.copytree(linux,app)
+(app/'update-installation.json').write_text(json.dumps({'application':'carrera-track-planner','distribution':'deb','format':1})+'\n')
 launcher=deb/'usr/bin/racehubos-track-planner';launcher.parent.mkdir(parents=True)
 launcher.write_text('#!/bin/sh\nexec /opt/racehubos-track-planner/node /opt/racehubos-track-planner/launcher.mjs\n');launcher.chmod(0o755)
 desktop=deb/'usr/share/applications/racehubos-track-planner.desktop';desktop.parent.mkdir(parents=True)
@@ -60,4 +63,5 @@ control=deb/'DEBIAN';control.mkdir()
 (control/'control').write_text(f'Package: racehubos-track-planner\nVersion: {version}\nArchitecture: amd64\nSection: games\nPriority: optional\nMaintainer: RaceHubOS contributors <noreply@localhost>\nDepends: libc6 (>= 2.28), libstdc++6, libgcc-s1, xdg-utils\nDescription: Independent offline track planner for Carrera layouts\n Separate optional planner with its own local plans and stock.\n No RaceHubOS installation or Python runtime required.\n')
 subprocess.run(['dpkg-deb','--threads-max=1','-Zgzip','-z1','--root-owner-group','--build',str(deb),str(output/f'racehubos-track-planner_{version}_amd64.deb')],check=True)
 shutil.copy2(source/'track-planner.racehub-addon.json',output/'track-planner.racehub-addon.json')
+shutil.copy2(source/'Carrera-Track-Planner-update.json',output/'Carrera-Track-Planner-update.json')
 print(output)

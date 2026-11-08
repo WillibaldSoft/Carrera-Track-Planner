@@ -1,3 +1,6 @@
+import UpdateButton from './updates/UpdateButton'
+import { usePlannerUpdates } from './updates/UpdateContext'
+import { PLANNER_VERSION } from './updates/version'
 import { decodeLegacyRoom } from './host/legacyBridge'
 import { prepareIndividualPitParts } from './components/pitPartEditing'
 import { useEffect, useState } from 'react'
@@ -8,6 +11,8 @@ import { Button } from '@core/components/ui/button'
 import PlannerThemeToggle from './components/PlannerThemeToggle'
 export default function StandalonePlanner() {
   const { t, i18n } = useTranslation('addons')
+  const updater = usePlannerUpdates()
+  const [baseline, setBaseline] = useState('')
   const [tracks, setTracks] = useState([]),
     [id, setId] = useState(''),
     [plan, setPlan] = useState(emptyTrackPlan),
@@ -16,6 +21,9 @@ export default function StandalonePlanner() {
     [saving, setSaving] = useState(false),
     [error, setError] = useState(''),
     [success, setSuccess] = useState('')
+  useEffect(() => {
+    updater?.setDirty(opened && baseline !== JSON.stringify({ name, plan }))
+  }, [opened, baseline, name, plan])
   async function load() {
     const r = await fetch('/api/tracks')
     if (!r.ok) throw new Error()
@@ -30,7 +38,9 @@ export default function StandalonePlanner() {
     setError('')
     setSuccess('')
     const track = tracks.find((row) => row.id === value)
-    setPlan(prepareIndividualPitParts(decodeLegacyRoom(track?.layout) || emptyTrackPlan()))
+    const next = prepareIndividualPitParts(decodeLegacyRoom(track?.layout) || emptyTrackPlan())
+    setPlan(next)
+    setBaseline(JSON.stringify({ name: track?.name || '', plan: next }))
     setName(track?.name || '')
     setOpened(true)
   }
@@ -51,6 +61,7 @@ export default function StandalonePlanner() {
       if (!r.ok) throw new Error()
       const result = await r.json()
       setId(result.data.id)
+      setBaseline(JSON.stringify({ name, plan }))
       await load()
       setSuccess(t('standaloneSaved'))
     } catch {
@@ -61,7 +72,16 @@ export default function StandalonePlanner() {
   }
   return (
     <main>
-      {!opened && <a className="text-xs underline" href="https://github.com/WillibaldSoft/Carrera-Track-Planner/tree/v1.1.7" target="_blank" rel="noreferrer">AGPL-3.0 · Source</a>}
+      {!opened && (
+        <a
+          className="text-xs underline"
+          href={`https://github.com/WillibaldSoft/Carrera-Track-Planner/tree/v${PLANNER_VERSION}`}
+          target="_blank"
+          rel="noreferrer"
+        >
+          AGPL-3.0 · Source
+        </a>
+      )}
       {opened ? (
         <form
           onSubmit={(e) => {
@@ -90,7 +110,10 @@ export default function StandalonePlanner() {
         <section className="mx-auto max-w-3xl p-6 space-y-6" data-testid="standalone-home">
           <div className="flex items-center justify-between gap-4">
             <h1 className="text-2xl font-bold">{t('standaloneTitle')}</h1>
-            <PlannerThemeToggle />
+            <div className="flex gap-2">
+              <UpdateButton />
+              <PlannerThemeToggle />
+            </div>
           </div>
           <p>{t('standaloneHelp')}</p>
           <label>

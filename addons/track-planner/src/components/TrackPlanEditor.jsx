@@ -1,3 +1,5 @@
+import UpdateButton from '../updates/UpdateButton'
+import { PLANNER_VERSION } from '../updates/version'
 import RoomTrack3D from './RoomTrack3D'
 import { decodeLegacyRoom } from '../host/legacyBridge'
 import { withRoomAnchor } from './roomBackground'
@@ -281,7 +283,15 @@ export default function TrackPlanEditor({
           </div>
         </div>
         <div className="planner-header-actions">
-          <a className="text-xs underline" href="https://github.com/WillibaldSoft/Carrera-Track-Planner/tree/v1.1.7" target="_blank" rel="noreferrer">AGPL-3.0 · Source</a>
+          <a
+            className="text-xs underline"
+            href={`https://github.com/WillibaldSoft/Carrera-Track-Planner/tree/v${PLANNER_VERSION}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            AGPL-3.0 · Source
+          </a>
+          <UpdateButton />
           <PlannerThemeToggle />
           <select
             data-testid="planner-mode"

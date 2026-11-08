@@ -5,3 +5,5 @@ test-results/
 
 __pycache__/
 *.pyc
+
+addons/track-planner/Carrera-Track-Planner-update.json

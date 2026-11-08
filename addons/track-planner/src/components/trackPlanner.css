@@ -1245,3 +1245,8 @@
 .planner-layer-popover p { margin:8px 0; color:var(--muted-foreground); }
 .planner-layer-insertion { display:grid; gap:5px; margin-top:12px; }
 .planner-layer-insertion select { border:1px solid var(--border); border-radius:7px; padding:7px; background:var(--card); }
+
+.planner-update-panel {width:min(460px,calc(100vw - 24px));}
+.planner-update-start {display:flex;align-items:center;gap:8px;margin-top:10px;}
+.planner-update-notes {white-space:pre-wrap;max-height:30dvh;overflow:auto;font:inherit;padding:8px;border:1px solid var(--border);border-radius:6px;}
+.planner-update-backup {overflow-wrap:anywhere;font-size:11px;}

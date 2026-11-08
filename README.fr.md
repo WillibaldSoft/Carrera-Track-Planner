@@ -2,6 +2,7 @@
 
 [Deutsch](README.de.md) · [English](README.md) · **Français**
 
+[1.2.0 · Updates](docs/RELEASE-1.2.0.fr.md) · [Guide](docs/UPDATES.fr.md)
 [1.1.6 · Ebenen-Checkboxen / Layer checkboxes / Cases par calque](docs/RELEASE-1.1.6.fr.md)
 [1.1.5 · Ebenen ausblenden / Layer visibility / Visibilité des calques](docs/RELEASE-1.1.5.fr.md)
 [1.1.4 · Randstreifen / Shoulders / Bordures](docs/RELEASE-1.1.4.fr.md)

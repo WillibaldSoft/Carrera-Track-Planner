@@ -1,37 +1,59 @@
-import { spawn } from 'node:child_process';
-import { createStandaloneServer } from './standalone-server.mjs';
-const port = Number(process.env.PORT) || 3180;
-const address = `http://127.0.0.1:${port}`;
+import { spawn } from 'node:child_process'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { createStandaloneServer } from './standalone-server.mjs'
+const port = Number(process.env.PORT) || 3180
+const address = `http://127.0.0.1:${port}`
 function open() {
-  if (process.env.RACEHUBOS_NO_OPEN === '1') return;
-  const program = process.platform === 'win32' ? 'explorer.exe' : process.platform === 'darwin' ? 'open' : 'xdg-open';
-  const child = spawn(program, [address], { stdio: 'ignore', detached: true });
-  child.on('error', () => console.log(address));
-  child.unref();
+  if (process.env.RACEHUBOS_NO_OPEN === '1') return
+  const program = process.platform === 'win32' ? 'explorer.exe' : process.platform === 'darwin' ? 'open' : 'xdg-open'
+  const child = spawn(program, [address], { stdio: 'ignore', detached: true })
+  child.on('error', () => console.log(address))
+  child.unref()
 }
 try {
-  const server = await createStandaloneServer();
+  const server = await createStandaloneServer({
+    updateOptions: {
+      onRestart: async (job) => {
+        const supervisor = path.join(job.backup, 'application/updater/restart.mjs')
+        const child = spawn(process.execPath, [supervisor, path.join(job.backup, 'job.json')], {
+          detached: true,
+          stdio: 'ignore',
+        })
+        await new Promise((resolve, reject) => {
+          child.once('spawn', resolve)
+          child.once('error', reject)
+        })
+        child.unref()
+        setTimeout(() => {
+          server.close()
+          server.closeAllConnections()
+          setTimeout(() => process.exit(0), 100)
+        }, 200)
+      },
+    },
+  })
   server.once('error', async (error) => {
     if (error.code === 'EADDRINUSE') {
       try {
         const r = await fetch(address + '/api/planner-info', {
             signal: AbortSignal.timeout(2000),
           }),
-          info = await r.json();
+          info = await r.json()
         if (info.application === 'racehubos-track-planner') {
-          open();
-          return;
+          open()
+          return
         }
       } catch {}
     }
-    console.error(error.message);
-    process.exitCode = 1;
-  });
+    console.error(error.message)
+    process.exitCode = 1
+  })
   server.listen(port, '127.0.0.1', () => {
-    console.log('RaceHubOS Track Planner: ' + address);
-    open();
-  });
+    console.log('RaceHubOS Track Planner: ' + address)
+    open()
+  })
 } catch (error) {
-  console.error(error.message);
-  process.exitCode = 1;
+  console.error(error.message)
+  process.exitCode = 1
 }
