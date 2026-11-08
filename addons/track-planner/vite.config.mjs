@@ -18,7 +18,7 @@ export default defineConfig({
           if (match) roots.add(match[1]);
         }
         roots.add(path.resolve(import.meta.dirname, '../../node_modules/@fontsource-variable/inter'));
-        let notice = 'RaceHubOS Track Planner third-party notices\n';
+        let notice = 'RaceHubOS Track Planner third-party notices\n' + fs.readFileSync(path.resolve(import.meta.dirname, '../../NOTICE'), 'utf8') + '\n' + fs.readFileSync(path.resolve(import.meta.dirname, '../../LICENSES/Apache-2.0.txt'), 'utf8');
         for (const root of [...roots].sort()) {
           if (!fs.existsSync(path.join(root, 'package.json'))) continue;
           const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));

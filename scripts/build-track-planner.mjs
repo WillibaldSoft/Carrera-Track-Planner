@@ -20,9 +20,14 @@ await fs.writeFile(
   path.join(dist, 'release.json'),
   JSON.stringify({ application: 'carrera-track-planner', version }) + '\n',
 )
+for (const name of ['LICENSE', 'NOTICE']) await fs.copyFile(path.join(root, name), path.join(dist, name))
+await fs.mkdir(path.join(dist, 'LICENSES'), { recursive: true })
+await fs.copyFile(path.join(root, 'LICENSES/Apache-2.0.txt'), path.join(dist, 'LICENSES/Apache-2.0.txt'))
 const manifest = {
   id: 'track-planner',
   hostApi: 1,
+  license: 'AGPL-3.0-only',
+  source: `https://github.com/WillibaldSoft/Carrera-Track-Planner/tree/v${version}`,
   version,
   entry: 'index.html',
   files: {},

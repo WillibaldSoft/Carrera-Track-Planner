@@ -40,6 +40,7 @@ export default function EmbeddedPlanner({ connectHost = connectLegacyHost } = {}
         send('save')
       }}
     >
+      <a className="text-xs underline" href="https://github.com/WillibaldSoft/Carrera-Track-Planner/tree/v1.1.7" target="_blank" rel="noreferrer">AGPL-3.0 · Source</a>
       <TrackPlanEditor
         value={draft.plan}
         trackName={draft.name}

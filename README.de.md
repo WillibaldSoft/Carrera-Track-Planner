@@ -53,7 +53,7 @@ Das bisherige experimentelle iframe-Protokoll ist als austauschbarer Adapter gek
 
 ## Quellen und Lizenz
 
-Apache-2.0. Benötigte RaceHubOS-UI- und Geometriequellen liegen mit Lizenz unter `vendor/racehubos`; die Herkunft mit Originalprüfsummen steht in [PROVENANCE.json](PROVENANCE.json). shadcn/ui-Buttons und RaceHubOS-Designvariablen werden wiederverwendet. Die Schienenoptik bleibt erhalten.
+AGPL-3.0-only. Benötigte RaceHubOS-UI- und Geometriequellen liegen mit Lizenz unter `vendor/racehubos`; die Herkunft mit Originalprüfsummen steht in [PROVENANCE.json](PROVENANCE.json). shadcn/ui-Buttons und RaceHubOS-Designvariablen werden wiederverwendet. Die Schienenoptik bleibt erhalten.
 
 
 [CU, einzelne Boxenteile und paralleles Andocken](docs/CU-PIT-PARALLEL.de.md)

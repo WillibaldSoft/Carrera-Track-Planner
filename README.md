@@ -53,7 +53,7 @@ The current experimental iframe protocol is isolated behind a replaceable adapte
 
 ## Source and license
 
-Apache-2.0. Required RaceHubOS UI and geometry snapshots live under `vendor/racehubos`, with retained license and original source hashes in [PROVENANCE.json](PROVENANCE.json). shadcn/ui Buttons and the RaceHubOS design tokens are reused; rail artwork is preserved. `private: true` in package metadata prevents npm publishing; this GitHub source repository is public.
+AGPL-3.0-only. Required RaceHubOS UI and geometry snapshots live under `vendor/racehubos`, with retained license and original source hashes in [PROVENANCE.json](PROVENANCE.json). shadcn/ui Buttons and the RaceHubOS design tokens are reused; rail artwork is preserved. `private: true` in package metadata prevents npm publishing; this GitHub source repository is public.
 
 
 [Fixed CU, individual pit parts and parallel docking](docs/CU-PIT-PARALLEL.en.md)
