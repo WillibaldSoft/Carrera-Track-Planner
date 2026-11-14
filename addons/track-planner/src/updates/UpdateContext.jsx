@@ -36,6 +36,7 @@ export function publicRelease(release, current) {
 }
 export function PlannerUpdateProvider({ children }) {
   const standalone = window.parent === window
+  const updateApi = standalone ? '/api/updates' : '/api/addons/track-planner/updates'
   const preference = `carrera-updates-at-start-${standalone ? 'standalone' : 'addon'}`
   const [auto, setAuto] = useState(() => {
     try {
@@ -68,8 +69,13 @@ export function PlannerUpdateProvider({ children }) {
     return result
   }
   async function readInfo() {
-    if (!standalone) return
-    const result = await json('/api/updates/info')
+    let result
+    try {
+      result = await json(updateApi + '/info')
+    } catch (e) {
+      if (standalone) throw e
+      result = { current: PLANNER_VERSION, canInstall: false, reason: 'hostUpdateUnavailable' }
+    }
     if (alive.current) setInfo(result)
     return result
   }
@@ -78,16 +84,19 @@ export function PlannerUpdateProvider({ children }) {
     setBusy(true)
     setError('')
     try {
-      const result = standalone
-        ? await json('/api/updates/check')
-        : publicRelease(
-            await json(repository, {
-              headers: { Accept: 'application/vnd.github+json' },
-              signal: AbortSignal.timeout(45000),
-            }),
-            PLANNER_VERSION,
-          )
+      const capability = await readInfo()
+      const result =
+        standalone || capability?.hostManaged
+          ? await json(updateApi + '/check')
+          : publicRelease(
+              await json(repository, {
+                headers: { Accept: 'application/vnd.github+json' },
+                signal: AbortSignal.timeout(45000),
+              }),
+              PLANNER_VERSION,
+            )
       if (alive.current) setRelease(result)
+      return result
     } catch (e) {
       if (alive.current) setError(e.message)
     } finally {
@@ -96,7 +105,7 @@ export function PlannerUpdateProvider({ children }) {
   }
   useEffect(() => {
     alive.current = true
-    if (standalone) readInfo().catch(() => {})
+    readInfo().catch(() => {})
     if (auto) check()
     return () => {
       alive.current = false
@@ -110,18 +119,22 @@ export function PlannerUpdateProvider({ children }) {
       setError('preference')
     }
   }
-  async function install() {
-    if (busy || dirty || !info.canInstall || !release?.available || !release.installable) return
+  async function install(bundleText, selectedRelease = release) {
+    if (busy || dirty || !info.canInstall || !selectedRelease?.available || !selectedRelease.installable) return
     setBusy(true)
     setError('')
     try {
       const latestInfo = await readInfo()
-      await json('/api/updates/install', {
+      await json(updateApi + '/install', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ version: release.version, confirmationToken: latestInfo.token }),
+        body: JSON.stringify({
+          version: selectedRelease.version,
+          confirmationToken: latestInfo.token,
+          ...(typeof bundleText === 'string' ? { bundleText } : {}),
+        }),
       })
-      const deadline = Date.now() + 240000
+      const deadline = Date.now() + (standalone ? 240000 : 600000)
       while (Date.now() < deadline) {
         await new Promise((resolve) => setTimeout(resolve, 1000))
         let next
@@ -144,9 +157,31 @@ export function PlannerUpdateProvider({ children }) {
       if (alive.current) setBusy(false)
     }
   }
+  async function installFile(file) {
+    if (!file || busy || dirty || !standalone) return
+    setError('')
+    try {
+      if (file.size > 32000000) throw Error('integrity')
+      const text = await file.text()
+      let bundle
+      try {
+        bundle = JSON.parse(text)
+      } catch {
+        throw Error('invalidBundle')
+      }
+      if (bundle?.kind !== 'carrera-planner.update' || bundle.format !== 1) throw Error('invalidBundle')
+      const candidate = await check()
+      if (!candidate) return
+      if (!candidate.available) throw Error('alreadyCurrent')
+      if (bundle.version !== candidate.version) throw Error('changed')
+      await install(text, candidate)
+    } catch (e) {
+      if (alive.current) setError(e.message)
+    }
+  }
   return (
     <Context.Provider
-      value={{ standalone, auto, automatic, info, release, busy, error, dirty, setDirty, check, install }}
+      value={{ standalone, auto, automatic, info, release, busy, error, dirty, setDirty, check, install, installFile }}
     >
       {children}
     </Context.Provider>

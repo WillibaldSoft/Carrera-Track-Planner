@@ -6,7 +6,7 @@ import path from 'node:path'
 import os from 'node:os'
 import net from 'node:net'
 import { spawn } from 'node:child_process'
-import { fileURLToPath,pathToFileURL } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 import { sha256, UPDATE_ASSET } from '../addons/track-planner/updater/release.mjs'
 const source = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../addons/track-planner')
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
@@ -21,11 +21,17 @@ async function until(read, predicate, timeout = 20000) {
   }
   throw Error('Timed out waiting for test planner')
 }
-for (const failing of [false, true])
+for (const { failing, fromFile } of [
+  { failing: false, fromFile: false },
+  { failing: false, fromFile: true },
+  { failing: true, fromFile: false },
+])
   test(
     failing
       ? 'real failed startup restores the previous portable application and saved data'
-      : 'real launcher updates a temporary portable install, restarts into a new PID, preserves data and verifies backup',
+      : fromFile
+        ? 'downloaded update JSON larger than 4 MB installs, restarts and preserves saved plans'
+        : 'real launcher updates a temporary portable install, restarts into a new PID, preserves data and verifies backup',
     async () => {
       const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'planner-update-process-')),
         app = path.join(temp, 'app'),
@@ -56,6 +62,7 @@ for (const failing of [false, true])
         const stored = { version: 1, tracks: [], preferences: { testValue: 'preserved' } }
         await fs.writeFile(path.join(data, 'plans.json'), JSON.stringify(stored))
         payload.version = '1.2.1'
+        if (fromFile) set('dist/upload-padding.txt', Buffer.alloc(3300000, 65))
         if (failing) set('standalone-server.mjs', "throw new Error('intentional restart failure for isolated test')\n")
         set('dist/release.json', JSON.stringify({ application: 'carrera-track-planner', version: '1.2.1' }))
         const bytes = Buffer.from(JSON.stringify(payload)),
@@ -122,7 +129,16 @@ for (const failing of [false, true])
           body: '{}',
         })
         assert.equal(cross.status, 403)
-        assert.equal((await post({ version: '1.2.1', confirmationToken: info.token })).status, 202)
+        assert.equal(
+          (
+            await post({
+              version: '1.2.1',
+              confirmationToken: info.token,
+              ...(fromFile ? { bundleText: bytes.toString('utf8') } : {}),
+            })
+          ).status,
+          202,
+        )
         const finished = await until(
           () => read('/api/updates/info'),
           (x) => x.state?.phase === (failing ? 'rolledBack' : 'complete'),

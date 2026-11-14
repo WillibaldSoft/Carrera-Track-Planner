@@ -137,20 +137,22 @@ test('legacy plans automatically use continuous smooth ramps at level changes', 
 test('ramps cross the same submillimetre joints accepted by the editor', async () => {
   const { suggestRampLengths } = await import('../addons/track-planner/src/components/rampSuggestions.js')
   const p = plan()
-  p.pieces.forEach((q) => { q.level = 1 - q.level })
+  p.pieces.forEach((q) => {
+    q.level = 1 - q.level
+  })
   const segments = traceTrackPlan(p).segments
   // A small imported placement adjustment must not split the descent chain.
   for (const s of segments.slice(7)) {
     s.start.x += 0.264
     s.end.x += 0.264
-    s.points = s.points.map(lane => lane.map(([x,y]) => [x + 0.264,y]))
+    s.points = s.points.map((lane) => lane.map(([x, y]) => [x + 0.264, y]))
   }
   const model = buildRampProfiles(segments, { ascentLengthMm: 1000, descentLengthMm: 2000 })
   assert.equal(model.ramps[0].lengthMm, 2000)
   assert.equal(model.ramps[0].maxPercent, 15)
   assert.equal(model.ramps[0].clipped, false)
   for (let i = 0; i < segments.length - 1; i++)
-    assert.ok(Math.abs(model.profiles[i].end - model.profiles[i+1].start) < 1e-8)
+    assert.ok(Math.abs(model.profiles[i].end - model.profiles[i + 1].start) < 1e-8)
   const before = JSON.stringify(p)
   const suggestion = suggestRampLengths(p, 15)
   assert.equal(suggestion.settings.descentLengthMm, 2000)
@@ -163,7 +165,30 @@ test('ramps cross the same submillimetre joints accepted by the editor', async (
 test('suggestions report insufficient space and do not override custom height points', async () => {
   const { suggestRampLengths } = await import('../addons/track-planner/src/components/rampSuggestions.js')
   const p = plan()
-  assert.ok(suggestRampLengths(p, 1).directions.some(r => r.limited))
-  p.pieces[5].elevation = {heightMm: 160, flat: true}
+  assert.ok(suggestRampLengths(p, 1).directions.some((r) => r.limited))
+  p.pieces[5].elevation = { heightMm: 160, flat: true }
   assert.equal(suggestRampLengths(p, 15).custom, true)
+})
+
+test('ascent and descent percentages independently set smooth lengths and preserve crossings', async () => {
+  const { suggestRampLengths } = await import('../addons/track-planner/src/components/rampSuggestions.js')
+  const { buildTrackElevationModel } = await import('../addons/track-planner/src/components/trackElevationModel.js')
+  const { readFile } = await import('node:fs/promises')
+  const p = JSON.parse(
+    await readFile(new URL('../addons/track-planner/public/track-plans/froehlichring.json', import.meta.url)),
+  )
+  const s = suggestRampLengths(p, { ascent: 10, descent: 20 })
+  assert.equal(s.settings.ascentLengthMm, 3000)
+  assert.equal(s.settings.descentLengthMm, 1500)
+  const m = buildTrackElevationModel({ ...p, sceneRamps: s.settings })
+  for (const r of m.ramps) assert.ok(r.maxPercent <= (r.up ? 10 : 20) + 0.01)
+  for (let i = 0; i < m.heights.length - 1; i++) assert.ok(Math.abs(m.heights[i].end - m.heights[i + 1].start) < 1e-8)
+  for (const c of m.crossingMeasures) assert.ok(Math.abs(c.clearanceMm - 150) < 1e-6)
+  for (const bad of [
+    { ascent: 0, descent: 15 },
+    { ascent: 15, descent: NaN },
+    { ascent: 15 },
+    { ascent: '10', descent: 15 },
+  ])
+    assert.throws(() => suggestRampLengths(p, bad))
 })

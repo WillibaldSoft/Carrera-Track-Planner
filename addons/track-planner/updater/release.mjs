@@ -97,7 +97,8 @@ export async function verifiedDownload(summary, options = {}) {
     .map((line) => /^([a-f0-9]{64})\s+\*?([^\r\n]+)$/.exec(line))
   const matching = rows.filter((row) => row?.[2] === UPDATE_ASSET)
   if (matching.length !== 1 || summary.asset.digest !== `sha256:${matching[0][1]}`) throw new UpdateError('integrity')
-  const bytes = await fetchBytes(summary.asset.browser_download_url, options)
+  const bytes = options.bundleBytes ?? (await fetchBytes(summary.asset.browser_download_url, options))
+  if (!Buffer.isBuffer(bytes) || bytes.length > 32000000) throw new UpdateError('integrity')
   if (bytes.length !== summary.asset.size || sha256(bytes) !== matching[0][1]) throw new UpdateError('integrity')
   try {
     return JSON.parse(bytes.toString('utf8'))

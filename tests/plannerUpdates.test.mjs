@@ -16,7 +16,7 @@ import { validateBundle, applyBundle, APP_ENTRIES } from '../addons/track-planne
 import { createUpdateService } from '../addons/track-planner/updater/service.mjs'
 import { supervise } from '../addons/track-planner/updater/restart.mjs'
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../addons/track-planner')
-const bundle = (version='1.2.1') => makeUpdateBundle(version)
+const bundle = (version = '1.2.1') => makeUpdateBundle(version)
 async function fixture() {
   const temp = await fs.mkdtemp(path.join(os.tmpdir(), 'planner-update-test-')),
     appRoot = path.join(temp, 'app'),
@@ -317,4 +317,61 @@ test('an abandoned update is reported as interrupted without restarting or overw
   } finally {
     await fs.rm(f.temp, { recursive: true, force: true })
   }
+})
+
+test('a downloaded update file installs directly without downloading the asset again', async () => {
+  const f = await fixture()
+  try {
+    const remote = releaseFixture(await bundle())
+    let restarted = 0,
+      downloads = 0
+    const service = await createUpdateService({
+      ...f,
+      platform: 'linux',
+      fetchImpl: async (url) => {
+        if (url.endsWith('/' + UPDATE_ASSET)) {
+          downloads++
+          throw Error('Should use uploaded file')
+        }
+        return remote.fetchImpl(url)
+      },
+      onRestart: async () => {
+        restarted++
+      },
+    })
+    const info = await service.info()
+    await service.check()
+    await service.install({
+      version: '1.2.1',
+      confirmationToken: info.token,
+      bundleText: remote.bytes.toString('utf8'),
+    })
+    for (let i = 0; i < 300 && !restarted && service.state.phase !== 'failed'; i++)
+      await new Promise((r) => setTimeout(r, 20))
+    assert.equal(restarted, 1)
+    assert.equal(downloads, 0)
+    assert.equal(JSON.parse(await fs.readFile(path.join(f.appRoot, 'dist/release.json'))).version, '1.2.1')
+    assert.equal(await fs.readFile(path.join(f.dataDir, 'plans.json'), 'utf8'), 'saved user layouts')
+  } finally {
+    await fs.rm(f.temp, { recursive: true, force: true })
+  }
+})
+
+test('a modified downloaded update file is rejected against official checksums before installation', async () => {
+  const remote = releaseFixture(await bundle()),
+    summary = releaseSummary(remote.release, '1.2.0')
+  await assert.rejects(
+    verifiedDownload(summary, {
+      fetchImpl: remote.fetchImpl,
+      bundleBytes: Buffer.from(remote.bytes.toString('utf8') + ' '),
+    }),
+    (e) => e.code === 'integrity',
+  )
+  await assert.rejects(
+    verifiedDownload(summary, {
+      fetchImpl: remote.fetchImpl,
+      bundleBytes: Buffer.from(JSON.stringify({ kind: 'carrera-planner.update', version: '1.2.1' })),
+    }),
+    (e) => e.code === 'integrity',
+  )
 })

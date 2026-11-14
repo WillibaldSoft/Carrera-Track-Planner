@@ -21,7 +21,7 @@ Le dossier de données reste inchangé. Le retour à l’application précédent
 
 Les installations Debian restent gérées par le gestionnaire de paquets. Le panneau propose le paquet adapté et les sommes de contrôle de la publication ; cette installation manuelle doit être vérifiée séparément.
 
-L’extension RaceHubOS propose recherche, changements et paquet d’extension. L’installation reste confiée à la procédure disponible sur l’hôte ou au futur gestionnaire d’extensions. Le planificateur ne modifie ni ne redémarre le cœur de RaceHubOS. Télécharger ne signifie pas installer.
+Avec l’extension locale RaceHubOS, **Installer directement dans RaceHubOS** télécharge le paquet officiel en interne, vérifie les sommes GitHub et SHA256SUMS, sauvegarde le planificateur, la base et la compilation hôte, puis exécute les contrôles locaux. La vue est rechargée après réussite. En cas d’échec, les anciens fichiers sont rétablis sans restaurer les plans enregistrés. Les sessions actives et modifications non enregistrées bloquent l’installation. Les anciens hôtes gardent le téléchargement manuel.
 
 ## Récupération
 
@@ -40,3 +40,6 @@ Si l’interruption précède une sauvegarde complète, aucun `job.json` n’exi
 Les paquets Windows sont créés ; un essai Windows natif est indisponible dans cet environnement Linux. L’installation Linux, les redémarrages réels et le retour automatique sont testés dans des installations isolées.
 
 Ce guide est aussi disponible hors ligne dans `dist/update-guides/fr.txt` du dossier de l’application. Par défaut, les données sont dans `~/.local/share/racehubos-track-planner` sous Linux ou `%LOCALAPPDATA%\racehubos-track-planner` sous Windows. `RACEHUBOS_PLANNER_DATA_DIR` permet de changer cet emplacement.
+
+
+Un fichier `Carrera-Track-Planner-update.json` téléchargé peut être sélectionné via **Installer un fichier de mise à jour**. Il est vérifié contre la dernière publication officielle et ses sommes SHA-256, puis installé avec sauvegarde et redémarrage. Les fichiers JSON d’extension ou de plan sont refusés. La version actuelle n’est pas écrasée.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Package already built planner and supplied Node runtimes. Never install."""
-INSTALLER_VERSION = 4
+INSTALLER_VERSION = 5
 import argparse
 import json
 from pathlib import Path
@@ -64,4 +64,16 @@ control=deb/'DEBIAN';control.mkdir()
 subprocess.run(['dpkg-deb','--threads-max=1','-Zgzip','-z1','--root-owner-group','--build',str(deb),str(output/f'racehubos-track-planner_{version}_amd64.deb')],check=True)
 shutil.copy2(source/'track-planner.racehub-addon.json',output/'track-planner.racehub-addon.json')
 shutil.copy2(source/'Carrera-Track-Planner-update.json',output/'Carrera-Track-Planner-update.json')
+bridge=stage/f'RaceHubOS-Planer-Direktupdate-{version}'
+bridge.mkdir()
+for name in ['package.json','LICENSE','NOTICE']:
+ shutil.copy2(root/name,bridge/name)
+shutil.copytree(root/'integrations/racehubos-1.32',bridge/'integrations/racehubos-1.32')
+(bridge/'addons/track-planner/updater').mkdir(parents=True)
+for name in ['addon.mjs','release.mjs']:
+ shutil.copy2(source/'updater'/name,bridge/'addons/track-planner/updater'/name)
+shutil.copy2(source/'track-planner.racehub-addon.json',bridge/'addons/track-planner/track-planner.racehub-addon.json')
+with zipfile.ZipFile(output/f'RaceHubOS-Planer-Direktupdate-{version}.zip','w',zipfile.ZIP_DEFLATED) as archive:
+ for p in bridge.rglob('*'):
+  if p.is_file():archive.write(p,p.relative_to(stage))
 print(output)

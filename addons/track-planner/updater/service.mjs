@@ -80,7 +80,9 @@ export async function createUpdateService({
     candidate = await latestRelease(current, { fetchImpl })
     return { ...candidate, asset: undefined, checksum: undefined }
   }
-  async function install({ version, confirmationToken }) {
+  async function install({ version, confirmationToken, bundleText }) {
+    if (bundleText !== undefined && (typeof bundleText !== 'string' || Buffer.byteLength(bundleText) > 32000000))
+      throw new UpdateError('integrity')
     if (busy) throw new UpdateError('busy')
     if (confirmationToken !== token) throw new UpdateError('confirmationRequired')
     if (!(await info()).canInstall) throw new UpdateError('manualOnly')
@@ -96,7 +98,10 @@ export async function createUpdateService({
         const fresh = await latestRelease((await info()).current, { fetchImpl })
         if (!fresh.available || fresh.version !== version || fresh.asset?.digest !== candidate.asset?.digest)
           throw new UpdateError('changed')
-        const bundle = await verifiedDownload(fresh, { fetchImpl })
+        const bundle = await verifiedDownload(fresh, {
+          fetchImpl,
+          ...(bundleText !== undefined ? { bundleBytes: Buffer.from(bundleText, 'utf8') } : {}),
+        })
         job = await applyBundle({
           bundle,
           version,

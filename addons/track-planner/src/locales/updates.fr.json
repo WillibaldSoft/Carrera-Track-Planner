@@ -12,7 +12,7 @@
   "changes": "Afficher les modifications",
   "installHelp": "Vérifie le téléchargement et les fichiers par SHA-256, sauvegarde l’application et les circuits enregistrés, puis redémarre. Le runtime Node reste inchangé.",
   "dirty": "Enregistrer les modifications ou fermer l’éditeur au préalable.",
-  "install": "Installer et redémarrer",
+  "install": "Installer directement et redémarrer",
   "addonHelp": "L’installation de cette extension reste gérée par RaceHubOS. Télécharger le paquet adapté puis utiliser la procédure disponible sur l’hôte. Ce planificateur ne modifie pas le cœur de RaceHubOS.",
   "systemHelp": "Cette installation système est mise à jour par le gestionnaire Debian. Télécharger le paquet officiel et vérifier les SHA256SUMS de la publication.",
   "manualHelp": "L’installation directe est indisponible ici. Télécharger le paquet adapté et vérifier ses SHA256SUMS.",
@@ -37,7 +37,11 @@
     "manualOnly": "Seule une installation manuelle est possible ici.",
     "unsupportedInstallation": "Cette installation ne peut pas être mise à jour directement.",
     "preference": "Le navigateur n’a pas pu mémoriser le réglage de démarrage.",
-    "interrupted": "La mise à jour a été interrompue. La sauvegarde et les instructions de récupération restent disponibles."
+    "interrupted": "La mise à jour a été interrompue. La sauvegarde et les instructions de récupération restent disponibles.",
+    "invalidBundle": "Sélectionner Carrera-Track-Planner-update.json. Les fichiers JSON d’extension ou de plan ne sont pas des mises à jour de l’application.",
+    "alreadyCurrent": "Cette version est déjà installée. Aucune modification.",
+    "activeSession": "Terminer d’abord la session en cours ou en pause.",
+    "localOnly": "Ouvrir les mises à jour sur le poste de course via localhost."
   },
   "phases": {
     "idle": "Prêt",
@@ -49,7 +53,12 @@
     "complete": "Mise à jour terminée.",
     "rolledBack": "Version précédente restaurée.",
     "failed": "Échec de la mise à jour.",
-    "interrupted": "Mise à jour interrompue."
+    "interrupted": "Mise à jour interrompue.",
+    "checkingHost": "Vérification de la compatibilité RaceHubOS …"
   },
-  "guide": "Instructions et récupération"
+  "guide": "Instructions et récupération",
+  "installFile": "Installer un fichier de mise à jour",
+  "fileHelp": "Sélectionner Carrera-Track-Planner-update.json téléchargé. Vérifié contre la publication officielle et les sommes, puis installé avec sauvegarde et redémarrage.",
+  "installAddon": "Installer directement dans RaceHubOS",
+  "addonInstallHelp": "Vérifie le paquet officiel et ses sommes, sauvegarde le planificateur et la base RaceHubOS, puis exécute les contrôles locaux. La vue est ensuite rechargée."
 }

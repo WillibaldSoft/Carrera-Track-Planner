@@ -1,13 +1,15 @@
+import { useRef } from 'react'
 import { Popover } from 'radix-ui'
 import { Download, X, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@core/components/ui/button'
 import { usePlannerUpdates, notesForLanguage } from './UpdateContext'
 export default function UpdateButton() {
+  const fileInput = useRef(null)
   const update = usePlannerUpdates(),
     { t, i18n } = useTranslation('plannerUpdates')
   if (!update) return null
-  const { standalone, auto, automatic, info, release, busy, error, dirty, check, install } = update
+  const { standalone, auto, automatic, info, release, busy, error, dirty, check, install, installFile } = update
   const manualName = !standalone
     ? 'track-planner.racehub-addon.json'
     : info.reason === 'systemPackage'
@@ -18,7 +20,6 @@ export default function UpdateButton() {
           ? 'RaceHubOS-Streckenplaner-Linux-x64.tar.gz'
           : null
   const direct =
-    standalone &&
     info.canInstall &&
     release?.installable &&
     !['incompatible', 'manualOnly', 'unsupportedInstallation'].includes(error)
@@ -64,6 +65,33 @@ export default function UpdateButton() {
             <RefreshCw size={15} />
             {busy ? t('working') : t('check')}
           </Button>
+          {standalone && info.canInstall && (
+            <div>
+              <input
+                ref={fileInput}
+                type="file"
+                accept=".json,application/json"
+                hidden
+                data-testid="updates-file-input"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  e.target.value = ''
+                  if (file) installFile(file)
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                data-testid="updates-install-file"
+                disabled={busy || dirty}
+                onClick={() => fileInput.current?.click()}
+              >
+                {t('installFile')}
+              </Button>
+              <p>{t('fileHelp')}</p>
+              {dirty && <p role="note">{t('dirty')}</p>}
+            </div>
+          )}
           {error && (
             <p role="alert" data-testid="updates-error">
               {t(`errors.${error}`, { defaultValue: t('errors.generic') })}
@@ -83,14 +111,19 @@ export default function UpdateButton() {
               </details>
               {direct ? (
                 <>
-                  <p>{t('installHelp')}</p>
+                  <p>{t(standalone ? 'installHelp' : 'addonInstallHelp')}</p>
                   {dirty && (
                     <p role="note" data-testid="updates-dirty">
                       {t('dirty')}
                     </p>
                   )}
-                  <Button type="button" data-testid="updates-install" disabled={busy || dirty} onClick={install}>
-                    {t('install')}
+                  <Button
+                    type="button"
+                    data-testid="updates-install"
+                    disabled={busy || dirty}
+                    onClick={() => install()}
+                  >
+                    {t(standalone ? 'install' : 'installAddon')}
                   </Button>
                 </>
               ) : (

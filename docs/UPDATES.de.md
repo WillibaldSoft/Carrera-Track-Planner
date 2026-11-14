@@ -21,7 +21,7 @@ Die Daten bleiben im bisherigen Datenverzeichnis. Eine Rückkehr zur alten Anwen
 
 Bei einem Debian-Systempaket bleibt der Paketmanager zuständig. Das Updatefenster bietet den passenden Download und die Veröffentlichung mit SHA256SUMS. Diese manuelle Installation außerhalb des Planers ist separat zu prüfen.
 
-Beim RaceHubOS-Add-on bietet der Planer Prüfung, Änderungsanzeige und das Add-on-Paket an. Die Installation bleibt beim verfügbaren Host-Installationsweg bzw. der vorgesehenen Add-on-Verwaltung. Der Planer verändert keinen RaceHubOS-Core und startet den Host nicht neu. Das Herunterladen allein installiert nichts.
+Mit der lokalen RaceHubOS-Erweiterung ist **Direkt in RaceHubOS installieren** verfügbar. Die Erweiterung lädt das offizielle Add-on-Paket intern, prüft die GitHub- und SHA256SUMS-Prüfsummen, sichert Planer, Datenbank und Host-Build und führt die bestehende lokale Updateprüfung aus. Erst danach wird die Planeransicht neu geladen. Bei einem Fehler werden die vorherigen Programmdateien wiederhergestellt; gespeicherte Pläne werden nicht zurückgesetzt. Laufende Sitzungen und ungespeicherte Änderungen sperren die Installation. Ohne diese Host-Funktion bleibt der manuelle Add-on-Download verfügbar.
 
 ## Wiederherstellung
 
@@ -40,3 +40,6 @@ Wurde vor der ersten vollständigen Sicherung abgebrochen, gibt es noch keine `j
 Windows-Pakete werden gebaut; ein nativer Windows-Laufzeittest ist in dieser Linux-Umgebung nicht verfügbar. Linux-Installation, wirklicher Prozessneustart und automatischer Rückfall werden in isolierten Testinstallationen geprüft.
 
 Die Anleitung liegt auch offline unter `dist/update-guides/de.txt` im Programmordner. Ohne abweichende Konfiguration liegt der Datenspeicher unter Linux in `~/.local/share/racehubos-track-planner`, unter Windows in `%LOCALAPPDATA%\racehubos-track-planner`. Ein gesetztes `RACEHUBOS_PLANNER_DATA_DIR` hat Vorrang.
+
+
+Bereits heruntergeladene `Carrera-Track-Planner-update.json` lassen sich im Updatefenster über **Update-Datei installieren** direkt auswählen und installieren. Die Datei wird gegen die neueste offizielle Veröffentlichung und deren SHA-256-Prüfsummen geprüft; Sicherung und Neustart erfolgen wie beim Online-Update. Add-on- und Bahnplan-JSON-Dateien werden abgewiesen. Bei einer aktuellen Version wird nichts überschrieben.

@@ -21,7 +21,7 @@ The data directory stays unchanged. Application rollback never overwrites newer 
 
 Debian system installations remain managed by the package manager. The update panel links to the matching package and release checksums. Manual installation outside the planner must be verified separately.
 
-The RaceHubOS add-on offers checks, changes and the add-on download. Installation remains with the available host procedure or future add-on manager. The planner does not patch or restart the RaceHubOS core. Downloading alone does not install anything.
+With the local RaceHubOS extension, **Install directly in RaceHubOS** downloads the official add-on internally, checks GitHub and SHA256SUMS digests, backs up the planner, database and host build, and runs the existing local compatibility checks. The planner view reloads after success. Failures restore the previous application files without rolling back saved plans. Active sessions and unsaved edits block installation. Older hosts retain the manual add-on download.
 
 ## Recovery
 
@@ -40,3 +40,6 @@ An interruption before a complete backup leaves no `job.json` and has not replac
 Windows packages are built but native Windows execution cannot be tested in this Linux environment. Linux installation, real restarts and automatic rollback are tested in isolated installations.
 
 An offline copy of this guide is in `dist/update-guides/en.txt` in the application folder. Unless overridden, data is stored in `~/.local/share/racehubos-track-planner` on Linux or `%LOCALAPPDATA%\racehubos-track-planner` on Windows. `RACEHUBOS_PLANNER_DATA_DIR` overrides that location.
+
+
+Already downloaded `Carrera-Track-Planner-update.json` files can be selected with **Install update file** in the update panel. The file is verified against the latest official release and its SHA-256 checksums, then installed with backup and restart. Add-on and track-plan JSON files are rejected. The current version is not overwritten.

@@ -69,12 +69,15 @@
   "snapshotPrintNote": "This print view preserves current framing, zoom and visible label positions. PDF exports rails and text as scalable vectors.",
   "center": "Center view",
   "targetSlope": "Maximum gradient (%)",
-  "suggestRamps": "Apply both suggestions",
-  "suggestHelp": "Preview smooth transitions. Apply ascent and descent separately or together. Limited space may prevent the target grade; preview values show the actual result.",
-  "suggestions": "Gradient suggestions",
+  "suggestRamps": "Apply both percentages",
+  "suggestHelp": "Enter maximum ascent and descent gradients separately. Apply sets the calculated length and updates the 3D view. Smooth ramps have a lower average than maximum gradient. Limited space is indicated. Save the plan afterwards.",
+  "suggestions": "Set ascent and descent percentages",
   "currentMax": "Current maximum",
   "suggestedMax": "Suggested maximum",
   "affectedRails": "Affected rails",
   "applySuggestion": "Apply",
-  "customSuggestionHelp": "Custom height points define this profile. Adjust these points in the height profile; ramp lengths do not change them."
+  "customSuggestionHelp": "Custom height points define this profile. Adjust these points in the height profile; ramp lengths do not change them.",
+  "ascentPercent": "Maximum ascent gradient (%)",
+  "descentPercent": "Maximum descent gradient (%)",
+  "invalidPercent": "Enter a value from 1 to 100 %."
 }

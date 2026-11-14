@@ -87,7 +87,8 @@ export async function createStandaloneServer({
           chunks = []
         for await (const chunk of req) {
           size += chunk.length
-          if (size > 4_000_000) return json(413, { success: false })
+          if (size > (url.pathname === '/api/updates/install' ? 36_000_000 : 4_000_000))
+            return json(413, { success: false })
           chunks.push(chunk)
         }
         const body = JSON.parse(Buffer.concat(chunks).toString('utf8'))

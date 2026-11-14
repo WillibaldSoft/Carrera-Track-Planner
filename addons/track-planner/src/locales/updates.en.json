@@ -12,7 +12,7 @@
   "changes": "Show changes",
   "installHelp": "Verifies the download and files with SHA-256, backs up the previous application and saved tracks, then restarts. The Node runtime is unchanged.",
   "dirty": "Save your changes or close the editor first.",
-  "install": "Install and restart",
+  "install": "Install update directly and restart",
   "addonHelp": "RaceHubOS remains responsible for installing this add-on. Download the matching package and use the available host installation procedure. This planner does not modify the RaceHubOS core.",
   "systemHelp": "This system installation is updated through the Debian package manager. Download the official package and check the release SHA256SUMS.",
   "manualHelp": "Direct installation is unavailable here. Download the matching release package and check its SHA256SUMS.",
@@ -37,7 +37,11 @@
     "manualOnly": "Only manual installation is available here.",
     "unsupportedInstallation": "This installation cannot be updated directly.",
     "preference": "The browser could not persist the startup preference.",
-    "interrupted": "The update was interrupted. The backup and recovery instructions are available."
+    "interrupted": "The update was interrupted. The backup and recovery instructions are available.",
+    "invalidBundle": "Select Carrera-Track-Planner-update.json. Add-on or track plan JSON files are not application updates.",
+    "alreadyCurrent": "This version is already installed. Nothing was changed.",
+    "activeSession": "End the active or paused session first.",
+    "localOnly": "Open direct updates locally on the race computer via localhost."
   },
   "phases": {
     "idle": "Ready",
@@ -49,7 +53,12 @@
     "complete": "Update completed.",
     "rolledBack": "Previous version restored.",
     "failed": "Update failed.",
-    "interrupted": "Update interrupted."
+    "interrupted": "Update interrupted.",
+    "checkingHost": "Checking RaceHubOS compatibility …"
   },
-  "guide": "Instructions and recovery"
+  "guide": "Instructions and recovery",
+  "installFile": "Install update file",
+  "fileHelp": "Select a downloaded Carrera-Track-Planner-update.json. It is checked against the official release and checksums, then installed with backup and restart.",
+  "installAddon": "Install directly in RaceHubOS",
+  "addonInstallHelp": "Verifies the official add-on and checksums, backs up the planner and RaceHubOS database, and runs the local compatibility checks. The planner view then reloads."
 }

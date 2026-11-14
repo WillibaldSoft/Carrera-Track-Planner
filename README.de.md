@@ -2,6 +2,7 @@
 
 **Deutsch** · [English](README.md) · [Français](README.fr.md)
 
+[1.4.0 · Gradients & direct updates](docs/RELEASE-1.4.0.de.md)
 [1.3.0 · 3D ramps](docs/RELEASE-1.3.0.de.md)
 [1.2.0 · Updates](docs/RELEASE-1.2.0.de.md) · [Guide](docs/UPDATES.de.md)
 [1.1.6 · Ebenen-Checkboxen / Layer checkboxes / Cases par calque](docs/RELEASE-1.1.6.de.md)

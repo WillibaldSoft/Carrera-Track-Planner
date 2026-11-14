@@ -69,12 +69,15 @@
   "snapshotPrintNote": "Diese Druckansicht übernimmt den aktuellen Ausschnitt, Zoom und sichtbare Beschriftungspositionen unverändert. PDF exportiert Schienen und Schrift als skalierbare Vektoren.",
   "center": "Darstellung zentrieren",
   "targetSlope": "Maximale Steigung (%)",
-  "suggestRamps": "Beide Vorschläge übernehmen",
-  "suggestHelp": "Vorschau für sanfte Übergänge. Auf- und Abfahrt einzeln übernehmen oder beide anwenden. Begrenzter Platz kann das Steigungsziel verhindern; die tatsächlichen Werte stehen in der Vorschau.",
-  "suggestions": "Steigungsvorschläge",
+  "suggestRamps": "Beide Prozentwerte umsetzen",
+  "suggestHelp": "Maximale Steigung und maximales Gefälle getrennt eingeben. „Übernehmen“ setzt die berechnete Länge um und aktualisiert die 3D-Darstellung. Bei sanften Übergängen ist der Mittelwert kleiner als der Maximalwert. Begrenzter Platz wird angezeigt. Anschließend den Plan speichern.",
+  "suggestions": "Auf- und Abfahrt in % einstellen",
   "currentMax": "Aktuell maximal",
   "suggestedMax": "Vorschlag maximal",
   "affectedRails": "Betroffene Bahnteile",
-  "applySuggestion": "Übernehmen",
-  "customSuggestionHelp": "Individuelle Höhenpunkte legen den Verlauf fest. Diese Punkte im Höhenprofil anpassen; Rampenlängen verändern sie nicht."
+  "applySuggestion": "Umsetzen",
+  "customSuggestionHelp": "Individuelle Höhenpunkte legen den Verlauf fest. Diese Punkte im Höhenprofil anpassen; Rampenlängen verändern sie nicht.",
+  "ascentPercent": "Maximale Steigung der Auffahrt (%)",
+  "descentPercent": "Maximales Gefälle der Abfahrt (%)",
+  "invalidPercent": "Bitte einen Wert von 1 bis 100 % eingeben."
 }

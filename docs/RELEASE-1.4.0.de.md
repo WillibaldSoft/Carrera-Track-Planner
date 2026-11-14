@@ -1,0 +1,9 @@
+# Version 1.4.0 – Getrennte Prozent-Eingaben und direkte RaceHubOS-Updates
+
+- Auffahrt und Abfahrt getrennt in Prozent einstellen. Vorschau mit berechneter Rampenlänge, tatsächlicher maximaler Steigung und betroffenen Bahnteilen; einzeln oder gemeinsam umsetzen. Die 3D-Geometrie folgt den übernommenen Werten. Begrenzter Platz wird angezeigt, Höhenanschlüsse bleiben zusammenhängend.
+- Direkte Updateinstallation im eingebetteten RaceHubOS-Planer mit offizieller Paket-/Dateiprüfung, Sicherung von Anwendung und Datenbank und anschließender lokaler Verträglichkeitsprüfung. Ungespeicherte Änderungen und aktive Sitzungen sperren die Installation.
+- Eigenständiger Planer: Bereits heruntergeladene `Carrera-Track-Planner-update.json` über „Update-Datei installieren“ direkt einspielen. Abgleich mit der offiziellen Veröffentlichung, Sicherung, Neustart und Rückfall bleiben erhalten; auch Dateien über 4 MB werden unterstützt.
+
+**RaceHubOS-Voraussetzung:** Die direkte Host-Installation benötigt die lokale `carrera-local`-Erweiterung für RaceHubOS **1.32.0** und ihre Updateprüfung. Das zusätzliche Paket **RaceHubOS-Planer-Direktupdate-1.4.0.zip** enthält Brücke, Planer und Installationsskript. Einmal bei beendetem RaceHubOS installieren; danach erfolgen Planer-Updates über den Knopf im eingebetteten Planer. Andere Hosts behalten den manuellen Weg. [Anleitung](https://github.com/WillibaldSoft/Carrera-Track-Planner/blob/v1.4.0/integrations/racehubos-1.32/README.md).
+
+Pakete: Linux x64 portabel, Windows x64 portabel, Debian amd64, RaceHubOS-Add-on-JSON, eigenständiges Updatepaket und RaceHubOS-1.32-Integrationspaket. Bestehende Pläne werden durch das Release nicht geändert. Windows-Paket inhaltlich geprüft; native Windows-Ausführung hier nicht verfügbar. Kein neues Setup-EXE oder macOS-Paket.

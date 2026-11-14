@@ -69,12 +69,15 @@
   "snapshotPrintNote": "Cette vue conserve cadrage, zoom et positions visibles. Le PDF exporte rails et texte en vecteurs redimensionnables.",
   "center": "Centrer la vue",
   "targetSlope": "Pente maximale (%)",
-  "suggestRamps": "Appliquer les deux propositions",
-  "suggestHelp": "Aperçu des transitions progressives. Appliquez la montée et la descente séparément ou ensemble. Un espace limité peut empêcher la pente cible ; les valeurs affichent le résultat réel.",
-  "suggestions": "Propositions de pentes",
+  "suggestRamps": "Appliquer les deux pourcentages",
+  "suggestHelp": "Saisir séparément les pentes maximales de montée et de descente. Appliquer utilise la longueur calculée et actualise la vue 3D. Une rampe progressive a une pente moyenne inférieure au maximum. Les limites d’espace sont indiquées. Enregistrer ensuite le plan.",
+  "suggestions": "Régler la montée et la descente en %",
   "currentMax": "Maximum actuel",
   "suggestedMax": "Maximum proposé",
   "affectedRails": "Rails concernés",
   "applySuggestion": "Appliquer",
-  "customSuggestionHelp": "Les hauteurs individuelles définissent ce profil. Ajustez ces points dans le profil ; les longueurs des rampes ne les modifient pas."
+  "customSuggestionHelp": "Les hauteurs individuelles définissent ce profil. Ajustez ces points dans le profil ; les longueurs des rampes ne les modifient pas.",
+  "ascentPercent": "Pente maximale de la montée (%)",
+  "descentPercent": "Pente maximale de la descente (%)",
+  "invalidPercent": "Saisir une valeur de 1 à 100 %."
 }
