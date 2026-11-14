@@ -83,7 +83,7 @@ test('incoming straight, double and curved switch diodes remain left at reversed
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   const types = [
     'DigitaleDoppelweiche_1',
     'DigitaleDoppelweiche_2',
@@ -108,7 +108,7 @@ test('incoming straight, double and curved switch diodes remain left at reversed
     mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify(plan)),
   })
-  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('planner-nav-editor').click()
   const canvas = page.getByTestId('graph-track-canvas')
   await expect(canvas.getByTestId('switch-infrared-sensor')).toHaveCount(8)
   await expect(canvas.getByTestId('pit-switch-infrared-sensor')).toHaveCount(1)
@@ -116,6 +116,6 @@ test('incoming straight, double and curved switch diodes remain left at reversed
   await expect(canvas.getByTestId('rail-8').getByTestId('switch-infrared-sensor')).toHaveCount(0)
   await expect(canvas.locator('[data-pit-fixed-merge] circle')).toHaveCount(0)
   await assertLeftOfSlot(canvas)
-  await page.getByTestId('toolbar-open-3d').click()
+  await page.getByTestId('planner-nav-3d').click()
   await expect(page.getByTestId('room-3d-canvas').getByTestId('switch-infrared-sensor')).toHaveCount(8)
 })

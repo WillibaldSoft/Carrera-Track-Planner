@@ -43,7 +43,7 @@ function readTemplate(value) {
     name: value.name,
     plan: extractTrackTemplate(
       plan,
-      plan.pieces.map((_, i) => i)
+      plan.pieces.map((_, i) => i),
     ),
   }
 }
@@ -58,6 +58,7 @@ export default function PlannerTools({
   endpointKey,
   onEndpoint,
   onInspect,
+  onOpenPit,
 }) {
   const { t } = useTranslation('tracks')
   const [dialog, setDialog] = useState(null)
@@ -163,7 +164,7 @@ export default function PlannerTools({
             if (e.key === 'Tab') {
               const focusable = [
                 ...e.currentTarget.querySelectorAll(
-                  'button:not(:disabled),input:not(:disabled),select:not(:disabled),a[href]'
+                  'button:not(:disabled),input:not(:disabled),select:not(:disabled),a[href]',
                 ),
               ].filter((n) => !n.hidden && n.getClientRects().length)
               if (e.shiftKey && document.activeElement === focusable[0]) {
@@ -345,7 +346,7 @@ export default function PlannerTools({
                   disabled={!library.entries[templateIndex] || (plan.pieces.length > 0 && !port)}
                   onClick={() =>
                     attempt(() =>
-                      apply(appendTrackTemplate(plan, library.entries[templateIndex].plan, port), plan.pieces.length)
+                      apply(appendTrackTemplate(plan, library.entries[templateIndex].plan, port), plan.pieces.length),
                     )
                   }
                 >
@@ -357,7 +358,7 @@ export default function PlannerTools({
                   disabled={!library.entries[templateIndex]}
                   onClick={() => {
                     const url = URL.createObjectURL(
-                      new Blob([JSON.stringify(library.entries[templateIndex], null, 2)], { type: 'application/json' })
+                      new Blob([JSON.stringify(library.entries[templateIndex], null, 2)], { type: 'application/json' }),
                     )
                     const a = document.createElement('a')
                     a.href = url
@@ -423,7 +424,7 @@ export default function PlannerTools({
                     setAudit(result)
                     onInspect(
                       result.conflicts.flatMap((p) => p.indices),
-                      result.auxiliaryPorts
+                      result.auxiliaryPorts,
                     )
                   })
                 }
@@ -522,12 +523,17 @@ export default function PlannerTools({
           )}
         </section>
       </div>,
-      document.body
+      document.body,
     )
   return (
     <>
       <div className="planner-tools-launchers">
-        <Button type="button" variant="outline" data-testid="tools-box" onClick={() => open('box')}>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="tools-box"
+          onClick={() => (onOpenPit ? onOpenPit() : open('box'))}
+        >
           {t('tools.box')}
         </Button>
         <Button

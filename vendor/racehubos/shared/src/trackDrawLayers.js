@@ -27,7 +27,7 @@ export function trackDrawItems(plan, segments, shoulders = []) {
   for (const [extraIndex, e] of (plan.trackExtras || []).entries())
     if (!e.hidden) {
       const a = segments[e.anchor],
-        border = !['single', 'pitEntry', 'pitExit'].includes(e.kind);
+        border = !['single', 'pitEntry', 'pitExit', 'fixedCross'].includes(e.kind);
       items.push({
         ...e,
         extra: true,

@@ -8,11 +8,11 @@ async function open(page) {
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page
     .getByTestId('track-plan-import')
     .setInputFiles({ name: 'layout.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(source)) })
-  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('planner-nav-editor').click()
   await page.locator('.planner-name').fill('Label layout')
   await page.getByTestId('show-track-elevations').check()
 }

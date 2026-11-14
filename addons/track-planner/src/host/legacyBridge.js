@@ -11,11 +11,27 @@ export function encodeLegacyRoom(plan) {
   if (!plan) return plan
   const hasScene =
     sceneKeys.some((k) => plan[k] !== undefined) || plan.pieces.some((p) => railKeys.some((k) => p[k] !== undefined))
-  if (!plan.roomPlan && !hasScene) return plan
+  const forcedRails = plan.pieces.flatMap((p, index) =>
+    p.type === 'Spurwechsel_20517' ? [{ index, type: p.type }] : [],
+  )
+  const extraKinds = (plan.trackExtras || []).flatMap((e, index) =>
+    e.kind === 'fixedCross' ? [{ index, kind: e.kind }] : [],
+  )
+  if (!plan.roomPlan && !hasScene && !forcedRails.length && !extraKinds.length) return plan
   return {
     ...plan,
+    ...(extraKinds.length
+      ? {
+          trackExtras: plan.trackExtras.map((e) =>
+            e.kind === 'fixedCross' ? { ...e, kind: 'single', fuelBay: false } : e,
+          ),
+        }
+      : {}),
+    pieces: plan.pieces.map((p) => (p.type === 'Spurwechsel_20517' ? { ...p, type: 'Standardgerade' } : p)),
     pit: {
       ...plan.pit,
+      ...(extraKinds.length ? { plannerExtraKindsV1: { version: 1, extras: extraKinds } } : {}),
+      ...(forcedRails.length ? { plannerRailTypesV1: { version: 1, rails: forcedRails } } : {}),
       ...(plan.roomPlan ? { plannerRoomV1: plan.roomPlan } : {}),
       ...(hasScene
         ? {
@@ -38,7 +54,60 @@ export function decodeLegacyRoom(value) {
     }
   }
   if (!value?.pit) return readTrackPlan(value)
-  const { plannerRoomV1, plannerSceneV1: scene, ...pit } = value.pit
+  const {
+    plannerRoomV1,
+    plannerSceneV1: scene,
+    plannerRailTypesV1: types,
+    plannerExtraKindsV1: kinds,
+    ...pit
+  } = value.pit
+  if (kinds) {
+    if (
+      kinds.version !== 1 ||
+      !Array.isArray(kinds.extras) ||
+      !Array.isArray(value.trackExtras) ||
+      kinds.extras.length > value.trackExtras.length ||
+      new Set(kinds.extras.map((e) => e?.index)).size !== kinds.extras.length ||
+      kinds.extras.some(
+        (e) =>
+          !e ||
+          !Number.isInteger(e.index) ||
+          e.index < 0 ||
+          e.kind !== 'fixedCross' ||
+          value.trackExtras[e.index]?.kind !== 'single',
+      )
+    )
+      return null
+    const restored = new Set(kinds.extras.map((e) => e.index))
+    value = {
+      ...value,
+      trackExtras: value.trackExtras.map((e, i) => {
+        if (!restored.has(i)) return e
+        const { fuelBay, ...part } = e
+        return { ...part, kind: 'fixedCross' }
+      }),
+    }
+  }
+  if (types) {
+    if (
+      types.version !== 1 ||
+      !Array.isArray(types.rails) ||
+      !Array.isArray(value.pieces) ||
+      types.rails.length > value.pieces.length ||
+      new Set(types.rails.map((p) => p?.index)).size !== types.rails.length ||
+      types.rails.some(
+        (p) =>
+          !p ||
+          !Number.isInteger(p.index) ||
+          p.index < 0 ||
+          p.type !== 'Spurwechsel_20517' ||
+          value.pieces[p.index]?.type !== 'Standardgerade',
+      )
+    )
+      return null
+    const rails = new Map(types.rails.map((p) => [p.index, p.type]))
+    value = { ...value, pieces: value.pieces.map((p, i) => (rails.has(i) ? { ...p, type: rails.get(i) } : p)) }
+  }
   if (
     scene &&
     (scene.version !== 1 ||

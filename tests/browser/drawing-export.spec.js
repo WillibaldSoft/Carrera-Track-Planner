@@ -1,3 +1,4 @@
+import { revealControl } from './reveal-control.js'
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -25,11 +26,11 @@ async function open(page, lang = 'de') {
   await page.getByTestId('standalone-language').selectOption(lang)
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page
     .getByTestId('track-plan-import')
     .setInputFiles({ name: 'export.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(source)) })
-  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('planner-nav-editor').click()
   await page.locator('.planner-name').fill('Manual labels export ' + lang)
   await page.evaluate(() => document.fonts.ready)
 }
@@ -58,6 +59,7 @@ async function download(page, id, file) {
   const controls = id.startsWith('export-image-')
     ? page.getByTestId('planner-image-export').filter({ has: page.getByTestId('graph-track-canvas') })
     : page
+  await revealControl(controls.getByTestId(id))
   await controls.getByTestId(id).click()
   const d = await pending
   await fs.mkdir(path.dirname(file), { recursive: true })
@@ -93,6 +95,7 @@ for (const lang of ['de', 'en', 'fr'])
     expect(pdf.subarray(0, 8).toString()).toMatch(/^%PDF-1\./)
     expect(pdf.toString('latin1')).not.toMatch(/\/Subtype\s*\/Image/)
     expect(pdf.toString('latin1')).toContain('/FontFile2')
+    await revealControl(page.getByTestId('track-print-preview'))
     await page.getByTestId('track-print-preview').click()
     await expect(page.getByTestId('track-print-view')).toHaveValue('current')
     const image = page.getByTestId('track-print-snapshot')
@@ -124,6 +127,7 @@ test('hidden labels stay hidden in all exported snapshots without deleting saved
   const dir = path.join(output, 'tmp', 'pdfs', 'hidden'),
     svg = await download(page, 'export-image-svg', path.join(dir, 'view.svg'))
   expect((await state(page, svg.toString())).cards).toHaveLength(0)
+  await revealControl(page.getByTestId('track-print-preview'))
   await page.getByTestId('track-print-preview').click()
   const src = await page.getByTestId('track-print-snapshot').getAttribute('src')
   const snapshot = await page.evaluate(async (src) => await (await fetch(src)).text(), src)
@@ -141,14 +145,14 @@ test('curved rails, CU and two fuel rails export as vector artwork', async ({ pa
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
   await page.getByTestId('start-pit-create').click()
-  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('planner-nav-editor').click()
   const dir = path.join(output, 'tmp', 'pdfs', 'cu-pit')
   await download(page, 'export-image-svg', path.join(dir, 'view.svg'))
   await download(page, 'export-image-png', path.join(dir, 'view.png'))
   const pdf = await download(page, 'export-image-pdf', path.join(dir, 'view.pdf'))
   expect(pdf.toString('latin1')).not.toMatch(/\/Subtype\s*\/Image/)
   expect(pdf.toString('latin1')).toContain('/FontFile2')
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   const curved = {
     ...source,
     pieces: source.pieces.map((p, i) => ({ ...p, type: i % 2 ? 'Kurve_1_60_links' : p.type })),

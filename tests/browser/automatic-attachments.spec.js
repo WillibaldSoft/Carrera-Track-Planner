@@ -1,3 +1,4 @@
+import { revealControl } from './reveal-control.js'
 import { test, expect } from '@playwright/test'
 import { emptyTrackPlan } from '../../vendor/racehubos/shared/src/index.js'
 async function open(page, lang = 'de') {
@@ -26,6 +27,7 @@ async function hoverRail(page, index = 0) {
 for (const lang of ['de', 'en', 'fr'])
   test(`automatic shoulders and end pieces preview, attach and undo (${lang})`, async ({ page }) => {
     await open(page, lang)
+    await revealControl(page.getByTestId('track-auto-attachments'))
     await page.getByTestId('track-auto-attachments').click()
     await expect(page.getByTestId('graph-track-canvas').getByTestId('track-connector')).toHaveCount(0)
     await expect(page.getByTestId('connection-hints')).toHaveCount(0)
@@ -34,6 +36,7 @@ for (const lang of ['de', 'en', 'fr'])
     await page.getByTestId('auto-attach-left').hover()
     await expect(page.getByTestId('automatic-attachment-preview')).toHaveCount(1)
     await page.getByTestId('auto-attach-left').click()
+    await revealControl(page.getByTestId('track-auto-attachments'))
     await page.getByTestId('track-auto-attachments').focus()
     await hoverRail(page)
     await expect(page.getByTestId('auto-attach-left')).toHaveCount(0)
@@ -64,14 +67,17 @@ test('central toolbar centres a marked rail without moving it and restores full 
   const full = (await canvas.getAttribute('viewBox')).split(' ').map(Number)
   expect(full[2]).toBeGreaterThan(after[2])
   const toolbar = page.getByRole('toolbar')
+  await revealControl(toolbar.getByTestId('tools-box'))
   await expect(toolbar.getByTestId('tools-box')).toBeVisible()
+  await revealControl(toolbar.getByTestId('tools-audit'))
   await expect(toolbar.getByTestId('tools-audit')).toBeVisible()
+  await revealControl(toolbar.getByTestId('toolbar-parallel'))
   await expect(toolbar.getByTestId('toolbar-parallel')).toBeVisible()
   await page.locator('.planner-name').fill('Central toolbar demo')
   const saved = page.waitForResponse((r) => r.url().endsWith('/api/tracks') && r.request().method() === 'POST')
-  await page.getByTestId('toolbar-save-track').click()
+  await page.getByTestId('planner-save').click()
   expect((await saved).ok()).toBe(true)
-  await page.getByTestId('toolbar-files').click()
+  await page.getByTestId('planner-nav-files').click()
   await expect(page.getByTestId('planner-files')).toBeVisible()
 })
 
@@ -88,10 +94,12 @@ test('toolbar centres and removes a single pit part and restores it with undo', 
   await page.getByTestId('track-center-selection').click()
   await expect(page.getByTestId('pit-part-xMm')).toHaveValue(x)
   const count = await svg.locator('[data-pit-part-id]').count()
+  await revealControl(page.getByTestId('toolbar-delete-selection'))
   await page.getByTestId('toolbar-delete-selection').click()
   await expect(svg.locator('[data-pit-part-id]')).toHaveCount(count - 1)
   await page.getByTestId('track-undo').click()
   await expect(svg.locator('[data-fuel-artwork="striped-sensor"]')).toHaveCount(2)
+  await revealControl(page.getByTestId('toolbar-parallel'))
   await page.getByTestId('toolbar-parallel').click()
   await expect(page.getByTestId('parallel-docking-controls')).toHaveAttribute('open', '')
 })
@@ -119,6 +127,7 @@ for (const side of ['left', 'right', 'both'])
     await page.getByTestId('add-track-piece').click()
     await page.getByTestId('add-track-piece').click()
     await page.getByTestId('track-fit').click()
+    await revealControl(page.getByTestId('track-auto-attachments'))
     await page.getByTestId('track-auto-attachments').click()
     await page.getByTestId('auto-border-side').selectOption(side)
     await hoverRail(page, 0)
@@ -167,7 +176,7 @@ test('curve-specific shoulders continue with matching articles and export as ind
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   const source = {
     ...emptyTrackPlan(),
     pieces: ['Standardgerade', 'Kurve_1_60_rechts', 'Kurve_2_30_links'].map((type) => ({
@@ -181,8 +190,9 @@ test('curve-specific shoulders continue with matching articles and export as ind
     mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify(source)),
   })
-  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('planner-nav-editor').click()
   await page.getByTestId('track-fit').click()
+  await revealControl(page.getByTestId('track-auto-attachments'))
   await page.getByTestId('track-auto-attachments').click()
   await page.getByTestId('auto-border-side').selectOption('left')
   await hoverRail(page, 0)
@@ -191,9 +201,11 @@ test('curve-specific shoulders continue with matching articles and export as ind
   await expect(canvas.getByTestId('border-shape-1-left-strip').locator('title')).toContainText('20561')
   await expect(canvas.getByTestId('border-shape-2-left-strip').locator('title')).toContainText('20591')
   await expect(canvas.locator('[data-border-side="right"]')).toHaveCount(0)
+  await revealControl(page.getByTestId('track-auto-attachments'))
   await page.getByTestId('track-auto-attachments').click()
   const controls = page.getByTestId('planner-image-export').filter({ has: canvas })
   let pending = page.waitForEvent('download')
+  await revealControl(controls.getByTestId('export-image-svg'))
   await controls.getByTestId('export-image-svg').click()
   const svg = await (await pending).createReadStream()
   const chunks = []
@@ -202,6 +214,7 @@ test('curve-specific shoulders continue with matching articles and export as ind
   expect(xml).toContain('border-artwork')
   expect(xml).not.toMatch(/<pattern[^>]+id="[^"]*-border"/)
   pending = page.waitForEvent('download')
+  await revealControl(controls.getByTestId('export-image-pdf'))
   await controls.getByTestId('export-image-pdf').click()
   const pdf = await pending
   await pdf.saveAs('test-results/curved-shoulders-vector.pdf')
@@ -214,7 +227,7 @@ test('left stays left in driving direction on a reversed connected rail and repe
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   const source = {
     ...emptyTrackPlan(),
     freePlacement: true,
@@ -229,7 +242,8 @@ test('left stays left in driving direction on a reversed connected rail and repe
     mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify(source)),
   })
-  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('planner-nav-editor').click()
+  await revealControl(page.getByTestId('track-auto-attachments'))
   await page.getByTestId('track-auto-attachments').click()
   await page.getByTestId('auto-border-side').selectOption('left')
   await hoverRail(page, 1)

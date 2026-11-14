@@ -1,3 +1,4 @@
+import { revealControl } from './reveal-control.js'
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs'
 import { trackBounds, emptyTrackPlan } from '../../vendor/racehubos/shared/src/index.js'
@@ -11,7 +12,7 @@ async function open(page, language = 'de', plan = fixture) {
   await page.getByTestId('room-continue').click()
   await page.locator('.planner-name').fill('Layout Demo')
   if (plan.pieces.length) {
-    await page.getByTestId('planner-files-toggle').click()
+    await page.getByTestId('planner-nav-files').click()
     await page.getByTestId('track-plan-import').setInputFiles({
       name: 'layout-demo.json',
       mimeType: 'application/json',
@@ -105,6 +106,7 @@ test('resizing preserves a fitted plan; small screens dock panels without hiding
       await fitted(page)
       await page.getByTestId('toggle-track-catalogue').click()
       await fitted(page)
+      await revealControl(page.getByTestId('repeat-track-part'))
       await expect(page.getByTestId('repeat-track-part')).toBeInViewport()
       await page.getByTestId('toggle-track-catalogue').click()
     }
@@ -114,6 +116,7 @@ test('resizing preserves a fitted plan; small screens dock panels without hiding
 test('repeat placement follows the mouse, stamps repeatedly, snaps and exits with Escape', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 })
   await open(page, 'de', emptyTrackPlan())
+  await revealControl(page.getByTestId('repeat-track-part'))
   await page.getByTestId('repeat-track-part').check()
   await page.getByTestId('palette-Standardgerade').click()
   const svg = page.getByTestId('graph-track-canvas')

@@ -1,3 +1,6 @@
+import { cuSideCamera } from './cuSideCamera'
+import { shiftRampArea, shiftRampAreaByParts } from './rampSuggestions.js'
+import { Focus } from 'lucide-react'
 import { suggestRampLengths } from './rampSuggestions.js'
 import { DEFAULT_RAMPS } from './rampProfiles.js'
 import { DEFAULT_SCENE_HEIGHTS } from '../../../../vendor/racehubos/shared/src/trackPlan.js'
@@ -8,7 +11,13 @@ import TrackImageExport from './PlannerImageExport'
 import { UnitDetails, FuelDetail, SwitchDiodeDetails } from '@core/components/tracks/TrackUnitDetails'
 import { PitSwitchDetail } from '@core/components/tracks/PitSwitchDetail'
 import { trackViewport } from './trackViewport'
-import { buildRoomScene, projectRoomScene } from './roomScene3d.js'
+import { buildRoomScene, projectRoomScene, projectedTrackBounds } from './roomScene3d.js'
+const baseCameraViews = {
+  perspective: { yaw: -35, pitch: 55 },
+  top: { yaw: 0, pitch: 90 },
+  side: { yaw: 0, pitch: 0 },
+  front: { yaw: 90, pitch: 0 },
+}
 const initial = { yaw: -35, pitch: 55, zoom: 1, pan: { x: 0, y: 0 } }
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n))
 const path = (points) => points.map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ')
@@ -30,7 +39,19 @@ function shade(color, item) {
       .join('')
   )
 }
-export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, initialSelected = 0 }) {
+export default function RoomTrack3D({
+  plan,
+  name,
+  onEditor,
+  onRoom,
+  onChange,
+  initialSelected = 0,
+  printMode = false,
+  cameraPreset = 'perspective',
+}) {
+  const cuView = useMemo(() => cuSideCamera(plan), [plan])
+  const cameraViews = { ...baseCameraViews, cu: { yaw: cuView.yaw, pitch: cuView.pitch } }
+  const { t: ui } = useTranslation('plannerInterface')
   const { t } = useTranslation('planner3D'),
     id = 'scene-' + useId().replaceAll(':', ''),
     svgRef = useRef(null),
@@ -49,10 +70,15 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
     Number.isFinite(Number(targetSlope[key])) &&
     Number(targetSlope[key]) >= 1 &&
     Number(targetSlope[key]) <= 100
+  const [shiftStep, setShiftStep] = useState(100)
+  const [shiftUnit, setShiftUnit] = useState('mm')
   const [heightRail, setHeightRail] = useState(Math.max(0, initialSelected))
-  const [camera, setCamera] = useState(initial),
+  const [camera, setCamera] = useState(() => ({ ...initial, ...cameraViews[cameraPreset] })),
     [settings, setSettings] = useState({ walls: true, cutaway: true, obstacles: true, labels: true, dimensions: true }),
     [viewport, setViewport] = useState({ width: 1000, height: 700 })
+  useEffect(() => {
+    setCamera({ ...initial, ...cameraViews[cameraPreset] })
+  }, [cameraPreset])
   const height = plan.sceneHeights ?? DEFAULT_SCENE_HEIGHTS
   const rampSettings = plan.sceneRamps ?? DEFAULT_RAMPS
   const selectedPiece = plan.pieces[heightRail]
@@ -74,7 +100,10 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
   }
 
   const scene = useMemo(() => buildRoomScene(plan, height), [plan, height]),
-    projected = useMemo(() => projectRoomScene(scene, camera, settings), [scene, camera.yaw, camera.pitch, settings])
+    projected = useMemo(
+      () => projectRoomScene(scene, camera, camera.pitch === 0 ? { ...settings, walls: false } : settings),
+      [scene, camera.yaw, camera.pitch, settings],
+    )
   const suggestion = useMemo(
     () =>
       suggestRampLengths(plan, {
@@ -83,8 +112,22 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
       }),
     [plan, targetSlope],
   )
+  const shifts = useMemo(
+    () =>
+      Object.fromEntries(
+        [true, false].map((up) => [
+          up ? 'ascent' : 'descent',
+          [-1, 1].map((sign) =>
+            (shiftUnit === 'parts' ? shiftRampAreaByParts : shiftRampArea)(plan, up, sign * shiftStep),
+          ),
+        ]),
+      ),
+    [plan, shiftStep, shiftUnit],
+  )
   const selectedCrossing = scene.crossingMeasures.find((c) => c.upperRail === heightRail)
-  const box = trackViewport(projected.bounds, viewport, camera.zoom, camera.pan)
+  const fittedBounds = printMode ? projected.bounds : projectedTrackBounds(projected)
+  const box = trackViewport(fittedBounds, viewport, camera.zoom, camera.pan)
+  const [rampsOpen, setRampsOpen] = useState(false)
   useEffect(() => {
     const svg = svgRef.current
     if (!svg) return
@@ -137,8 +180,42 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
     )
   }
   return (
-    <section data-testid="room-track-3d" className="planner-3d-pane">
+    <section data-testid="room-track-3d" className={`planner-3d-pane ${printMode ? 'planner-print-3d' : ''}`}>
       <div className="planner-3d-controls" role="toolbar" aria-label={t('controls')}>
+        <label>
+          {ui('projection')}{' '}
+          <select
+            data-testid="three-view"
+            value={
+              Object.keys(cameraViews).find(
+                (k) => cameraViews[k].yaw === camera.yaw && cameraViews[k].pitch === camera.pitch,
+              ) || 'custom'
+            }
+            onChange={(e) => setCamera({ ...initial, ...cameraViews[e.target.value] })}
+          >
+            {Object.keys(cameraViews).map((k) => (
+              <option key={k} value={k} disabled={k === 'cu' && !cuView.available}>
+                {ui(k)}
+              </option>
+            ))}
+            <option value="custom" disabled>
+              {ui('custom')}
+            </option>
+          </select>
+        </label>
+        <Button
+          type="button"
+          data-testid="three-center"
+          className="planner-3d-center"
+          title={t('centerHelp')}
+          onClick={() => {
+            setRampsOpen(false)
+            setCamera((c) => ({ ...c, zoom: 1, pan: { x: 0, y: 0 } }))
+          }}
+        >
+          <Focus size={16} aria-hidden="true" />
+          {t('center')}
+        </Button>
         <Button type="button" data-testid="three-back-editor" variant="outline" onClick={onEditor}>
           {t('editor')}
         </Button>
@@ -156,25 +233,9 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
         >
           {t('top')}
         </Button>
-        <Button
-          type="button"
-          data-testid="three-fit"
-          variant="outline"
-          onClick={() => setCamera((c) => ({ ...c, zoom: 1, pan: { x: 0, y: 0 } }))}
-        >
-          {t('fit')}
-        </Button>
-        <Button
-          type="button"
-          data-testid="three-center"
-          variant="outline"
-          onClick={() => setCamera((c) => ({ ...c, pan: { x: 0, y: 0 } }))}
-        >
-          {t('center')}
-        </Button>
         {[
           ['yaw', -180, 180],
-          ['pitch', 15, 90],
+          ['pitch', 0, 90],
           ['zoom', 0.3, 8],
         ].map(([key, min, max]) => (
           <label key={key}>
@@ -347,9 +408,47 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
         {t('interaction')} · {t('levels', { height: scene.clearance, spacing: scene.levelHeight })}
       </p>
       {!!scene.ramps.length && (
-        <details open data-testid="three-ramp-suggestions">
+        <details
+          open={rampsOpen}
+          onToggle={(e) => setRampsOpen(e.currentTarget.open)}
+          data-testid="three-ramp-suggestions"
+        >
           <summary>{t('suggestions')}</summary>
           <p>{t(suggestion.custom ? 'customSuggestionHelp' : 'suggestHelp')}</p>
+          <label className="planner-ramp-shift-step">
+            {t('shiftStep')}{' '}
+            <select
+              data-testid="three-shift-unit"
+              value={shiftUnit}
+              onChange={(e) => {
+                setShiftUnit(e.target.value)
+                setShiftStep(e.target.value === 'parts' ? 1 : 100)
+              }}
+            >
+              <option value="mm">mm</option>
+              <option value="parts">{t('shiftParts')}</option>
+            </select>
+            <input
+              type="number"
+              min="1"
+              max={shiftUnit === 'parts' ? 10 : 1000}
+              step="1"
+              data-testid="three-shift-step"
+              value={shiftStep}
+              onChange={(e) => {
+                const n = Number(e.target.value)
+                if (
+                  Number.isFinite(n) &&
+                  n >= 1 &&
+                  n <= (shiftUnit === 'parts' ? 10 : 1000) &&
+                  (shiftUnit === 'mm' || Number.isInteger(n))
+                )
+                  setShiftStep(n)
+              }}
+            />{' '}
+            mm
+          </label>
+          <p className="text-xs">{t('shiftHelp')}</p>
           <table className="planner-ramp-table">
             <thead>
               <tr>
@@ -388,7 +487,31 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
                   <td>
                     {r.maxPercent.toFixed(1)} % {r.limited && <span>{t('limited')}</span>}
                   </td>
-                  <td>{r.rails.join(', ')}</td>
+                  <td>
+                    <span data-testid={`three-affected-${r.up ? 'ascent' : 'descent'}`}>{r.rails.join(', ')}</span>
+                    <div className="planner-ramp-shift-controls">
+                      {[-1, 1].map((sign, i) => (
+                        <Button
+                          key={sign}
+                          type="button"
+                          variant="outline"
+                          data-testid={`three-shift-${r.up ? 'ascent' : 'descent'}-${sign < 0 ? 'left' : 'right'}`}
+                          title={t(sign < 0 ? 'shiftEarlier' : 'shiftLater')}
+                          aria-label={
+                            t(sign < 0 ? 'shiftEarlier' : 'shiftLater') + ' · ' + t(r.up ? 'ascent' : 'descent')
+                          }
+                          disabled={!shifts[r.up ? 'ascent' : 'descent'][i]}
+                          onClick={() => onChange(shifts[r.up ? 'ascent' : 'descent'][i])}
+                        >
+                          {sign < 0 ? '←' : '→'}
+                        </Button>
+                      ))}
+                      <span>
+                        {(rampSettings[r.up ? 'ascentShiftMm' : 'descentShiftMm'] || 0) > 0 ? '+' : ''}
+                        {Math.round(rampSettings[r.up ? 'ascentShiftMm' : 'descentShiftMm'] || 0)} mm
+                      </span>
+                    </div>
+                  </td>
                   <td>
                     <Button
                       type="button"
@@ -498,7 +621,7 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
               setCamera({
                 ...d.camera,
                 yaw: ((d.camera.yaw + dx * 0.4 + 540) % 360) - 180,
-                pitch: clamp(d.camera.pitch - dy * 0.3, 15, 90),
+                pitch: clamp(d.camera.pitch - dy * 0.3, 0, 90),
               })
           }}
           onPointerUp={(e) => {
@@ -519,7 +642,7 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
                 setCamera((c) => ({
                   ...c,
                   yaw: c.yaw + (e.key === 'ArrowRight' ? 5 : e.key === 'ArrowLeft' ? -5 : 0),
-                  pitch: clamp(c.pitch + (e.key === 'ArrowUp' ? 5 : e.key === 'ArrowDown' ? -5 : 0), 15, 90),
+                  pitch: clamp(c.pitch + (e.key === 'ArrowUp' ? 5 : e.key === 'ArrowDown' ? -5 : 0), 0, 90),
                   zoom: clamp(c.zoom * (e.key === '+' ? 1.2 : e.key === '-' ? 1 / 1.2 : 1), 0.3, 8),
                 }))
             }

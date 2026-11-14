@@ -9,14 +9,14 @@ async function open(page, lang = 'de') {
   await page.getByTestId('standalone-language').selectOption(lang)
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page.getByTestId('track-plan-import').setInputFiles({
     name: '2d-heights.json',
     mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify(source)),
   })
   await page.locator('.planner-name').fill('2D heights ' + lang)
-  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('planner-nav-editor').click()
 }
 for (const lang of ['de', 'en', 'fr'])
   test(`2D values toggle, edit heights and gradients, save and agree with 3D (${lang})`, async ({ page }) => {
@@ -56,7 +56,7 @@ for (const lang of ['de', 'en', 'fr'])
     await expect(labels).toHaveCount(0)
     await page.getByTestId('show-track-elevations').check()
     await expect(last).toContainText('200')
-    await page.getByTestId('planner-mode').selectOption('3d')
+    await page.getByTestId('planner-nav-3d').click()
     await page.getByTestId('three-display-settings').locator('summary').click()
     await page.getByTestId('three-height-rail').selectOption('3')
     await expect(page.getByTestId('three-rail-height')).toHaveValue('200')
@@ -86,11 +86,11 @@ test('2D edits and labels show each bridge clear height', async ({ page }) => {
     new URL('../../addons/track-planner/public/track-plans/froehlichring.json', import.meta.url),
   )
   await open(page)
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page
     .getByTestId('track-plan-import')
     .setInputFiles({ name: 'bridge.json', mimeType: 'application/json', buffer: bridge })
-  await page.getByTestId('planner-mode').selectOption('editor')
+  await page.getByTestId('planner-nav-editor').click()
   await page.getByTestId('show-track-elevations').check()
   const upper = page.locator('[data-testid="track-height-label"][data-height-rail="33"]')
   await upper.focus()
@@ -99,7 +99,7 @@ test('2D edits and labels show each bridge clear height', async ({ page }) => {
   await page.getByTestId('two-local-clearance').fill('200')
   await expect(upper).toContainText('↕ 200 mm')
   await expect(page.getByTestId('two-rail-height')).toHaveValue('210')
-  await page.getByTestId('planner-mode').selectOption('3d')
+  await page.getByTestId('planner-nav-3d').click()
   await page.getByTestId('three-display-settings').locator('summary').click()
   await page.getByTestId('three-height-rail').selectOption('33')
   await expect(page.getByTestId('three-local-clearance')).toHaveValue('200')

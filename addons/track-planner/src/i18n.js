@@ -21,14 +21,30 @@ for (const [lang, words] of Object.entries({ de: roomDe, en: roomEn, fr: roomFr 
 import actionsDe from './locales/actions.de.json'
 import actionsEn from './locales/actions.en.json'
 import actionsFr from './locales/actions.fr.json'
-for (const [lang,words] of Object.entries({de:actionsDe,en:actionsEn,fr:actionsFr})) i18n.addResourceBundle(lang,'plannerActions',words,true,true)
+for (const [lang, words] of Object.entries({ de: actionsDe, en: actionsEn, fr: actionsFr }))
+  i18n.addResourceBundle(lang, 'plannerActions', words, true, true)
 
 import threeDe from './locales/three.de.json'
 import threeEn from './locales/three.en.json'
 import threeFr from './locales/three.fr.json'
-for(const [lang,words] of Object.entries({de:threeDe,en:threeEn,fr:threeFr}))i18n.addResourceBundle(lang,'planner3D',words,true,true)
+for (const [lang, words] of Object.entries({ de: threeDe, en: threeEn, fr: threeFr }))
+  i18n.addResourceBundle(lang, 'planner3D', words, true, true)
 
 import updatesDe from './locales/updates.de.json'
 import updatesEn from './locales/updates.en.json'
 import updatesFr from './locales/updates.fr.json'
-for(const [lang,words] of Object.entries({de:updatesDe,en:updatesEn,fr:updatesFr})) i18n.addResourceBundle(lang,'plannerUpdates',words,true,true)
+for (const [lang, words] of Object.entries({ de: updatesDe, en: updatesEn, fr: updatesFr }))
+  i18n.addResourceBundle(lang, 'plannerUpdates', words, true, true)
+
+import interfaceDe from './locales/interface.de.json'
+import interfaceEn from './locales/interface.en.json'
+import interfaceFr from './locales/interface.fr.json'
+for (const [lang, words] of Object.entries({ de: interfaceDe, en: interfaceEn, fr: interfaceFr }))
+  i18n.addResourceBundle(lang, 'plannerInterface', words, true, true)
+
+for (const [lang, label] of Object.entries({
+  de: 'Spurwechsel 20517 (Einzelteil; 2 je Packung)',
+  en: 'Lane change 20517 (individual rail; 2 per pack)',
+  fr: 'Changement de voie 20517 (rail individuel ; 2 par boîte)',
+}))
+  i18n.addResourceBundle(lang, 'tracks', { inventory: { parts: { fixedCross: label } }, pitParts:{fixedCross:label} }, true, true)

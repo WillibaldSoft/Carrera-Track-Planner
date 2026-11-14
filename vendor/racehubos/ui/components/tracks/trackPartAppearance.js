@@ -1,4 +1,5 @@
 export function trackPartAppearance(type) {
+  if(type === 'Spurwechsel_20517') return {family:'Spurwechsel',color:'#0f766e',short:'SW'}
   if (/^(Schikane|Engstelle)_/.test(type))
     return { family: 'Sonderteil', color: '#9333ea', short: type.startsWith('Schikane') ? 'SCH' : 'ENG' }
   const bank = type.startsWith('Steilkurve_')

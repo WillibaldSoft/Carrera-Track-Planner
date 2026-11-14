@@ -11,6 +11,14 @@ const bezier = (a, b, c, d, t) => {
 };
 const length = (pts) => pts.slice(1).reduce((sum, p, i) => sum + Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]), 0);
 export function specialTrackGeometry(spec, start) {
+  if (spec.special === 'fixedCross') {
+    const c=Math.cos(start.h),s=Math.sin(start.h),l=spec.length;
+    const world=([x,y])=>[start.x+c*x-s*y,start.y+s*x+c*y];
+    const slots=[-49.5,49.5].map(offset=>Array.from({length:33},(_,i)=>{
+      const t=i/32;return world([l*t,offset*(1-2*t*t*(3-2*t))]);
+    }));
+    return {points:[Array.from({length:33},(_,i)=>world([l*i/32,0])),...slots],roadOutline:[[0,-99],[l,-99],[l,99],[0,99]].map(world),laneLengthsM:slots.map(p=>length(p)/1000)};
+  }
   const l = spec.length,
     side = spec.side ?? -1;
   const branch = (x) => {

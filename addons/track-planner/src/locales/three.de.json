@@ -67,7 +67,7 @@
   "currentDrawing": "Aktuelle Ansicht mit Beschriftungen",
   "snapshotError": "Die aktuelle Ansicht konnte nicht für den Export übernommen werden.",
   "snapshotPrintNote": "Diese Druckansicht übernimmt den aktuellen Ausschnitt, Zoom und sichtbare Beschriftungspositionen unverändert. PDF exportiert Schienen und Schrift als skalierbare Vektoren.",
-  "center": "Darstellung zentrieren",
+  "center": "Zentrieren",
   "targetSlope": "Maximale Steigung (%)",
   "suggestRamps": "Beide Prozentwerte umsetzen",
   "suggestHelp": "Maximale Steigung und maximales Gefälle getrennt eingeben. „Übernehmen“ setzt die berechnete Länge um und aktualisiert die 3D-Darstellung. Bei sanften Übergängen ist der Mittelwert kleiner als der Maximalwert. Begrenzter Platz wird angezeigt. Anschließend den Plan speichern.",
@@ -79,5 +79,11 @@
   "customSuggestionHelp": "Individuelle Höhenpunkte legen den Verlauf fest. Diese Punkte im Höhenprofil anpassen; Rampenlängen verändern sie nicht.",
   "ascentPercent": "Maximale Steigung der Auffahrt (%)",
   "descentPercent": "Maximales Gefälle der Abfahrt (%)",
-  "invalidPercent": "Bitte einen Wert von 1 bis 100 % eingeben."
+  "invalidPercent": "Bitte einen Wert von 1 bis 100 % eingeben.",
+  "centerHelp": "Gesamte 3D-Darstellung einpassen und zentrieren; Perspektive beibehalten.",
+  "shiftStep": "Bereich verschieben · Schrittweite",
+  "shiftEarlier": "Bereich früher beginnen lassen",
+  "shiftLater": "Bereich später beginnen lassen",
+  "shiftHelp": "Pfeile verschieben den Rampenbereich entlang der Fahrtrichtung. Prozentwert und Rampenlänge bleiben erhalten. Grenzen an Überfahrten, festen Höhen und Nachbarrampen werden beachtet; ohne Platz ist die Richtung gesperrt.",
+  "shiftParts": "Bahnteile"
 }

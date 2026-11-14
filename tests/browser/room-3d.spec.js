@@ -1,3 +1,4 @@
+import { revealControl } from './reveal-control.js'
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs'
 import { DEFAULT_ROOM } from '../../vendor/racehubos/shared/src/index.js'
@@ -19,7 +20,7 @@ for (const lang of ['de', 'en', 'fr'])
     await page.getByTestId('standalone-language').selectOption(lang)
     await page.getByTestId('standalone-new').click()
     await page.getByTestId('room-continue').click()
-    await page.getByTestId('planner-files-toggle').click()
+    await page.getByTestId('planner-nav-files').click()
     await page.getByTestId('track-plan-import').setInputFiles({
       name: '3d.json',
       mimeType: 'application/json',
@@ -30,7 +31,7 @@ for (const lang of ['de', 'en', 'fr'])
     await page.getByTestId('planner-save').click()
     const baseline = JSON.parse((await (await saved).json()).data.layout)
     await expect(page.getByTestId('planner-save')).toBeEnabled()
-    await page.getByTestId('toolbar-open-3d').click()
+    await page.getByTestId('planner-nav-3d').click()
     const view = page.getByTestId('room-track-3d'),
       svg = page.getByTestId('room-3d-canvas')
     await expect(svg).toBeVisible()
@@ -66,12 +67,14 @@ for (const lang of ['de', 'en', 'fr'])
     await view.getByTestId('three-top').click()
     await expect(svg).toHaveAttribute('data-pitch', '90')
     const download = page.waitForEvent('download')
+    await revealControl(view.getByTestId('export-image-svg'))
     await view.getByTestId('export-image-svg').click()
     const svgDownload = await download
     expect(svgDownload.suggestedFilename()).toContain('-3D.svg')
     const exportedSvg = fs.readFileSync(await svgDownload.path(), 'utf8')
     expect(exportedSvg).toContain('<svg')
     const pngDownload = page.waitForEvent('download')
+    await revealControl(view.getByTestId('export-image-png'))
     await view.getByTestId('export-image-png').click()
     const png = fs.readFileSync(await (await pngDownload).path())
     expect(png.subarray(0, 8).toString('hex')).toBe('89504e470d0a1a0a')
@@ -87,7 +90,7 @@ for (const lang of ['de', 'en', 'fr'])
     })
     await view.getByTestId('three-back-editor').click()
     await expect(page.getByTestId('graph-track-canvas')).toBeVisible()
-    await page.getByTestId('toolbar-open-3d').click()
+    await page.getByTestId('planner-nav-3d').click()
     await view.getByTestId('three-display-settings').locator('summary').click()
     await expect(view.getByTestId('three-clearance')).toHaveValue('200')
     await expect(view.getByTestId('three-wallHeight')).toHaveValue('2700')
@@ -100,7 +103,7 @@ for (const lang of ['de', 'en', 'fr'])
     const rows = (await (await page.request.get('/api/tracks')).json()).data
     const row = rows.find((r) => r.name === '3D room ' + lang)
     await page.getByTestId('standalone-track').selectOption(row.id)
-    await page.getByTestId('planner-mode').selectOption('3d')
+    await page.getByTestId('planner-nav-3d').click()
     await view.getByTestId('three-display-settings').locator('summary').click()
     await expect(view.getByTestId('three-clearance')).toHaveValue('200')
     await expect(view.getByTestId('three-wallHeight')).toHaveValue('2700')
@@ -115,13 +118,13 @@ test('3D viewer works without a saved room and keeps the canvas usable on mobile
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page.getByTestId('track-plan-import').setInputFiles({
     name: 'without-room.json',
     mimeType: 'application/json',
     buffer: Buffer.from(JSON.stringify(source)),
   })
-  await page.getByTestId('planner-mode').selectOption('3d')
+  await page.getByTestId('planner-nav-3d').click()
   await expect(page.getByTestId('three-no-room')).toBeVisible()
   const svg = page.getByTestId('room-3d-canvas')
   await expect(svg).toBeVisible()
@@ -140,7 +143,7 @@ test('individual multi-stage heights save, reload, and restore the final flat ra
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page.getByTestId('track-plan-import').setInputFiles({
     name: 'height-profile.json',
     mimeType: 'application/json',
@@ -155,7 +158,7 @@ test('individual multi-stage heights save, reload, and restore the final flat ra
     ),
   })
   await page.locator('.planner-name').fill('Individual elevations')
-  await page.getByTestId('planner-mode').selectOption('3d')
+  await page.getByTestId('planner-nav-3d').click()
   const view = page.getByTestId('room-track-3d')
   await view.getByTestId('three-display-settings').locator('summary').click()
   for (const [rail, height, flat] of [
@@ -185,7 +188,7 @@ test('individual multi-stage heights save, reload, and restore the final flat ra
   expect(plan.pieces[7].elevation).toEqual({ heightMm: 350, flat: true })
   await page.reload()
   await page.getByTestId('standalone-track').selectOption(row.id)
-  await page.getByTestId('planner-mode').selectOption('3d')
+  await page.getByTestId('planner-nav-3d').click()
   await view.getByTestId('three-display-settings').locator('summary').click()
   await view.getByTestId('three-height-rail').selectOption('11')
   await expect(view.getByTestId('three-rail-height')).toHaveValue('0')
@@ -197,7 +200,7 @@ test('individual multi-stage heights save, reload, and restore the final flat ra
   await view.getByTestId('three-display-settings').locator('summary').click()
   await view.getByTestId('three-back-editor').click()
   await page.getByTestId('track-undo').click()
-  await page.getByTestId('toolbar-open-3d').click()
+  await page.getByTestId('planner-nav-3d').click()
   await view.getByTestId('three-display-settings').locator('summary').click()
   await view.getByTestId('three-height-rail').selectOption('7')
   await expect(view.getByTestId('three-rail-height')).toHaveValue('350')
@@ -207,11 +210,11 @@ test('each bridge can store its own clear height', async ({ page }) => {
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page
     .getByTestId('track-plan-import')
     .setInputFiles({ name: 'bridges.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(source)) })
-  await page.getByTestId('planner-mode').selectOption('3d')
+  await page.getByTestId('planner-nav-3d').click()
   const view = page.getByTestId('room-track-3d')
   await view.getByTestId('three-display-settings').locator('summary').click()
   await view.getByTestId('three-height-rail').selectOption('33')
@@ -224,4 +227,87 @@ test('each bridge can store its own clear height', async ({ page }) => {
   await expect(view.getByTestId('three-local-clearance')).toHaveValue('300')
   await view.getByTestId('three-height-rail').selectOption('33')
   await expect(view.getByTestId('three-local-clearance')).toHaveValue('200')
+})
+
+test('centering after maximum zoom fits the complete track in the visible canvas and keeps perspective', async ({
+  page,
+}) => {
+  await page.goto('/')
+  await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
+  await page.getByTestId('planner-nav-files').click()
+  await page.getByTestId('track-plan-import').setInputFiles({
+    name: 'center.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({ ...source, roomPlan: room })),
+  })
+  await page.getByTestId('planner-nav-3d').click()
+  const svg = page.getByTestId('room-3d-canvas')
+  const yaw = await svg.getAttribute('data-yaw'),
+    pitch = await svg.getAttribute('data-pitch')
+  await page.getByTestId('three-zoom').press('End')
+  await expect(page.getByTestId('three-zoom')).toHaveValue('8')
+  await page.getByTestId('three-center').click()
+  await expect(page.getByTestId('three-zoom')).toHaveValue('1')
+  await expect(svg).toHaveAttribute('data-yaw', yaw)
+  await expect(svg).toHaveAttribute('data-pitch', pitch)
+  await expect
+    .poll(() =>
+      svg.evaluate((svg) => {
+        const rect = svg.getBoundingClientRect(),
+          parts = [...svg.querySelectorAll('[data-3d-kind="track"],[data-3d-kind="pit"]')]
+        return (
+          rect.height > 200 &&
+          rect.top >= 0 &&
+          rect.bottom <= innerHeight &&
+          parts.length > 0 &&
+          parts.every((p) => {
+            const b = p.getBoundingClientRect()
+            return (
+              b.left >= rect.left - 1 &&
+              b.right <= rect.right + 1 &&
+              b.top >= rect.top - 1 &&
+              b.bottom <= rect.bottom + 1
+            )
+          })
+        )
+      }),
+    )
+    .toBe(true)
+})
+
+test('ramp area arrows shift by a precise step and CU-side view is available for printing', async ({ page }) => {
+  await page.goto('/')
+  await page.getByTestId('standalone-new').click()
+  await page.getByTestId('room-continue').click()
+  await page.getByTestId('planner-nav-files').click()
+  await page.getByTestId('track-plan-import').setInputFiles({
+    name: 'ramp-shift.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(
+      JSON.stringify({ ...source, roomPlan: room, sceneRamps: { ascentLengthMm: 2000, descentLengthMm: 2000 } }),
+    ),
+  })
+  await page.locator('.planner-name').fill('Ramp range and CU side')
+  await page.getByTestId('planner-nav-3d').click()
+  await page.getByTestId('three-ramp-suggestions').locator('summary').click()
+  await page.getByTestId('three-shift-ascent-right').click()
+  await expect(page.getByTestId('three-suggestion-ascent')).toContainText('+100 mm')
+  await page.getByTestId('three-shift-step').fill('50')
+  await page.getByTestId('three-shift-ascent-left').click()
+  await expect(page.getByTestId('three-suggestion-ascent')).toContainText('+50 mm')
+  const saved = page.waitForResponse((r) => r.url().endsWith('/api/tracks') && r.request().method() === 'POST')
+  await page.getByTestId('planner-save').click()
+  const layout = JSON.parse((await (await saved).json()).data.layout)
+  expect(layout.sceneRamps.ascentShiftMm).toBe(50)
+  expect(layout.sceneRamps.ascentLengthMm).toBe(2000)
+  await page.getByTestId('three-shift-unit').selectOption('parts')
+  await expect(page.getByTestId('three-shift-step')).toHaveValue('1')
+  await page.getByTestId('three-shift-ascent-right').click()
+  await expect(page.getByTestId('three-suggestion-ascent')).not.toContainText('+50 mm')
+  await page.getByTestId('three-view').selectOption('cu')
+  await expect(page.getByTestId('room-3d-canvas')).toHaveAttribute('data-pitch', '35')
+  await page.getByTestId('planner-nav-print').click()
+  await page.getByTestId('print-projection').selectOption('cu')
+  await expect(page.getByTestId('room-3d-canvas').filter({ visible: true })).toHaveAttribute('data-pitch', '35')
 })

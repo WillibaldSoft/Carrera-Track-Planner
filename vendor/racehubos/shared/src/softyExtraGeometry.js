@@ -30,7 +30,10 @@ export function softyExtraGeometry(extra, segments = []) {
     world = ([x, y]) => [pose.xMm + c * x - s * y, pose.yMm + s * x + c * y];
   let polygon = [],
     slots = [];
-  if (extra.kind === 'single') {
+  if (extra.kind === 'fixedCross') {
+    polygon=[[-172.5,-99],[172.5,-99],[172.5,99],[-172.5,99]];
+    slots=[-49.5,49.5].map(offset=>Array.from({length:33},(_,i)=>{const t=i/32;return [-172.5+345*t,offset*(1-2*t*t*(3-2*t))]}));
+  } else if (extra.kind === 'single') {
     polygon = [
       [-172.5, -49.5],
       [172.5, -49.5],
@@ -96,7 +99,7 @@ export function softyExtraGeometry(extra, segments = []) {
   return {
     polygon: polygon.map(world),
     slots: slots.map((p) => p.map(world)),
-    border: !['single', 'pitEntry', 'pitExit'].includes(extra.kind),
+    border: !['single', 'pitEntry', 'pitExit', 'fixedCross'].includes(extra.kind),
     article: spec.article,
     pose,
   };

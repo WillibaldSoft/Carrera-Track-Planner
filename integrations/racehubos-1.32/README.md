@@ -3,7 +3,7 @@
 This bridge is for RaceHubOS **1.32.0 with the local `carrera-local` extension** and its existing update-guard tools. It is not a universal upstream RaceHubOS add-on manager. Other hosts retain manual planner downloads.
 
 1. End the active or paused session, save edits, and stop RaceHubOS.
-2. Extract `RaceHubOS-Planer-Direktupdate-1.4.0.zip`.
+2. Extract `RaceHubOS-Planer-Direktupdate-1.5.0.zip`.
 3. With Node >=22.13, run from the extracted folder:
 
    `node integrations/racehubos-1.32/install.mjs /path/to/RaceHubOS-1.32`

@@ -67,7 +67,7 @@
   "currentDrawing": "Vue actuelle avec étiquettes",
   "snapshotError": "La vue actuelle n’a pas pu être capturée pour l’export.",
   "snapshotPrintNote": "Cette vue conserve cadrage, zoom et positions visibles. Le PDF exporte rails et texte en vecteurs redimensionnables.",
-  "center": "Centrer la vue",
+  "center": "Centrer",
   "targetSlope": "Pente maximale (%)",
   "suggestRamps": "Appliquer les deux pourcentages",
   "suggestHelp": "Saisir séparément les pentes maximales de montée et de descente. Appliquer utilise la longueur calculée et actualise la vue 3D. Une rampe progressive a une pente moyenne inférieure au maximum. Les limites d’espace sont indiquées. Enregistrer ensuite le plan.",
@@ -79,5 +79,11 @@
   "customSuggestionHelp": "Les hauteurs individuelles définissent ce profil. Ajustez ces points dans le profil ; les longueurs des rampes ne les modifient pas.",
   "ascentPercent": "Pente maximale de la montée (%)",
   "descentPercent": "Pente maximale de la descente (%)",
-  "invalidPercent": "Saisir une valeur de 1 à 100 %."
+  "invalidPercent": "Saisir une valeur de 1 à 100 %.",
+  "centerHelp": "Ajuster et centrer toute la scène 3D en conservant la perspective.",
+  "shiftStep": "Déplacer la rampe · pas",
+  "shiftEarlier": "Commencer la rampe plus tôt",
+  "shiftLater": "Commencer la rampe plus tard",
+  "shiftHelp": "Les flèches déplacent la zone de rampe dans le sens de circulation, sans changer pente ni longueur. Les croisements, hauteurs fixes et rampes voisines limitent le déplacement ; les directions impossibles sont désactivées.",
+  "shiftParts": "Éléments de piste"
 }

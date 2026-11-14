@@ -6,15 +6,17 @@ import RailInventorySort from './RailInventorySort'
 import RailInventoryEditor from './RailInventoryEditor'
 import { Button } from '@core/components/ui/button'
 const api = import.meta.env.VITE_API_URL || ''
-export default function TrackPartsManager({ plan, name }) {
+export default function TrackPartsManager({ plan, name, inline = false }) {
   const { t } = useTranslation('tracks')
-  const [open, setOpen] = useState(false),
+  const { t: ui } = useTranslation('plannerInterface')
+  const renderPanel = inline ? (content) => content : createPortal
+  const [open, setOpen] = useState(inline),
     [tracks, setTracks] = useState([]),
     [source, setSource] = useState(''),
     [error, setError] = useState(false)
   const [sortOrder, setSortOrder] = useState('stockDesc')
   const [stock, setStock] = useState(emptyRailInventory),
-    [view, setView] = useState('compare'),
+    [view, setView] = useState('required'),
     [printPreview, setPrintPreview] = useState(false)
   useEffect(() => {
     if (!open) return
@@ -45,7 +47,7 @@ export default function TrackPartsManager({ plan, name }) {
     sourceName = reference?.name || name
   const comparison = inventoryComparison(sourcePlan, stock),
     rows = sortRailInventoryRows(comparison.rows, stock.counts, sortOrder).filter((r) =>
-      view === 'stock' ? r.available > 0 : view === 'required' ? r.required > 0 : r.available > 0 || r.required > 0
+      view === 'stock' ? r.available > 0 : view === 'required' ? r.required > 0 : r.available > 0 || r.required > 0,
     )
   return (
     <>
@@ -53,6 +55,7 @@ export default function TrackPartsManager({ plan, name }) {
         type="button"
         variant="outline"
         data-testid="track-parts-manager"
+        hidden={inline}
         onClick={() => {
           setPrintPreview(false)
           setOpen(true)
@@ -61,25 +64,30 @@ export default function TrackPartsManager({ plan, name }) {
         {t('inventory.managePrint')}
       </Button>
       {open &&
-        createPortal(
+        renderPanel(
           <div
-            className="track-parts-portal fixed inset-0 z-[110] bg-background text-foreground overflow-auto p-5"
-            role="dialog"
-            aria-modal="true"
+            className={
+              inline
+                ? 'planner-inline-panel track-parts-inline bg-background text-foreground p-5'
+                : 'track-parts-portal fixed inset-0 z-[110] bg-background text-foreground overflow-auto p-5'
+            }
+            role={inline ? 'region' : 'dialog'}
+            aria-modal={inline ? undefined : true}
             aria-label={t('inventory.managePrint')}
             data-testid="track-parts-dialog"
             onKeyDown={(e) => {
-              if (e.key === 'Escape') {
+              if (!inline && e.key === 'Escape') {
                 e.stopPropagation()
                 setOpen(false)
               }
             }}
           >
-            <style>{`@media print{@page{size:A4 portrait;margin:12mm}body>*:not(.track-parts-portal){display:none!important}.track-parts-portal{position:static!important;padding:0!important;overflow:visible!important;background:white!important;color:black!important}.track-parts-portal .parts-tools{display:none!important}.track-parts-portal table{width:100%;border-collapse:collapse;font-size:10pt}.track-parts-portal th,.track-parts-portal td{border-bottom:1px solid #aaa;padding:5px}.track-parts-portal thead{display:table-header-group}.track-parts-portal tr{break-inside:avoid}}`}</style>
+            <style>{`@media print{@page{size:A4 portrait;margin:12mm}${inline ? '' : 'body>*:not(.track-parts-portal){display:none!important}'}.track-parts-portal{position:static!important;padding:0!important;overflow:visible!important;background:white!important;color:black!important}.track-parts-portal .parts-tools{display:none!important}.track-parts-portal table{width:100%;border-collapse:collapse;font-size:10pt}.track-parts-portal th,.track-parts-portal td{border-bottom:1px solid #aaa;padding:5px}.track-parts-portal thead{display:table-header-group}.track-parts-portal tr{break-inside:avoid}}`}</style>
             <div className="parts-tools flex flex-wrap items-center gap-3 mb-4">
-              <h2 className="text-xl font-bold mr-auto">{t('inventory.managePrint')}</h2>
+              <h2 className="text-xl font-bold mr-auto">{inline ? ui('parts') : t('inventory.managePrint')}</h2>
               <Button
                 data-testid="inventory-print-preview"
+                hidden={inline}
                 type="button"
                 variant="outline"
                 onClick={() => setPrintPreview((v) => !v)}
@@ -89,7 +97,13 @@ export default function TrackPartsManager({ plan, name }) {
               <Button data-testid="inventory-print" type="button" onClick={() => window.print()}>
                 {t('print.print')}
               </Button>
-              <Button data-testid="inventory-close" type="button" variant="outline" onClick={() => setOpen(false)}>
+              <Button
+                data-testid="inventory-close"
+                hidden={inline}
+                type="button"
+                variant="outline"
+                onClick={() => setOpen(false)}
+              >
                 {t('print.close')}
               </Button>
             </div>
@@ -114,7 +128,8 @@ export default function TrackPartsManager({ plan, name }) {
               </label>
               {error && <p role="alert">{t('inventory.sourceError')}</p>}
             </div>
-            <div className="parts-tools" hidden={printPreview}>
+            <details className="parts-tools planner-stock-details" hidden={printPreview}>
+              <summary>{ui('stock')}</summary>
               <RailInventoryEditor
                 standalone
                 sortOrder={sortOrder}
@@ -123,7 +138,7 @@ export default function TrackPartsManager({ plan, name }) {
                 sourceName={sourceName}
                 onStockChange={setStock}
               />
-            </div>
+            </details>
             <section className="mt-5" data-testid="inventory-print-sheet">
               <div className="parts-tools mb-3">
                 <label>
@@ -142,12 +157,16 @@ export default function TrackPartsManager({ plan, name }) {
                   </select>
                 </label>
               </div>
-              <div className="parts-tools mb-3">
+              <details className="parts-tools mb-3">
+                <summary>{ui('details')}</summary>
                 <RailInventorySort testId="inventory-print-sort" value={sortOrder} onChange={setSortOrder} />
-              </div>
+              </details>
               <h2 className="text-xl font-bold">{t(`inventory.list_${view}`)}</h2>
               <p>{sourceName}</p>
-              <p className="text-sm mb-3">{t('inventory.countingNote')}</p>
+              <details className="parts-tools text-sm mb-3">
+                <summary>{ui('help')}</summary>
+                <p>{t('inventory.countingNote')}</p>
+              </details>
               <table className="w-full text-sm">
                 <thead>
                   <tr>
@@ -182,7 +201,7 @@ export default function TrackPartsManager({ plan, name }) {
               )}
             </section>
           </div>,
-          document.body
+          document.body,
         )}
     </>
   )

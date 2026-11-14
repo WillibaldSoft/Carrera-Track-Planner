@@ -14,7 +14,7 @@ test('fractional room origin and dropped rail save immediately without editing c
     measuredLaneLengthsM: [1.23456789, 1.98765432],
     roomPlan: { ...DEFAULT_ROOM, backgroundOrigin: { xMm: -3000.125, yMm: -1700.375 } },
   }
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page
     .getByTestId('track-plan-import')
     .setInputFiles({ name: 'room.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(plan)) })

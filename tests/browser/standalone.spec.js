@@ -28,7 +28,7 @@ test('standalone planner saves a local plan and exports an exchange file without
   await page.reload()
   await page.getByTestId('standalone-track').selectOption(rows[0].id)
   await expect(page.getByTestId('graph-track-canvas')).toHaveAttribute('data-piece-count', '2')
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   const pending = page.waitForEvent('download')
   await page.getByTestId('export-track-json').click()
   const download = await pending
@@ -42,7 +42,7 @@ test('standalone room planner can generate drafts without changing saved plans',
   await page.goto('/')
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-mode').selectOption('room')
+  await page.getByTestId('planner-nav-room').click()
   await page.getByTestId('generate-room-plan').click()
   await expect(page.getByTestId('room-proposal-oval')).toBeVisible()
 })

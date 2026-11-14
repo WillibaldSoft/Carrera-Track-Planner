@@ -530,3 +530,17 @@ export function projectRoomScene(
     y = Math.min(...ys)
   return { items, bounds: { x, y, width: Math.max(...xs) - x, depth: Math.max(...ys) - y } }
 }
+
+// Fit the track itself; tall room walls must not shrink it to a thumbnail.
+export function projectedTrackBounds(projected) {
+  const points = projected.items
+    .filter((item) => item.rail !== undefined || item.extra !== undefined)
+    .flatMap((item) => item.points || (item.point ? [item.point] : []))
+    .filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y))
+  if (!points.length) return projected.bounds
+  const xs = points.map((p) => p.x),
+    ys = points.map((p) => p.y)
+  const x = Math.min(...xs),
+    y = Math.min(...ys)
+  return { x, y, width: Math.max(...xs) - x, depth: Math.max(...ys) - y }
+}

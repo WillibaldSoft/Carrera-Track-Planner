@@ -67,7 +67,7 @@
   "currentDrawing": "Current view with labels",
   "snapshotError": "The current view could not be captured for export.",
   "snapshotPrintNote": "This print view preserves current framing, zoom and visible label positions. PDF exports rails and text as scalable vectors.",
-  "center": "Center view",
+  "center": "Center",
   "targetSlope": "Maximum gradient (%)",
   "suggestRamps": "Apply both percentages",
   "suggestHelp": "Enter maximum ascent and descent gradients separately. Apply sets the calculated length and updates the 3D view. Smooth ramps have a lower average than maximum gradient. Limited space is indicated. Save the plan afterwards.",
@@ -79,5 +79,11 @@
   "customSuggestionHelp": "Custom height points define this profile. Adjust these points in the height profile; ramp lengths do not change them.",
   "ascentPercent": "Maximum ascent gradient (%)",
   "descentPercent": "Maximum descent gradient (%)",
-  "invalidPercent": "Enter a value from 1 to 100 %."
+  "invalidPercent": "Enter a value from 1 to 100 %.",
+  "centerHelp": "Fit and center the entire 3D scene while keeping the perspective.",
+  "shiftStep": "Move ramp area · step size",
+  "shiftEarlier": "Start the ramp area earlier",
+  "shiftLater": "Start the ramp area later",
+  "shiftHelp": "Arrows move the ramp area along the direction of travel, retaining grade and ramp length. Crossings, fixed heights and neighbouring ramps limit movement; unavailable directions are disabled.",
+  "shiftParts": "Track pieces"
 }

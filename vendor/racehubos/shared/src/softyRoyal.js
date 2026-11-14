@@ -123,6 +123,7 @@ export function exportSoftyRoyal(input, name = 'Streckenplan') {
     place(G.single, extent - 172.5, -49.5);
   }
   for (const extra of plan.trackExtras || []) {
+    if(!G[extra.kind])throw new Error('New pit geometry requires RaceHubOS JSON export; native SBP mapping not verified.');
     const p = extraWorldPose(extra, traced.segments);
     add(
       G[extra.kind],

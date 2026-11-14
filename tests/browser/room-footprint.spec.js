@@ -35,7 +35,7 @@ for (const lang of ['de', 'en', 'fr'])
     const saved = page.waitForResponse((r) => r.url().endsWith('/api/tracks') && r.request().method() === 'POST')
     await page.getByTestId('planner-save').click()
     expect((await saved).ok()).toBe(true)
-    await page.getByTestId('planner-files-toggle').click()
+    await page.getByTestId('planner-nav-files').click()
     const download = page.waitForEvent('download')
     await page.getByTestId('export-track-json').click()
     await download

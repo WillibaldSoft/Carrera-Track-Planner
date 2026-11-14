@@ -1,43 +1,73 @@
-import { validateDrawLayer } from './trackDrawLayers.js';
-import { specialTrackGeometry } from './specialTrackGeometry.js';
-import { EXTRA_TRACK_PARTS } from './carreraTrackCatalog.js';
-import { validatePartGroups } from './trackAssemblies.js';
-import { validateTrackExtras, validateSoftyImport } from './softyNativeCatalog.js';
-import { validateBorders } from './trackBorders.js';
-import { analyseTrackConnections } from './trackConnections.js';
-import { validateRoom } from './roomConfiguration.js';
-export const DEFAULT_SCENE_HEIGHTS = Object.freeze({ wallHeight: 2400, obstacleHeight: 1200, baseHeight: 0, clearance: 150 });
+import { validateDrawLayer } from './trackDrawLayers.js'
+import { specialTrackGeometry } from './specialTrackGeometry.js'
+import { EXTRA_TRACK_PARTS } from './carreraTrackCatalog.js'
+import { validatePartGroups } from './trackAssemblies.js'
+import { validateTrackExtras, validateSoftyImport } from './softyNativeCatalog.js'
+import { validateBorders } from './trackBorders.js'
+import { analyseTrackConnections } from './trackConnections.js'
+import { validateRoom } from './roomConfiguration.js'
+export const DEFAULT_SCENE_HEIGHTS = Object.freeze({
+  wallHeight: 2400,
+  obstacleHeight: 1200,
+  baseHeight: 0,
+  clearance: 150,
+})
 export function validateSceneHeights(value) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid scene heights');
-  const result = {};
-  for (const [key, min, max] of [['wallHeight',500,4000],['obstacleHeight',50,4000],['baseHeight',0,1500],['clearance',50,500]]) {
-    const n = value[key] ?? DEFAULT_SCENE_HEIGHTS[key];
-    if (!Number.isFinite(n) || n < min || n > max) throw new Error('Invalid scene height: ' + key);
-    result[key] = n;
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid scene heights')
+  const result = {}
+  for (const [key, min, max] of [
+    ['wallHeight', 500, 4000],
+    ['obstacleHeight', 50, 4000],
+    ['baseHeight', 0, 1500],
+    ['clearance', 50, 500],
+  ]) {
+    const n = value[key] ?? DEFAULT_SCENE_HEIGHTS[key]
+    if (!Number.isFinite(n) || n < min || n > max) throw new Error('Invalid scene height: ' + key)
+    result[key] = n
   }
-  return result;
+  return result
 }
 export function validateSceneRamps(value) {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid scene ramps');
-  const result = {};
+  if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid scene ramps')
+  const result = {}
   for (const key of ['ascentLengthMm', 'descentLengthMm']) {
-    const n = value[key] ?? 1000;
-    if (!Number.isFinite(n) || n < 100 || n > 20000) throw new Error('Invalid ramp length');
-    result[key] = n;
+    const n = value[key] ?? 1000
+    if (!Number.isFinite(n) || n < 100 || n > 20000) throw new Error('Invalid ramp length')
+    result[key] = n
   }
-  return result;
+  for (const key of ['ascentShiftMm', 'descentShiftMm'])
+    if (value[key] !== undefined) {
+      if (!Number.isFinite(value[key]) || Math.abs(value[key]) > 20000) throw new Error('Invalid ramp shift')
+      result[key] = value[key]
+    }
+  return result
 }
 export function validateRailElevation(value) {
-  if (!value || typeof value !== 'object' || Array.isArray(value) || !Number.isFinite(value.heightMm) || value.heightMm < 0 || value.heightMm > 3000 || typeof value.flat !== 'boolean') throw new Error('Invalid rail elevation');
-  return { heightMm: value.heightMm, flat: value.flat };
+  if (
+    !value ||
+    typeof value !== 'object' ||
+    Array.isArray(value) ||
+    !Number.isFinite(value.heightMm) ||
+    value.heightMm < 0 ||
+    value.heightMm > 3000 ||
+    typeof value.flat !== 'boolean'
+  )
+    throw new Error('Invalid rail elevation')
+  return { heightMm: value.heightMm, flat: value.flat }
 }
 export function validateHeightLabelOffset(value) {
-  if (!value || typeof value !== 'object' || Array.isArray(value) || ![value.alongMm, value.acrossMm].every(n => Number.isFinite(n) && Math.abs(n) <= 1000000)) throw new Error('Invalid height label position');
-  return { alongMm: value.alongMm, acrossMm: value.acrossMm };
+  if (
+    !value ||
+    typeof value !== 'object' ||
+    Array.isArray(value) ||
+    ![value.alongMm, value.acrossMm].every((n) => Number.isFinite(n) && Math.abs(n) <= 1000000)
+  )
+    throw new Error('Invalid height label position')
+  return { alongMm: value.alongMm, acrossMm: value.acrossMm }
 }
 // Millimetres and degrees. Original Autorennbahnplaner 2022 centre radii;
 // catalogue dimensions are nominal, not a survey of a physically adjusted track.
-export const TRACK_PLAN_KIND = 'racehubos.track-plan';
+export const TRACK_PLAN_KIND = 'racehubos.track-plan'
 export const TRACK_PARTS = Object.freeze({
   ...EXTRA_TRACK_PARTS,
   Standardgerade: { length: 345 },
@@ -67,11 +97,11 @@ export const TRACK_PARTS = Object.freeze({
             radius: 299 + (k - 1) * 198,
             angle: angle * (side === 'links' ? -1 : 1),
           },
-        ])
-      )
-    )
+        ]),
+      ),
+    ),
   ),
-});
+})
 export function emptyTrackPlan() {
   return {
     kind: TRACK_PLAN_KIND,
@@ -87,7 +117,7 @@ export function emptyTrackPlan() {
     measuredLaneLengthsM: null,
     geometryProfile: 'planner2022',
     startHeadingDegrees: 0,
-  };
+  }
 }
 export function validateTrackPlan(value) {
   if (
@@ -97,13 +127,13 @@ export function validateTrackPlan(value) {
     !Array.isArray(value.pieces) ||
     value.pieces.length > 2000
   )
-    throw new Error('Invalid track plan');
+    throw new Error('Invalid track plan')
   if (
     !['planner2022', 'prototype'].includes(value.geometryProfile ?? 'planner2022') ||
     !Number.isFinite(value.startHeadingDegrees ?? 0) ||
     Math.abs(value.startHeadingDegrees ?? 0) > 360
   )
-    throw new Error('Invalid geometry profile');
+    throw new Error('Invalid geometry profile')
   const pieces = value.pieces.map((p) => {
     if (
       !p ||
@@ -112,29 +142,31 @@ export function validateTrackPlan(value) {
       !Number.isFinite(p.jointDegrees ?? 0) ||
       Math.abs(p.jointDegrees ?? 0) > 5
     )
-      throw new Error('Invalid track piece');
+      throw new Error('Invalid track piece')
     if (p.paintOrder !== undefined && (!Number.isInteger(p.paintOrder) || p.paintOrder < 0 || p.paintOrder > 12000))
-      throw new Error('Invalid paint order');
+      throw new Error('Invalid paint order')
     if (p.antiCollision !== undefined && (typeof p.antiCollision !== 'boolean' || !/weiche/i.test(p.type)))
-      throw new Error('Invalid anti-collision switch');
-    validateDrawLayer(p.drawLayer);
-    const borders = validateBorders(p.borders, p.type);
-    let placement;
+      throw new Error('Invalid anti-collision switch')
+    validateDrawLayer(p.drawLayer)
+    const borders = validateBorders(p.borders, p.type)
+    let placement
     if (p.placement) {
-      const q = p.placement;
+      const q = p.placement
       if (
         ![q.xMm, q.yMm, q.headingDegrees].every(Number.isFinite) ||
         Math.abs(q.xMm) > 1000000 ||
         Math.abs(q.yMm) > 1000000 ||
         Math.abs(q.headingDegrees) > 360
       )
-        throw new Error('Invalid placement');
-      placement = { xMm: q.xMm, yMm: q.yMm, headingDegrees: q.headingDegrees };
+        throw new Error('Invalid placement')
+      placement = { xMm: q.xMm, yMm: q.yMm, headingDegrees: q.headingDegrees }
     }
-    if (value.freePlacement === true && !placement) throw new Error('Missing free placement');
-    if (placement && value.freePlacement !== true) throw new Error('Unexpected placement');
+    if (value.freePlacement === true && !placement) throw new Error('Missing free placement')
+    if (placement && value.freePlacement !== true) throw new Error('Unexpected placement')
     return {
-      ...(p.heightLabelOffset !== undefined ? { heightLabelOffset: validateHeightLabelOffset(p.heightLabelOffset) } : {}),
+      ...(p.heightLabelOffset !== undefined
+        ? { heightLabelOffset: validateHeightLabelOffset(p.heightLabelOffset) }
+        : {}),
       ...(p.elevation !== undefined ? { elevation: validateRailElevation(p.elevation) } : {}),
       ...(p.antiCollision !== undefined ? { antiCollision: p.antiCollision } : {}),
       ...(p.drawLayer !== undefined ? { drawLayer: p.drawLayer } : {}),
@@ -144,14 +176,15 @@ export function validateTrackPlan(value) {
       type: p.type,
       level: p.level ?? 0,
       jointDegrees: p.jointDegrees ?? 0,
-    };
-  });
+    }
+  })
   if (value.freePlacement !== undefined && typeof value.freePlacement !== 'boolean')
-    throw new Error('Invalid placement mode');
+    throw new Error('Invalid placement mode')
   if (value.showAntiCollision !== undefined && typeof value.showAntiCollision !== 'boolean')
-    throw new Error('Invalid anti-collision display');
-  if (value.showElevationLabels !== undefined && typeof value.showElevationLabels !== 'boolean') throw new Error('Invalid elevation label display');
-  const pit = { ...emptyTrackPlan().pit, ...value.pit };
+    throw new Error('Invalid anti-collision display')
+  if (value.showElevationLabels !== undefined && typeof value.showElevationLabels !== 'boolean')
+    throw new Error('Invalid elevation label display')
+  const pit = { ...emptyTrackPlan().pit, ...value.pit }
   if (
     typeof pit.enabled !== 'boolean' ||
     !Number.isInteger(pit.entry) ||
@@ -166,24 +199,24 @@ export function validateTrackPlan(value) {
     pit.bayLengthMm < 115 ||
     pit.bayLengthMm > 10000
   )
-    throw new Error('Invalid pit geometry');
-  validateDrawLayer(pit.drawLayer);
-  if (pit.native !== undefined && typeof pit.native !== 'boolean') throw new Error('Invalid native pit');
+    throw new Error('Invalid pit geometry')
+  validateDrawLayer(pit.drawLayer)
+  if (pit.native !== undefined && typeof pit.native !== 'boolean') throw new Error('Invalid native pit')
   const trackExtras = validateTrackExtras(value.trackExtras, pieces.length),
-    softyImport = validateSoftyImport(value.softyImport);
-  const partGroups = validatePartGroups(value.partGroups, pieces.length);
-  const measured = value.measuredLaneLengthsM ?? null;
+    softyImport = validateSoftyImport(value.softyImport)
+  const partGroups = validatePartGroups(value.partGroups, pieces.length)
+  const measured = value.measuredLaneLengthsM ?? null
   if (
     measured !== null &&
     (!Array.isArray(measured) ||
       measured.length !== 2 ||
       measured.some((n) => !Number.isFinite(n) || n <= 0 || n > 10000))
   )
-    throw new Error('Invalid measured lengths');
+    throw new Error('Invalid measured lengths')
   return {
     kind: TRACK_PLAN_KIND,
     version: 1,
-    ...(value.showElevationLabels !== undefined ? {showElevationLabels:value.showElevationLabels} : {}),
+    ...(value.showElevationLabels !== undefined ? { showElevationLabels: value.showElevationLabels } : {}),
     ...(value.showAntiCollision !== undefined ? { showAntiCollision: value.showAntiCollision } : {}),
     ...(partGroups ? { partGroups } : {}),
     ...(trackExtras ? { trackExtras } : {}),
@@ -197,28 +230,28 @@ export function validateTrackPlan(value) {
     ...(value.sceneRamps !== undefined ? { sceneRamps: validateSceneRamps(value.sceneRamps) } : {}),
     ...(value.sceneHeights !== undefined ? { sceneHeights: validateSceneHeights(value.sceneHeights) } : {}),
     ...(value.roomPlan ? { roomPlan: validateRoom(value.roomPlan) } : {}),
-  };
+  }
 }
 export function readTrackPlan(layout) {
   try {
-    return validateTrackPlan(typeof layout === 'string' ? JSON.parse(layout) : layout);
+    return validateTrackPlan(typeof layout === 'string' ? JSON.parse(layout) : layout)
   } catch {
-    return null;
+    return null
   }
 }
 export function traceTrackPlan(input) {
-  const plan = validateTrackPlan(input);
+  const plan = validateTrackPlan(input)
   let x = 0,
     y = 0,
-    h = (plan.startHeadingDegrees * Math.PI) / 180;
-  const lengths = [0, 0];
+    h = (plan.startHeadingDegrees * Math.PI) / 180
+  const lengths = [0, 0]
   const segments = plan.pieces.map((piece, index) => {
     if (piece.placement) {
-      x = piece.placement.xMm;
-      y = piece.placement.yMm;
-      h = (piece.placement.headingDegrees * Math.PI) / 180;
-    } else h += (piece.jointDegrees * Math.PI) / 180;
-    const base = TRACK_PARTS[piece.type];
+      x = piece.placement.xMm
+      y = piece.placement.yMm
+      h = (piece.placement.headingDegrees * Math.PI) / 180
+    } else h += (piece.jointDegrees * Math.PI) / 180
+    const base = TRACK_PARTS[piece.type]
     const spec =
       plan.geometryProfile === 'prototype'
         ? {
@@ -226,31 +259,31 @@ export function traceTrackPlan(input) {
             ...(base.radius ? { radius: base.radius - 2 } : {}),
             ...(piece.type === 'Viertelgerade' ? { length: 86.25 } : {}),
           }
-        : base;
-    const turn = ((spec.angle || 0) * Math.PI) / 180;
+        : base
+    const turn = ((spec.angle || 0) * Math.PI) / 180
     const sign = Math.sign(turn),
-      start = { x, y, h };
-    const points = [[], [], []];
+      start = { x, y, h }
+    const points = [[], [], []]
     for (let j = 0; j <= 32; j++) {
       const f = j / 32,
-        a = h + turn * f;
-      const px = turn ? x + sign * spec.radius * (Math.sin(a) - Math.sin(h)) : x + spec.length * f * Math.cos(h);
-      const py = turn ? y + sign * spec.radius * (Math.cos(h) - Math.cos(a)) : y + spec.length * f * Math.sin(h);
-      [0, -49.5, 49.5].forEach((offset, lane) =>
-        points[lane].push([px - Math.sin(a) * offset, py + Math.cos(a) * offset])
-      );
+        a = h + turn * f
+      const px = turn ? x + sign * spec.radius * (Math.sin(a) - Math.sin(h)) : x + spec.length * f * Math.cos(h)
+      const py = turn ? y + sign * spec.radius * (Math.cos(h) - Math.cos(a)) : y + spec.length * f * Math.sin(h)
+      ;[0, -49.5, 49.5].forEach((offset, lane) =>
+        points[lane].push([px - Math.sin(a) * offset, py + Math.cos(a) * offset]),
+      )
     }
-    const special = spec.special ? specialTrackGeometry(spec, start) : null;
-    if (special) points.splice(0, 3, ...special.points);
-    const end = points[0].at(-1);
-    [x, y] = end;
-    h += turn;
+    const special = spec.special ? specialTrackGeometry(spec, start) : null
+    if (special) points.splice(0, 3, ...special.points)
+    const end = points[0].at(-1)
+    ;[x, y] = end
+    h += turn
     const laneLengthsM = special
       ? special.laneLengthsM
-      : [-49.5, 49.5].map((offset) => (turn ? Math.abs(turn) * (spec.radius - sign * offset) : spec.length) / 1000);
+      : [-49.5, 49.5].map((offset) => (turn ? Math.abs(turn) * (spec.radius - sign * offset) : spec.length) / 1000)
     laneLengthsM.forEach((n, lane) => {
-      lengths[lane] += n * 1000;
-    });
+      lengths[lane] += n * 1000
+    })
     return {
       ...piece,
       laneLengthsM,
@@ -266,15 +299,15 @@ export function traceTrackPlan(input) {
             approximateSlots: !!spec.approximateSlots,
           }
         : {}),
-    };
-  });
-  const connectivity = plan.freePlacement ? analyseTrackConnections(segments) : null;
+    }
+  })
+  const connectivity = plan.freePlacement ? analyseTrackConnections(segments) : null
   if (connectivity?.closed) {
-    lengths.fill(0);
+    lengths.fill(0)
     for (const { index, reverse } of connectivity.route)
       segments[index].laneLengthsM.forEach((n, lane) => {
-        lengths[reverse ? 1 - lane : lane] += n * 1000;
-      });
+        lengths[reverse ? 1 - lane : lane] += n * 1000
+      })
   }
   return {
     segments,
@@ -285,26 +318,26 @@ export function traceTrackPlan(input) {
     headingErrorDegrees: connectivity?.closed
       ? 0
       : (((((h * 180) / Math.PI - plan.startHeadingDegrees) % 360) + 540) % 360) - 180,
-  };
+  }
 }
 // Round-average speed only. Digital lane changes and pit routes need extra telemetry.
 export function trackSpeedKmh(lengthM, lapTimeMs) {
   return Number.isFinite(lengthM) && lengthM > 0 && Number.isFinite(lapTimeMs) && lapTimeMs > 0
     ? (lengthM * 3600) / lapTimeMs
-    : null;
+    : null
 }
 export function serializeTrackPlan(plan) {
   const clean = validateTrackPlan(plan),
-    result = traceTrackPlan(clean);
+    result = traceTrackPlan(clean)
   return JSON.stringify({
     ...clean,
     laneLengthsM: result.laneLengthsM,
     calculatedLaneLengthsM: result.calculatedLaneLengthsM,
-  });
+  })
 }
 export function trackPlanFields(plan) {
   const layout = serializeTrackPlan(plan),
-    result = JSON.parse(layout);
+    result = JSON.parse(layout)
   return {
     layout,
     length:
@@ -312,42 +345,42 @@ export function trackPlanFields(plan) {
         ? null
         : (result.laneLengthsM[0] + result.laneLengthsM[1]) / 2,
     corners: result.pieces.filter((p) => TRACK_PARTS[p.type].angle).length,
-  };
+  }
 }
 export function importTrackTrk(text) {
-  if (text.length > 2000000) throw new Error('TRK too large');
-  const fields = Object.create(null);
+  if (text.length > 2000000) throw new Error('TRK too large')
+  const fields = Object.create(null)
   for (const token of text.replace(/^\uFEFF/, '').split('&')) {
-    const i = token.indexOf('=');
-    if (i < 1 || Object.hasOwn(fields, token.slice(0, i))) throw new Error('Invalid TRK');
-    fields[token.slice(0, i)] = token.slice(i + 1);
+    const i = token.indexOf('=')
+    if (i < 1 || Object.hasOwn(fields, token.slice(0, i))) throw new Error('Invalid TRK')
+    fields[token.slice(0, i)] = token.slice(i + 1)
   }
-  if (fields.Bahnsystem !== 'Digital 132' || !fields.teile_Typ_1) throw new Error('Unsupported TRK');
-  const types = fields.teile_Typ_1.split(';');
-  if (types.length !== Number(fields.ItemNumber_1) + 1) throw new Error('Invalid TRK count');
+  if (fields.Bahnsystem !== 'Digital 132' || !fields.teile_Typ_1) throw new Error('Unsupported TRK')
+  const types = fields.teile_Typ_1.split(';')
+  if (types.length !== Number(fields.ItemNumber_1) + 1) throw new Error('Invalid TRK count')
   if (fields.RaceHubOSPlan) {
-    const extended = validateTrackPlan(JSON.parse(decodeURIComponent(fields.RaceHubOSPlan)));
-    const nativeTypes = types.filter((t) => t !== 'Startteil');
+    const extended = validateTrackPlan(JSON.parse(decodeURIComponent(fields.RaceHubOSPlan)))
+    const nativeTypes = types.filter((t) => t !== 'Startteil')
     if (JSON.stringify(extended.pieces.map((p) => p.type)) !== JSON.stringify(nativeTypes))
-      throw new Error('TRK extension disagrees with edited rails');
-    return extended;
+      throw new Error('TRK extension disagrees with edited rails')
+    return extended
   }
   return validateTrackPlan({
     ...emptyTrackPlan(),
     pieces: types.filter((t) => t !== 'Startteil').map((type) => ({ type, level: 0 })),
-  });
+  })
 }
 // Digital controllers identify cars, not lanes. Use the mean of the two saved
 // lanes, never map controller 1/2 to track lane 1/2.
 export function trackLapDistanceM(track) {
-  const plan = readTrackPlan(track?.layout);
+  const plan = readTrackPlan(track?.layout)
   if (plan) {
-    const traced = traceTrackPlan(plan);
-    if (plan.freePlacement && !traced.connectivity.closed) return null;
+    const traced = traceTrackPlan(plan)
+    if (plan.freePlacement && !traced.connectivity.closed) return null
     // An explicitly saved manual length overrides the geometric estimate.
-    if (Number.isFinite(track?.length) && track.length > 0) return track.length;
-    const lengths = traced.laneLengthsM;
-    return lengths.every((n) => Number.isFinite(n) && n > 0) ? (lengths[0] + lengths[1]) / 2 : null;
+    if (Number.isFinite(track?.length) && track.length > 0) return track.length
+    const lengths = traced.laneLengthsM
+    return lengths.every((n) => Number.isFinite(n) && n > 0) ? (lengths[0] + lengths[1]) / 2 : null
   }
-  return Number.isFinite(track?.length) && track.length > 0 ? track.length : null;
+  return Number.isFinite(track?.length) && track.length > 0 ? track.length : null
 }

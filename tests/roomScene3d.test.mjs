@@ -170,3 +170,54 @@ test('saved heights survive validation and JSON round trips; old plans retain de
   for (const bad of [NaN, Infinity, -1, 501, '150'])
     assert.throws(() => validateSceneHeights({ ...settings, clearance: bad }))
 })
+
+test('orthographic top and side views preserve finite bounds and all rails', () => {
+  const scene = buildRoomScene(p())
+  for (const camera of [
+    { yaw: 0, pitch: 90 },
+    { yaw: 0, pitch: 0 },
+    { yaw: 90, pitch: 0 },
+  ]) {
+    const projected = projectRoomScene(scene, camera, {
+      walls: false,
+      cutaway: true,
+      obstacles: true,
+      labels: true,
+      dimensions: true,
+    })
+    assert.ok(Object.values(projected.bounds).every(Number.isFinite))
+    assert.ok(projected.bounds.width > 0)
+    assert.ok(projected.bounds.depth > 0)
+  }
+})
+
+import { projectedTrackBounds } from '../addons/track-planner/src/components/roomScene3d.js'
+import { trackViewport } from '../addons/track-planner/src/components/trackViewport.js'
+test('centering fits every projected rail inside the actual canvas despite tall room walls', () => {
+  const scene = buildRoomScene(p(), { wallHeight: 6000 })
+  for (const camera of [
+    { yaw: -35, pitch: 55 },
+    { yaw: 0, pitch: 90 },
+    { yaw: 0, pitch: 0 },
+  ]) {
+    const projected = projectRoomScene(scene, camera, {
+      walls: true,
+      cutaway: true,
+      obstacles: true,
+      labels: true,
+      dimensions: true,
+    })
+    const bounds = projectedTrackBounds(projected)
+    for (const viewport of [
+      { width: 1200, height: 400 },
+      { width: 350, height: 500 },
+    ]) {
+      const [x, y, w, h] = trackViewport(bounds, viewport, 1, { x: 0, y: 0 })
+      const points = projected.items
+        .filter((i) => i.rail !== undefined || i.extra !== undefined)
+        .flatMap((i) => i.points || (i.point ? [i.point] : []))
+      assert.ok(points.length > 0)
+      for (const pt of points) assert.ok(pt.x >= x && pt.x <= x + w && pt.y >= y && pt.y <= y + h)
+    }
+  }
+})

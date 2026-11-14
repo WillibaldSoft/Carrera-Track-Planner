@@ -27,6 +27,7 @@ export const EXTRA_TRACK_PARTS = Object.freeze({
       [`Kurvenweiche_${side}_${route}_2`, { radius: 299, angle: side === 'links' ? -60 : 60 }],
     ])
   ),
+  Spurwechsel_20517: { length: 345, special: 'fixedCross', approximateSlots: true },
   Multistart: { length: 345 },
   Schikane_30373: { length: 1035, special: 'chicane', modules: 3, approximateSlots: true },
   Engstelle_links_30350: { length: 1380, special: 'narrow', side: -1, modules: 4 },
@@ -61,6 +62,7 @@ export function trackArticle(type) {
     Schikane_30373: '30373',
     Engstelle_links_30350: '30350',
     Engstelle_rechts_30351: '30351',
+    Spurwechsel_20517: '20517',
     Standardgerade: '20509',
     Drittelgerade: '20611',
     Viertelgerade: '20612',
@@ -424,5 +426,5 @@ export const SPECIAL_GEOMETRY_AUDIT = Object.freeze({
     placeable: true,
   },
   '20587': { modules: 4, note: 'bridge', placeable: false },
-  '20517': { modules: 2, moduleLengthMm: 345, note: 'fixedCross', placeable: false },
+  '20517': { modules: 2, moduleLengthMm: 345, note: 'fixedCross', placeable: true },
 });

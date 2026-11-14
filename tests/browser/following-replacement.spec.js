@@ -1,3 +1,4 @@
+import { revealControl } from './reveal-control.js'
 import { test, expect } from '@playwright/test'
 import { emptyTrackPlan, enableFreePlacement } from '../../vendor/racehubos/shared/src/index.js'
 const plan = () =>
@@ -11,7 +12,7 @@ async function open(page, language = 'de') {
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
   await page.locator('.planner-name').fill('Replacement Demo')
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page.getByTestId('track-plan-import').setInputFiles({
     name: 'replacement.json',
     mimeType: 'application/json',
@@ -55,6 +56,7 @@ for (const language of ['de', 'en', 'fr'])
 test('repeat placement still chooses a part without replacing the selected rail', async ({ page }) => {
   await open(page)
   await select(page, 1)
+  await revealControl(page.getByTestId('repeat-track-part'))
   await page.getByTestId('repeat-track-part').check()
   await page.getByTestId('palette-Kurve_1_60_rechts').click()
   await expect(page.getByTestId('replacement-cut-controls')).toHaveCount(0)

@@ -1,3 +1,6 @@
+import PitLanePlanner from './PitLanePlanner'
+import TrackPartsManager from './TrackPartsManager'
+import TrackPlanPrint from './TrackPlanPrint'
 import UpdateButton from '../updates/UpdateButton'
 import { PLANNER_VERSION } from '../updates/version'
 import RoomTrack3D from './RoomTrack3D'
@@ -42,6 +45,7 @@ export default function TrackPlanEditor({
 }) {
   const { t } = useTranslation('tracks')
   const { t: t3 } = useTranslation('planner3D')
+  const { t: ui } = useTranslation('plannerInterface')
   const fileInput = useRef(null)
   const [selected, setSelected] = useState(-1)
   const [mode, setMode] = useState(() => (!value?.pieces.length && !value?.roomPlan ? 'room' : 'editor'))
@@ -291,28 +295,13 @@ export default function TrackPlanEditor({
           >
             AGPL-3.0 · Source
           </a>
-          <UpdateButton />
-          <PlannerThemeToggle />
-          <select
-            data-testid="planner-mode"
-            aria-label={t('room.mode')}
-            value={mode}
-            onChange={(e) => setMode(e.target.value)}
-          >
-            <option value="editor">{t('editor.title')}</option>
-            <option value="3d">{t3('title')}</option>
-            <option value="room">{t('room.title')}</option>
-            <option value="files">{t('work.files')}</option>
-          </select>
-          <Button
-            type="button"
-            variant={mode === 'files' ? 'secondary' : 'outline'}
-            data-testid="planner-files-toggle"
-            onClick={() => setMode(mode === 'files' ? 'editor' : 'files')}
-          >
-            <FolderOpen />
-            {t('work.files')}
-          </Button>
+          <details className="planner-header-settings">
+            <summary>{ui('settings')}</summary>
+            <div className="planner-settings-content">
+              <UpdateButton />
+              <PlannerThemeToggle />
+            </div>
+          </details>
 
           {expanded && (
             <>
@@ -332,7 +321,27 @@ export default function TrackPlanEditor({
           )}
         </div>
       </header>
+      <nav className="planner-main-navigation" aria-label={ui('navigation')} data-testid="planner-main-navigation">
+        {['editor', '3d', 'room', 'pit', 'parts', 'print', 'files'].map((section) => (
+          <Button
+            key={section}
+            type="button"
+            variant={mode === section ? 'secondary' : 'ghost'}
+            aria-current={mode === section ? 'page' : undefined}
+            data-testid={`planner-nav-${section}`}
+            onClick={() => setMode(section)}
+          >
+            {ui(section)}
+          </Button>
+        ))}
+      </nav>
       <div className="planner-body">
+        {mode === 'pit' && (
+          <PitLanePlanner plan={plan} selected={selected} onChange={update} onEditor={() => setMode('editor')} />
+        )}
+        {mode === 'parts' && <TrackPartsManager inline plan={plan} name={trackName} />}
+        {mode === 'print' && <TrackPlanPrint inline plan={plan} name={trackName} />}
+
         {(error || statusError || statusSuccess) && (
           <p role={error || statusError ? 'alert' : 'status'} className="planner-notice">
             {error || statusError || statusSuccess}
@@ -373,6 +382,7 @@ export default function TrackPlanEditor({
             planDetails={planDetails}
             onOpenFiles={() => setMode('files')}
             onOpen3D={() => setMode('3d')}
+            onOpenPit={() => setMode('pit')}
             saving={saving}
           />
         </div>
@@ -530,7 +540,7 @@ export default function TrackPlanEditor({
             </a>
           </div>
         </section>
-        {mode !== 'editor' && planDetails}
+        {mode === 'room' && planDetails}
       </div>
     </section>
   )

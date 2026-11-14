@@ -2,6 +2,7 @@
 
 [Deutsch](README.de.md) · [English](README.md) · **Français**
 
+[1.5.0 · Navigation et stands](docs/RELEASE-1.5.0.fr.md)
 [1.4.0 · Gradients & direct updates](docs/RELEASE-1.4.0.fr.md)
 [1.3.0 · 3D ramps](docs/RELEASE-1.3.0.fr.md)
 [1.2.0 · Updates](docs/RELEASE-1.2.0.fr.md) · [Guide](docs/UPDATES.fr.md)

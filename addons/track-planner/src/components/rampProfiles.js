@@ -13,7 +13,11 @@ export function buildRampProfiles(
     s.points[0].slice(1).reduce((sum, p, i) => sum + Math.hypot(p[0] - s.points[0][i][0], p[1] - s.points[0][i][1]), 0)
   const fixed = (s) => pinned.has(s.index) || ['Control_unit', 'AdapterUnit'].includes(s.type)
   const next = segments.map((s) => {
-    const candidates = segments.filter((q) => q.index !== s.index && compatiblePorts({ ...s.end, index: s.index }, { ...q.start, h: q.start.h + Math.PI, index: q.index }))
+    const candidates = segments.filter(
+      (q) =>
+        q.index !== s.index &&
+        compatiblePorts({ ...s.end, index: s.index }, { ...q.start, h: q.start.h + Math.PI, index: q.index }),
+    )
     return candidates.length === 1 ? candidates[0].index : -1
   })
   const incoming = segments.map((s) => next.filter((i) => i === s.index).length)
@@ -121,7 +125,9 @@ export function buildRampProfiles(
           else right = Math.min(right, positions[k])
         }
       const actual = Math.max(0, Math.min(requested, right - left))
-      const start = Math.max(left, Math.min(r.at - actual / 2, right - actual))
+      const shift = settings[up ? 'ascentShiftMm' : 'descentShiftMm'] ?? 0
+      const originalStart = Math.max(left, Math.min(r.at - actual / 2, right - actual))
+      const start = Math.max(left, Math.min(originalStart + shift, right - actual))
       Object.assign(r, { start, end: start + actual })
       const rise = (r.to - r.from) * spacing,
         mean = actual ? (Math.abs(rise) / actual) * 100 : null
@@ -129,6 +135,9 @@ export function buildRampProfiles(
         index: ramps.length,
         up,
         requestedLengthMm: requested,
+        appliedShiftMm: start - originalStart,
+        startAlongMm: start,
+        chainBoundariesMm: positions,
         lengthMm: actual,
         riseMm: Math.abs(rise),
         meanPercent: mean,

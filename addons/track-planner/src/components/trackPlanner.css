@@ -1250,3 +1250,167 @@
 .planner-update-start {display:flex;align-items:center;gap:8px;margin-top:10px;}
 .planner-update-notes {white-space:pre-wrap;max-height:30dvh;overflow:auto;font:inherit;padding:8px;border:1px solid var(--border);border-radius:6px;}
 .planner-update-backup {overflow-wrap:anywhere;font-size:11px;}
+
+/* Persistent task navigation keeps the main workflows one click away. */
+.planner-main-navigation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--background);
+  flex-shrink: 0;
+}
+.planner-main-navigation button {
+  min-height: 38px;
+}
+.planner-main-navigation [aria-current='page'] {
+  box-shadow: inset 0 -3px 0 var(--primary);
+  font-weight: 650;
+}
+.planner-header-settings,
+.planner-tool-group {
+  position: relative;
+}
+.planner-header-settings summary,
+.planner-tool-group summary,
+.planner-stock-details summary {
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: 500;
+}
+.planner-settings-content,
+.planner-tool-group-content {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+.planner-settings-content {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  z-index: 170;
+  min-width: 250px;
+}
+.planner-tool-group-content {
+  margin-top: 6px;
+}
+.planner-inline-panel {
+  max-width: 1200px;
+  margin: 0 auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+.planner-stock-details[open] summary {
+  margin-bottom: 12px;
+}
+.planner-inline-panel table th,
+.planner-inline-panel table td {
+  padding: 9px 12px;
+}
+.planner-inline-panel .print-tools select {
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  padding: 6px;
+}
+@media (max-width: 700px) {
+  .planner-main-navigation {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 6px;
+  }
+  .planner-main-navigation button {
+    font-size: 12px;
+    padding: 6px;
+  }
+  .planner-inline-panel {
+    padding: 12px;
+  }
+  .planner-inline-panel table th,
+  .planner-inline-panel table td {
+    padding: 6px;
+  }
+}
+@media print {
+  body:has(.planner-inline-panel) > * {
+    display: none !important;
+  }
+  body:has(.planner-inline-panel) #root {
+    display: block !important;
+  }
+  body:has(.planner-inline-panel) *:has(.planner-inline-panel) {
+    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    display: block !important;
+  }
+  body:has(.planner-inline-panel) .planner-workspace > :not(.planner-body),
+  body:has(.planner-inline-panel) .planner-body > :not(.planner-inline-panel),
+  .planner-inline-panel .parts-tools,
+  .planner-inline-panel .print-tools {
+    display: none !important;
+  }
+  .planner-inline-panel {
+    border: 0 !important;
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  .planner-inline-panel table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .planner-inline-panel tr {
+    break-inside: avoid;
+  }
+}
+
+.planner-workspace [hidden] {display:none!important;}
+
+.planner-placement-options,.planner-image-export-options {font-size:13px;}
+.planner-placement-options summary,.planner-image-export-options summary {cursor:pointer;padding:6px 8px;font-weight:500;}
+.planner-image-export-options[open] summary{margin-bottom:0;}
+@media print {body:has(.planner-inline-panel) *:has(.planner-inline-panel)>*:not(:has(.planner-inline-panel)):not(.planner-inline-panel){display:none!important;}}
+
+.planner-print-options {border:1px solid #cbd5e1;border-radius:10px;padding:16px;margin-bottom:20px;}
+.planner-print-options legend {font-weight:650;padding:0 6px;}
+.planner-print-options p{font-size:13px;margin-bottom:10px;color:#475569;}
+.planner-print-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px;margin-top:14px;}
+.planner-print-choices label{display:flex;align-items:center;gap:8px;}
+.planner-print-choices input{width:17px;height:17px;accent-color:#7c3aed;}
+.planner-print-choices label:has(input:disabled){opacity:.5;}
+.planner-print-3d{height:420px;min-height:420px;pointer-events:none;}
+.planner-print-3d > :not(.planner-3d-export),.planner-print-3d .planner-image-export-options{display:none!important;}
+.planner-print-3d .planner-3d-export{height:100%;min-height:0;}
+.planner-print-3d .planner-3d-canvas{height:100%;background:white;}
+@media print{.planner-print-3d{height:140mm!important;min-height:0!important;} .track-print-page table thead{display:table-header-group;}}
+
+.planner-pit-page{display:flex;flex-direction:column;gap:16px;}
+.planner-pit-settings{display:flex;flex-wrap:wrap;gap:16px;border:1px solid var(--border);border-radius:10px;padding:14px;}
+.planner-pit-settings legend{font-weight:600;padding:0 6px;}
+.planner-pit-settings label{display:flex;flex-direction:column;gap:6px;min-width:160px;max-width:100%;}
+.planner-pit-settings input,.planner-pit-settings select{border:1px solid var(--border);border-radius:6px;padding:8px;max-width:100%;background:var(--background);}
+.planner-pit-toggle{display:flex;align-items:center;gap:8px;}
+.planner-pit-page>button{align-self:flex-start;}
+.planner-pit-existing{padding:12px;border-radius:8px;background:var(--muted);font-size:14px;}
+.planner-pit-variants{display:flex;flex-wrap:wrap;gap:8px;}
+.planner-pit-preview{width:100%;min-height:200px;max-height:350px;background:#fff;border:1px solid var(--border);border-radius:10px;}
+.planner-pit-settings input[type=number]{width:100px;}
+
+.planner-3d-center {flex-shrink:0;gap:6px;}
+/* Opening export/tool menus must not resize the drawing or move its labels. */
+.planner-image-export-options {position:relative;flex-shrink:0;}
+.planner-image-export-options>div {position:absolute;left:0;bottom:100%;z-index:180;min-width:280px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--background);box-shadow:0 6px 24px #0002;}
+.planner-workspace[data-mode='editor'] .planner-toolbar {overflow:visible;max-height:none;}
+.planner-tool-group-content {position:absolute;top:100%;left:0;z-index:180;min-width:280px;max-width:min(450px,calc(100vw - 32px));max-height:60vh;overflow:auto;box-shadow:0 6px 24px #0002;}
+
+.planner-ramp-shift-step{display:flex;gap:8px;align-items:center;font-size:13px;margin:8px 0;}
+.planner-ramp-shift-step input{width:80px;border:1px solid var(--border);border-radius:6px;padding:5px;}
+.planner-ramp-shift-controls{display:flex;gap:6px;align-items:center;margin-top:6px;}
+@media(max-width:900px){.planner-workspace[data-mode='editor'] .planner-toolbar{max-height:112px;overflow:auto;}.planner-tool-group-content{position:fixed;top:230px;left:16px;}}

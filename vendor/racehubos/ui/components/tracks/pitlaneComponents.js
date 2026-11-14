@@ -1,5 +1,6 @@
 import { extraWorldPose, nativeFuelBayIndices, SOFTY_EXTRAS } from '@racehubos/shared'
 const styles = {
+  fixedCross:{short:'SW',article:'20517',color:'#0f766e'},
   single: { short: 'ESG', article: '30341', color: '#0891b2' },
   fuel: { short: 'FUEL', article: '30361', color: '#d97706' },
   entry: { short: 'PIT-IN', article: '30356', color: '#be185d' },
@@ -9,7 +10,7 @@ export function pitlaneComponents(plan, segments) {
   const fuel = new Set(nativeFuelBayIndices(plan, segments))
   const nativeParts = (plan.trackExtras || []).flatMap((e, i) => {
     if (e.hidden) return []
-    if (!['single', 'pitEntry', 'pitExit'].includes(e.kind))
+    if (!['single', 'pitEntry', 'pitExit', 'fixedCross'].includes(e.kind))
       return [
         {
           id: `extra-${i}`,
@@ -22,7 +23,7 @@ export function pitlaneComponents(plan, segments) {
           pose: extraWorldPose(e, segments),
         },
       ]
-    const kind = fuel.has(i) ? 'fuel' : e.kind === 'single' ? 'single' : e.kind === 'pitEntry' ? 'entry' : 'exit'
+    const kind = e.kind === 'fixedCross' ? 'fixedCross' : fuel.has(i) ? 'fuel' : e.kind === 'single' ? 'single' : e.kind === 'pitEntry' ? 'entry' : 'exit'
     return [
       { ...styles[kind], id: `extra-${i}`, kind, extraIndex: i, anchor: e.anchor, pose: extraWorldPose(e, segments) },
     ]

@@ -16,6 +16,7 @@ const modelledRails = [
   ['30373', 'chicane'],
   ['30350', 'narrowLeft'],
   ['30351', 'narrowRight'],
+  ['20517', 'fixedCross'],
   ['20509', 'standard'],
   ['20611', 'third'],
   ['20612', 'quarter'],
@@ -72,6 +73,7 @@ export function railRequirements(plan) {
   // The legacy Startampel name is a 345mm rail placeholder in these plans,
   // not evidence of an installed Startlight (user confirmed it was removed).
   const direct = {
+    Spurwechsel_20517: '20517',
     Standardgerade: '20509',
     Drittelgerade: '20611',
     Viertelgerade: '20612',

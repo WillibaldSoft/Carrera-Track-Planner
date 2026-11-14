@@ -146,9 +146,11 @@ export default function GraphicalTrackEditor({
   planDetails,
   onOpenFiles,
   onOpen3D,
+  onOpenPit,
   saving = false,
 }) {
   const { t } = useTranslation('tracks')
+  const { t: ui } = useTranslation('plannerInterface')
   const { t: rt } = useTranslation('plannerRoom')
   const [showRoom, setShowRoom] = useState(true)
   const [heightEditorOpen, setHeightEditorOpen] = useState(false)
@@ -953,6 +955,7 @@ export default function GraphicalTrackEditor({
         <Button
           type="submit"
           data-testid="toolbar-save-track"
+          hidden={expanded}
           disabled={saving || !storedPlan.pieces.length || !name?.trim()}
         >
           {ta('save')}
@@ -961,12 +964,20 @@ export default function GraphicalTrackEditor({
           type="button"
           variant="outline"
           data-testid="toolbar-files"
+          hidden={expanded}
           disabled={!onOpenFiles}
           onClick={onOpenFiles}
         >
           {ta('files')}
         </Button>
-        <Button type="button" variant="outline" data-testid="toolbar-open-3d" disabled={!onOpen3D} onClick={onOpen3D}>
+        <Button
+          type="button"
+          variant="outline"
+          data-testid="toolbar-open-3d"
+          hidden={expanded}
+          disabled={!onOpen3D}
+          onClick={onOpen3D}
+        >
           {t3('title')}
         </Button>
         <label>
@@ -992,23 +1003,29 @@ export default function GraphicalTrackEditor({
             {t3('arrangeLabels')}
           </Button>
         )}
-        <TrackPlanPrint plan={plan} name={name} drawingRef={canvasRef} />
-        <PlannerTools
-          plan={storedPlan}
-          selected={selected}
-          indices={motion}
-          onChange={onChange}
-          onSelect={onSelect}
-          onSelectIndices={selectIndices}
-          fit={fit}
-          endpointKey={endpointKey}
-          onEndpoint={setEndpointKey}
-          onInspect={(indices, auxiliary) => {
-            setAuditMarks({ plan: storedPlan, indices, auxiliary })
-            setShowConnections(true)
-          }}
-        />
 
+        <details className="planner-tool-group">
+          <summary>{ui('tools')}</summary>
+          <div className="planner-tool-group-content">
+            <TrackPlanPrint plan={plan} name={name} drawingRef={canvasRef} />
+            <PlannerTools
+              onOpenPit={onOpenPit}
+              plan={storedPlan}
+              selected={selected}
+              indices={motion}
+              onChange={onChange}
+              onSelect={onSelect}
+              onSelectIndices={selectIndices}
+              fit={fit}
+              endpointKey={endpointKey}
+              onEndpoint={setEndpointKey}
+              onInspect={(indices, auxiliary) => {
+                setAuditMarks({ plan: storedPlan, indices, auxiliary })
+                setShowConnections(true)
+              }}
+            />
+          </div>
+        </details>
         <Button type="button" variant="outline" data-testid="track-undo" disabled={!canUndo} onClick={undo}>
           {t('graph.undo')}
         </Button>
@@ -1052,95 +1069,100 @@ export default function GraphicalTrackEditor({
         >
           {ta('center')}
         </Button>
-        <Button
-          type="button"
-          variant={autoAttachments ? 'default' : 'outline'}
-          data-testid="track-auto-attachments"
-          aria-pressed={autoAttachments}
-          onClick={() => {
-            setAutoAttachments(!autoAttachments)
-            if (!autoAttachments) setPanel('inspector')
-            setAutoReverse(automaticReverse(selected))
-            autoHoverLock.current = -1
-            setAutoTarget(!autoAttachments && storedPlan.pieces[selected] ? selected : -1)
-            setAutoOption(null)
-            setRepeatPlacement(false)
-          }}
-        >
-          {ta('automatic')}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          data-testid="toolbar-repeat-placement"
-          aria-pressed={repeatPlacement}
-          onClick={() => {
-            setRepeatPlacement(!repeatPlacement)
-            setAutoAttachments(false)
-            setAutoTarget(-1)
-            setPlacementPoint(null)
-          }}
-        >
-          {ta('repeat')}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          data-testid="toolbar-rotate-selection"
-          disabled={!active && pitPart?.extraIndex === undefined}
-          onClick={() => {
-            if (pitPart?.extraIndex !== undefined)
-              onChange(
-                updatePitPartWorld(storedPlan, pitPart.extraIndex, {
-                  headingDegrees: pitPart.pose.headingDegrees + 15,
-                }),
-              )
-            else rotate(15)
-          }}
-        >
-          {ta('rotate')}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          data-testid="toolbar-delete-selection"
-          disabled={!active && pitPart?.extraIndex === undefined}
-          onClick={() => {
-            if (pitPart?.extraIndex !== undefined) {
-              const prepared = editablePitlane(plan)
-              onChange(deletePitComponent(prepared.plan, pitPart.extraIndex))
-            } else onChange(deleteTrackSelection(plan, motion))
-            onSelect(-1)
-          }}
-        >
-          {ta('delete')}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          data-testid="toolbar-join"
-          disabled={!joinPair}
-          onClick={joinSelectedSections}
-        >
-          {ta('join')}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          data-testid="toolbar-parallel"
-          onClick={() => {
-            const panel = canvasRef.current
-              ?.closest('.planner-graphical')
-              ?.querySelector('[data-testid="parallel-docking-controls"]')
-            if (panel) {
-              panel.open = true
-              panel.scrollIntoView({ block: 'nearest' })
-            }
-            setPanel('inspector')
-          }}
-        >
-          {ta('parallel')}
-        </Button>
+        <details className="planner-tool-group">
+          <summary>{ui('edit')}</summary>
+          <div className="planner-tool-group-content">
+            <Button
+              type="button"
+              variant={autoAttachments ? 'default' : 'outline'}
+              data-testid="track-auto-attachments"
+              aria-pressed={autoAttachments}
+              onClick={() => {
+                setAutoAttachments(!autoAttachments)
+                if (!autoAttachments) setPanel('inspector')
+                setAutoReverse(automaticReverse(selected))
+                autoHoverLock.current = -1
+                setAutoTarget(!autoAttachments && storedPlan.pieces[selected] ? selected : -1)
+                setAutoOption(null)
+                setRepeatPlacement(false)
+              }}
+            >
+              {ta('automatic')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              data-testid="toolbar-repeat-placement"
+              aria-pressed={repeatPlacement}
+              onClick={() => {
+                setRepeatPlacement(!repeatPlacement)
+                setAutoAttachments(false)
+                setAutoTarget(-1)
+                setPlacementPoint(null)
+              }}
+            >
+              {ta('repeat')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              data-testid="toolbar-rotate-selection"
+              disabled={!active && pitPart?.extraIndex === undefined}
+              onClick={() => {
+                if (pitPart?.extraIndex !== undefined)
+                  onChange(
+                    updatePitPartWorld(storedPlan, pitPart.extraIndex, {
+                      headingDegrees: pitPart.pose.headingDegrees + 15,
+                    }),
+                  )
+                else rotate(15)
+              }}
+            >
+              {ta('rotate')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              data-testid="toolbar-delete-selection"
+              disabled={!active && pitPart?.extraIndex === undefined}
+              onClick={() => {
+                if (pitPart?.extraIndex !== undefined) {
+                  const prepared = editablePitlane(plan)
+                  onChange(deletePitComponent(prepared.plan, pitPart.extraIndex))
+                } else onChange(deleteTrackSelection(plan, motion))
+                onSelect(-1)
+              }}
+            >
+              {ta('delete')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              data-testid="toolbar-join"
+              disabled={!joinPair}
+              onClick={joinSelectedSections}
+            >
+              {ta('join')}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              data-testid="toolbar-parallel"
+              onClick={() => {
+                const panel = canvasRef.current
+                  ?.closest('.planner-graphical')
+                  ?.querySelector('[data-testid="parallel-docking-controls"]')
+                if (panel) {
+                  panel.open = true
+                  panel.scrollIntoView({ block: 'nearest' })
+                }
+                setPanel('inspector')
+              }}
+            >
+              {ta('parallel')}
+            </Button>
+          </div>
+        </details>
         <select
           data-testid="toolbar-pointer-mode"
           aria-label={ta('pointer')}
@@ -1278,7 +1300,7 @@ export default function GraphicalTrackEditor({
               {t('tools.connections')}
             </label>
 
-            <TrackPartsManager plan={plan} name={name} />
+            {!expanded && <TrackPartsManager plan={plan} name={name} />}
             <p className="planner-hint">{t('graph.help')}</p>
 
             {plan.pieces.some((p) => TRACK_PARTS[p.type].approximateSlots) && (
@@ -1295,50 +1317,53 @@ export default function GraphicalTrackEditor({
       <div className="planner-layout" data-panel={panel}>
         <aside className="planner-catalogue" data-testid="planner-catalogue-sidebar">
           <h3 className="font-semibold">{t('graph.catalogue')}</h3>
-          <label className="planner-repeat-option">
-            <input
-              type="checkbox"
-              data-testid="repeat-track-part"
-              checked={repeatPlacement}
-              onChange={(e) => {
-                setRepeatPlacement(e.target.checked)
-                if (e.target.checked) {
-                  setAutoAttachments(false)
-                  setAutoTarget(-1)
-                  setAutoOption(null)
-                }
-                setPlacementPoint(null)
-                setPlacementHeading((((join ?? trace.segments.at(-1)?.end)?.h ?? 0) * 180) / Math.PI)
-                suppressClick.current = false
-              }}
-            />{' '}
-            {t('layout.repeatPlace')}
-          </label>
-          <label className="planner-repeat-option">
-            <input
-              type="checkbox"
-              data-testid="lay-borders"
-              checked={layBorders}
-              onChange={(e) => setLayBorders(e.target.checked)}
-            />{' '}
-            {ta('newBorders.label')}
-          </label>
-          <label>
-            {ta('newBorders.side')}{' '}
-            <select data-testid="lay-borders-side" value={autoSide} onChange={(e) => setAutoSide(e.target.value)}>
-              {['left', 'right', 'both'].map((value) => (
-                <option key={value} value={value}>
-                  {ta(`newBorders.${value}`)}
-                </option>
-              ))}
-            </select>
-          </label>
-          {!repeatPlacement && <p className="planner-replacement-hint">{t('replacement.catalogueHint')}</p>}
-          {repeatPlacement && (
-            <p className="planner-repeat-hint" role="status" data-testid="repeat-placement-hint">
-              {t('layout.repeatHint')}
-            </p>
-          )}
+          <details className="planner-placement-options">
+            <summary>{ui('placement')}</summary>
+            <label className="planner-repeat-option">
+              <input
+                type="checkbox"
+                data-testid="repeat-track-part"
+                checked={repeatPlacement}
+                onChange={(e) => {
+                  setRepeatPlacement(e.target.checked)
+                  if (e.target.checked) {
+                    setAutoAttachments(false)
+                    setAutoTarget(-1)
+                    setAutoOption(null)
+                  }
+                  setPlacementPoint(null)
+                  setPlacementHeading((((join ?? trace.segments.at(-1)?.end)?.h ?? 0) * 180) / Math.PI)
+                  suppressClick.current = false
+                }}
+              />{' '}
+              {t('layout.repeatPlace')}
+            </label>
+            <label className="planner-repeat-option">
+              <input
+                type="checkbox"
+                data-testid="lay-borders"
+                checked={layBorders}
+                onChange={(e) => setLayBorders(e.target.checked)}
+              />{' '}
+              {ta('newBorders.label')}
+            </label>
+            <label>
+              {ta('newBorders.side')}{' '}
+              <select data-testid="lay-borders-side" value={autoSide} onChange={(e) => setAutoSide(e.target.value)}>
+                {['left', 'right', 'both'].map((value) => (
+                  <option key={value} value={value}>
+                    {ta(`newBorders.${value}`)}
+                  </option>
+                ))}
+              </select>
+            </label>
+            {!repeatPlacement && <p className="planner-replacement-hint">{t('replacement.catalogueHint')}</p>}
+            {repeatPlacement && (
+              <p className="planner-repeat-hint" role="status" data-testid="repeat-placement-hint">
+                {t('layout.repeatHint')}
+              </p>
+            )}
+          </details>
           <div className="planner-catalogue-tabs" role="tablist" aria-label={t('graph.catalogue')}>
             {['all', 'straights', 'curves', 'banked', 'specials', 'switches', 'units', 'borders', 'manufacturer'].map(
               (key) => (

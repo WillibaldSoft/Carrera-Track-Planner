@@ -34,7 +34,7 @@ async function open(page, plan, language = 'de') {
   await page.getByTestId('room-continue').click()
   await page.locator('.planner-name').fill('CU and parallel demo')
   if (plan) {
-    await page.getByTestId('planner-files-toggle').click()
+    await page.getByTestId('planner-nav-files').click()
     await page.getByTestId('track-plan-import').setInputFiles({
       name: 'cu-parallel.json',
       mimeType: 'application/json',
@@ -166,7 +166,7 @@ test('two pit singles can be marked directly with Ctrl and docked at 99 mm', asy
 
 test('imported legacy pit groups export as individual parts without an intermediate edit', async ({ page }) => {
   await open(page, createPitAssembly({ includeCU: true }))
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   const downloadPromise = page.waitForEvent('download')
   await page.getByTestId('export-track-json').click()
   const download = await downloadPromise,

@@ -37,6 +37,7 @@ export const SOFTY_GUIDS = Object.freeze({
   pitBorderExit: '928b2b38-a861-43ae-a525-412388bd39aa',
 });
 export const SOFTY_EXTRAS = Object.freeze({
+  fixedCross: {article:'20517'},
   single: { article: '30341' },
   pitEntry: { article: '30356' },
   pitExit: { article: '30356' },

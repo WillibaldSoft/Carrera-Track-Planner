@@ -15,7 +15,7 @@ async function open(page, lang = 'de') {
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
   await page.locator('.planner-name').fill('Join demo')
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page
     .getByTestId('track-plan-import')
     .setInputFiles({ name: 'join.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(fixture())) })

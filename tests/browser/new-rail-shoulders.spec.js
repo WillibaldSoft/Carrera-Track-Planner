@@ -1,3 +1,4 @@
+import { revealControl } from './reveal-control.js'
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs/promises'
 import { emptyTrackPlan } from '../../vendor/racehubos/shared/src/index.js'
@@ -9,12 +10,15 @@ for (const lang of ['de', 'en', 'fr'])
     await page.getByTestId('standalone-language').selectOption(lang)
     await page.getByTestId('standalone-new').click()
     await page.getByTestId('room-continue').click()
+    await revealControl(page.getByTestId('lay-borders'))
     await page.getByTestId('lay-borders').check()
+    await revealControl(page.getByTestId('lay-borders-side'))
     await page.getByTestId('lay-borders-side').selectOption('left')
     await page.getByTestId('add-track-piece').click()
     const svg = page.getByTestId('graph-track-canvas')
     await expect(svg.getByTestId('border-shape-0-left-strip')).toHaveCount(1)
     await expect(svg.getByTestId('border-shape-0-right-strip')).toHaveCount(0)
+    await revealControl(page.getByTestId('repeat-track-part'))
     await page.getByTestId('repeat-track-part').check()
     await expect(page.getByTestId('lay-borders-side')).toHaveValue('left')
     await page.getByTestId('room-background-visible').uncheck()
@@ -42,7 +46,7 @@ for (const lang of ['de', 'en', 'fr'])
     await expect(svg.getByTestId('border-shape-2-left-strip')).toHaveCount(1)
     await fs.mkdir(`docs/screenshots/new-rail-shoulders/${lang}`, { recursive: true })
     await page.screenshot({ path: `docs/screenshots/new-rail-shoulders/${lang}/01-repeat-shoulders.png` })
-    await page.getByTestId('planner-files-toggle').click()
+    await page.getByTestId('planner-nav-files').click()
     await page.getByTestId('track-plan-import').setInputFiles({
       name: 'pit.json',
       mimeType: 'application/json',

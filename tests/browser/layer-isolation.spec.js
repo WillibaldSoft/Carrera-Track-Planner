@@ -1,3 +1,4 @@
+import { revealControl } from './reveal-control.js'
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs/promises'
 import { emptyTrackPlan } from '../../vendor/racehubos/shared/src/index.js'
@@ -30,7 +31,7 @@ async function open(page, lang, plan = fixture()) {
   await page.getByTestId('standalone-language').selectOption(lang)
   await page.getByTestId('standalone-new').click()
   await page.getByTestId('room-continue').click()
-  await page.getByTestId('planner-files-toggle').click()
+  await page.getByTestId('planner-nav-files').click()
   await page
     .getByTestId('track-plan-import')
     .setInputFiles({ name: 'levels.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(plan)) })
@@ -138,6 +139,7 @@ for (const lang of ['de', 'en', 'fr'])
     await fs.mkdir(dir, { recursive: true })
     await page.screenshot({ path: `${dir}/01-two-editable-layers.png` })
     await page.keyboard.press('Escape')
+    await revealControl(page.getByTestId('toolbar-rotate-selection'))
     await page.getByTestId('toolbar-rotate-selection').click()
     await expect(svg).toHaveAttribute('data-selected-count', '2')
     await page.getByTestId('track-undo').click()

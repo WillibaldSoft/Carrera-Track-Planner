@@ -1,5 +1,6 @@
 export const labelTrackPart = (type) =>
   ({
+    Spurwechsel_20517: 'Spurwechsel · erzwungen · 20517',
     Pit_stop_weiche_anfang: 'Pitlane-Einfahrt · aktive Weiche',
     Pit_stop_weiche_ende: 'Pitlane-Ausfahrt · Zusammenführung',
     Startampel_3spur_hinten: 'Standardgerade · 345 mm',
