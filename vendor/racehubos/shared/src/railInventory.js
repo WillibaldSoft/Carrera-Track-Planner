@@ -5,6 +5,7 @@ import {
   trackArticle,
 } from './carreraTrackCatalog.js';
 import { traceTrackPlan } from './trackPlan.js';
+import { extraWorldPose } from './softyExtraGeometry.js';
 import { nativeFuelBayIndices } from './trackUnitGeometry.js';
 import { SOFTY_EXTRAS } from './softyNativeCatalog.js';
 import { CARRERA_BORDERS, borderArticle } from './trackBorders.js';
@@ -78,6 +79,8 @@ export function railRequirements(plan) {
     AdapterUnit: '30360',
     Startampel_3spur_hinten: '20509',
   };
+  const segments = traceTrackPlan(plan).segments;
+  let entries = 0, exits = 0;
   for (let i = 0; i < plan.pieces.length; i++) {
     const type = plan.pieces[i].type,
       next = plan.pieces[i + 1]?.type;
@@ -121,12 +124,26 @@ export function railRequirements(plan) {
       i++;
       continue;
     }
-    if (
-      type.startsWith('Pit_stop_weiche_') &&
-      ((plan.pit.enabled && [plan.pit.entry, plan.pit.merge].includes(i)) ||
-        plan.trackExtras?.some((e) => e.anchor === i && ['pitEntry', 'pitExit'].includes(e.kind)))
-    )
+    if (type.startsWith('Pit_stop_weiche_')) {
+      // Schematic pits are counted below. Native extras can describe the same
+      // turnout as a carrier, or a separate turnout merely anchored to it.
+      if (plan.pit.enabled && !plan.pit.native && [plan.pit.entry, plan.pit.merge].includes(i)) continue;
+      const kind = type === 'Pit_stop_weiche_anfang' ? 'pitEntry' : 'pitExit';
+      const a = segments[i].start;
+      const represented = plan.trackExtras?.some((e) => {
+        if (e.hidden || e.kind !== kind) return false;
+        const pose = extraWorldPose(e, segments);
+        return Math.hypot(
+          pose.xMm - (a.x + Math.cos(a.h) * 172.5 - Math.sin(a.h) * 99),
+          pose.yMm - (a.y + Math.sin(a.h) * 172.5 + Math.cos(a.h) * 99)
+        ) < 1;
+      });
+      if (!represented) {
+        if (kind === 'pitEntry') entries++;
+        else exits++;
+      }
       continue;
+    }
     unresolved.push(`${i + 1}: ${type}`);
   }
   for (const p of plan.pieces)
@@ -152,9 +169,7 @@ export function railRequirements(plan) {
     } else unresolved.push('Pitlane');
   }
   // Use the same FUEL positions as the native double-box drawing.
-  const fuelIndices = new Set(nativeFuelBayIndices(plan, traceTrackPlan(plan).segments));
-  let entries = 0,
-    exits = 0;
+  const fuelIndices = new Set(nativeFuelBayIndices(plan, segments));
   for (const [index, e] of (plan.trackExtras || []).entries()) {
     if (e.hidden) continue;
     if (e.kind === 'pitEntry') entries++;

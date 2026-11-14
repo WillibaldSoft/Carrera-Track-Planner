@@ -66,5 +66,15 @@
   "exportPdf": "Exporter en PDF",
   "currentDrawing": "Vue actuelle avec étiquettes",
   "snapshotError": "La vue actuelle n’a pas pu être capturée pour l’export.",
-  "snapshotPrintNote": "Cette vue conserve cadrage, zoom et positions visibles. Le PDF exporte rails et texte en vecteurs redimensionnables."
+  "snapshotPrintNote": "Cette vue conserve cadrage, zoom et positions visibles. Le PDF exporte rails et texte en vecteurs redimensionnables.",
+  "center": "Centrer la vue",
+  "targetSlope": "Pente maximale (%)",
+  "suggestRamps": "Appliquer les deux propositions",
+  "suggestHelp": "Aperçu des transitions progressives. Appliquez la montée et la descente séparément ou ensemble. Un espace limité peut empêcher la pente cible ; les valeurs affichent le résultat réel.",
+  "suggestions": "Propositions de pentes",
+  "currentMax": "Maximum actuel",
+  "suggestedMax": "Maximum proposé",
+  "affectedRails": "Rails concernés",
+  "applySuggestion": "Appliquer",
+  "customSuggestionHelp": "Les hauteurs individuelles définissent ce profil. Ajustez ces points dans le profil ; les longueurs des rampes ne les modifient pas."
 }

@@ -66,5 +66,15 @@
   "exportPdf": "PDF exportieren",
   "currentDrawing": "Aktuelle Ansicht mit Beschriftungen",
   "snapshotError": "Die aktuelle Ansicht konnte nicht für den Export übernommen werden.",
-  "snapshotPrintNote": "Diese Druckansicht übernimmt den aktuellen Ausschnitt, Zoom und sichtbare Beschriftungspositionen unverändert. PDF exportiert Schienen und Schrift als skalierbare Vektoren."
+  "snapshotPrintNote": "Diese Druckansicht übernimmt den aktuellen Ausschnitt, Zoom und sichtbare Beschriftungspositionen unverändert. PDF exportiert Schienen und Schrift als skalierbare Vektoren.",
+  "center": "Darstellung zentrieren",
+  "targetSlope": "Maximale Steigung (%)",
+  "suggestRamps": "Beide Vorschläge übernehmen",
+  "suggestHelp": "Vorschau für sanfte Übergänge. Auf- und Abfahrt einzeln übernehmen oder beide anwenden. Begrenzter Platz kann das Steigungsziel verhindern; die tatsächlichen Werte stehen in der Vorschau.",
+  "suggestions": "Steigungsvorschläge",
+  "currentMax": "Aktuell maximal",
+  "suggestedMax": "Vorschlag maximal",
+  "affectedRails": "Betroffene Bahnteile",
+  "applySuggestion": "Übernehmen",
+  "customSuggestionHelp": "Individuelle Höhenpunkte legen den Verlauf fest. Diese Punkte im Höhenprofil anpassen; Rampenlängen verändern sie nicht."
 }

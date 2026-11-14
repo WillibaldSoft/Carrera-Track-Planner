@@ -1,3 +1,4 @@
+import { suggestRampLengths } from './rampSuggestions.js'
 import { DEFAULT_RAMPS } from './rampProfiles.js'
 import { DEFAULT_SCENE_HEIGHTS } from '../../../../vendor/racehubos/shared/src/trackPlan.js'
 import { useEffect, useId, useMemo, useRef, useState } from 'react'
@@ -34,6 +35,7 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
     id = 'scene-' + useId().replaceAll(':', ''),
     svgRef = useRef(null),
     drag = useRef(null)
+  const [targetSlope, setTargetSlope] = useState(15)
   const [heightRail, setHeightRail] = useState(Math.max(0, initialSelected))
   const [camera, setCamera] = useState(initial),
     [settings, setSettings] = useState({ walls: true, cutaway: true, obstacles: true, labels: true, dimensions: true }),
@@ -60,6 +62,7 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
 
   const scene = useMemo(() => buildRoomScene(plan, height), [plan, height]),
     projected = useMemo(() => projectRoomScene(scene, camera, settings), [scene, camera.yaw, camera.pitch, settings])
+  const suggestion = useMemo(() => suggestRampLengths(plan, targetSlope), [plan, targetSlope])
   const selectedCrossing = scene.crossingMeasures.find((c) => c.upperRail === heightRail)
   const box = trackViewport(projected.bounds, viewport, camera.zoom, camera.pan)
   useEffect(() => {
@@ -140,6 +143,10 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
           onClick={() => setCamera((c) => ({ ...c, zoom: 1, pan: { x: 0, y: 0 } }))}
         >
           {t('fit')}
+        </Button>
+        <Button type="button" data-testid="three-center" variant="outline"
+          onClick={() => setCamera((c) => ({ ...c, pan: { x: 0, y: 0 } }))}>
+          {t('center')}
         </Button>
         {[
           ['yaw', -180, 180],
@@ -315,6 +322,42 @@ export default function RoomTrack3D({ plan, name, onEditor, onRoom, onChange, in
       <p className="text-xs">
         {t('interaction')} · {t('levels', { height: scene.clearance, spacing: scene.levelHeight })}
       </p>
+      {!!scene.ramps.length && (
+        <details data-testid="three-ramp-suggestions">
+          <summary>{t('suggestions')}</summary>
+          <label>
+            {t('targetSlope')}
+            <input data-testid="three-target-slope" type="number" min="1" max="100" step="1"
+              value={targetSlope} onChange={(e) => {
+                const n = Number(e.target.value)
+                if (Number.isFinite(n)) setTargetSlope(clamp(n, 1, 100))
+              }} />
+          </label>
+          <p>{t(suggestion.custom ? 'customSuggestionHelp' : 'suggestHelp')}</p>
+          <table className="planner-ramp-table">
+            <thead><tr>
+              <th>{t('ramp')}</th><th>{t('actualLength')}</th><th>{t('currentMax')}</th>
+              <th>{t('suggestedMax')}</th><th>{t('affectedRails')}</th><th>{t('applySuggestion')}</th>
+            </tr></thead>
+            <tbody>{suggestion.directions.map((r) => (
+              <tr key={r.key} data-testid={`three-suggestion-${r.up ? 'ascent' : 'descent'}`}>
+                <td>{t(r.up ? 'ascent' : 'descent')}</td>
+                <td>{Math.round(r.lengthMm)} mm</td>
+                <td>{r.currentMaxPercent.toFixed(1)} %</td>
+                <td>{r.maxPercent.toFixed(1)} % {r.limited && <span>{t('limited')}</span>}</td>
+                <td>{r.rails.join(', ')}</td>
+                <td><Button type="button" disabled={suggestion.custom}
+                  data-testid={`three-apply-${r.up ? 'ascent' : 'descent'}`}
+                  onClick={() => onChange({ ...plan, sceneRamps: { ...rampSettings, [r.key]: suggestion.settings[r.key] } })}>
+                  {t('applySuggestion')}
+                </Button></td>
+              </tr>
+            ))}</tbody>
+          </table>
+          <Button type="button" data-testid="three-suggest-ramps" disabled={suggestion.custom}
+            onClick={() => onChange({ ...plan, sceneRamps: suggestion.settings })}>{t('suggestRamps')}</Button>
+        </details>
+      )}
       {!!scene.ramps.length && (
         <details data-testid="three-ramp-gradients">
           <summary>{t('gradients')}</summary>

@@ -43,10 +43,7 @@ export function buildTrackElevationModel(plan, overrides = {}, segments = traceT
   const anchors = new Map(plan.pieces.flatMap((p, i) => (p.elevation ? [[i, p.elevation]] : [])))
   const crossings = checkDetailedGeometry(plan).crossings.filter((c) => anchors.size || c.levels[0] !== c.levels[1])
   const pinned = new Set(crossings.flatMap((c) => c.rails))
-  const rampModel =
-    plan.sceneRamps || anchors.size
-      ? buildRampProfiles(segments, plan.sceneRamps, clearance + 10, baseHeight, pinned, anchors)
-      : null
+  const rampModel = buildRampProfiles(segments, plan.sceneRamps, clearance + 10, baseHeight, pinned, anchors)
   const heights = rampModel?.profiles ?? sceneTrackHeights(segments, clearance + 10, baseHeight, pinned)
   const metrics = segments.map((s) => {
     const h = heights[s.index],

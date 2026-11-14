@@ -1,3 +1,4 @@
+import { compatiblePorts } from '../../../../vendor/racehubos/shared/src/trackConnections.js'
 // Distances follow the horizontal track centreline, including curves.
 export const DEFAULT_RAMPS = Object.freeze({ ascentLengthMm: 1000, descentLengthMm: 1000 })
 export function buildRampProfiles(
@@ -11,10 +12,8 @@ export function buildRampProfiles(
   const length = (s) =>
     s.points[0].slice(1).reduce((sum, p, i) => sum + Math.hypot(p[0] - s.points[0][i][0], p[1] - s.points[0][i][1]), 0)
   const fixed = (s) => pinned.has(s.index) || ['Control_unit', 'AdapterUnit'].includes(s.type)
-  const match = (a, b) =>
-    Math.hypot(a.x - b.x, a.y - b.y) < 0.1 && Math.abs(Math.sin(a.h - b.h)) < 0.1 && Math.cos(a.h - b.h) > 0
   const next = segments.map((s) => {
-    const candidates = segments.filter((q) => q.index !== s.index && match(s.end, q.start))
+    const candidates = segments.filter((q) => q.index !== s.index && compatiblePorts({ ...s.end, index: s.index }, { ...q.start, h: q.start.h + Math.PI, index: q.index }))
     return candidates.length === 1 ? candidates[0].index : -1
   })
   const incoming = segments.map((s) => next.filter((i) => i === s.index).length)

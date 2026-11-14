@@ -66,5 +66,15 @@
   "exportPdf": "Export PDF",
   "currentDrawing": "Current view with labels",
   "snapshotError": "The current view could not be captured for export.",
-  "snapshotPrintNote": "This print view preserves current framing, zoom and visible label positions. PDF exports rails and text as scalable vectors."
+  "snapshotPrintNote": "This print view preserves current framing, zoom and visible label positions. PDF exports rails and text as scalable vectors.",
+  "center": "Center view",
+  "targetSlope": "Maximum gradient (%)",
+  "suggestRamps": "Apply both suggestions",
+  "suggestHelp": "Preview smooth transitions. Apply ascent and descent separately or together. Limited space may prevent the target grade; preview values show the actual result.",
+  "suggestions": "Gradient suggestions",
+  "currentMax": "Current maximum",
+  "suggestedMax": "Suggested maximum",
+  "affectedRails": "Affected rails",
+  "applySuggestion": "Apply",
+  "customSuggestionHelp": "Custom height points define this profile. Adjust these points in the height profile; ramp lengths do not change them."
 }

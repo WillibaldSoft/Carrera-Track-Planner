@@ -122,3 +122,48 @@ test('crossing clearance follows individual heights even on rails with the same 
   assert.ok(crossing)
   assert.ok(scene.lines.some((l) => l.kind === 'clearance' && Math.abs(l.points[1][2] - l.points[0][2] - 200) < 1e-6))
 })
+
+test('legacy plans automatically use continuous smooth ramps at level changes', async () => {
+  const { buildTrackElevationModel } = await import('../addons/track-planner/src/components/trackElevationModel.js')
+  const p = plan()
+  const model = buildTrackElevationModel(p)
+  assert.ok(model.ramps.length > 0)
+  assert.equal(p.sceneRamps, undefined)
+  for (let i = 0; i < model.heights.length - 1; i++)
+    assert.ok(Math.abs(model.heights[i].end - model.heights[i + 1].start) < 1e-8)
+  assert.ok(model.heights.some((h) => h.sloped))
+})
+
+test('ramps cross the same submillimetre joints accepted by the editor', async () => {
+  const { suggestRampLengths } = await import('../addons/track-planner/src/components/rampSuggestions.js')
+  const p = plan()
+  p.pieces.forEach((q) => { q.level = 1 - q.level })
+  const segments = traceTrackPlan(p).segments
+  // A small imported placement adjustment must not split the descent chain.
+  for (const s of segments.slice(7)) {
+    s.start.x += 0.264
+    s.end.x += 0.264
+    s.points = s.points.map(lane => lane.map(([x,y]) => [x + 0.264,y]))
+  }
+  const model = buildRampProfiles(segments, { ascentLengthMm: 1000, descentLengthMm: 2000 })
+  assert.equal(model.ramps[0].lengthMm, 2000)
+  assert.equal(model.ramps[0].maxPercent, 15)
+  assert.equal(model.ramps[0].clipped, false)
+  for (let i = 0; i < segments.length - 1; i++)
+    assert.ok(Math.abs(model.profiles[i].end - model.profiles[i+1].start) < 1e-8)
+  const before = JSON.stringify(p)
+  const suggestion = suggestRampLengths(p, 15)
+  assert.equal(suggestion.settings.descentLengthMm, 2000)
+  assert.equal(suggestion.directions[0].limited, false)
+  assert.ok(suggestion.directions[0].maxPercent <= 15.01)
+  assert.ok(suggestion.directions[0].rails.length > 2)
+  assert.equal(JSON.stringify(p), before)
+})
+
+test('suggestions report insufficient space and do not override custom height points', async () => {
+  const { suggestRampLengths } = await import('../addons/track-planner/src/components/rampSuggestions.js')
+  const p = plan()
+  assert.ok(suggestRampLengths(p, 1).directions.some(r => r.limited))
+  p.pieces[5].elevation = {heightMm: 160, flat: true}
+  assert.equal(suggestRampLengths(p, 15).custom, true)
+})
