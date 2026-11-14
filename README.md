@@ -2,6 +2,7 @@
 
 [Deutsch](README.de.md) · **English** · [Français](README.fr.md)
 
+[1.3.0 · 3D ramps](docs/RELEASE-1.3.0.en.md)
 [1.2.0 · Updates](docs/RELEASE-1.2.0.en.md) · [Guide](docs/UPDATES.en.md)
 [1.1.6 · Ebenen-Checkboxen / Layer checkboxes / Cases par calque](docs/RELEASE-1.1.6.en.md)
 [1.1.5 · Ebenen ausblenden / Layer visibility / Visibilité des calques](docs/RELEASE-1.1.5.en.md)
