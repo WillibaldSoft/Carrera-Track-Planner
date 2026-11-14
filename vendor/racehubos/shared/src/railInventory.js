@@ -67,6 +67,22 @@ export function validateRailInventory(value) {
   }
   return result;
 }
+// A main-rail carrier and its native extra describe one physical turnout.
+// Share this identity check between inventory and printed type legends.
+export function pitTurnoutHasNativeExtra(plan, segments, index) {
+  const type = plan.pieces[index]?.type;
+  if (!['Pit_stop_weiche_anfang', 'Pit_stop_weiche_ende'].includes(type)) return false;
+  const kind = type === 'Pit_stop_weiche_anfang' ? 'pitEntry' : 'pitExit';
+  const a = segments[index].start;
+  return !!plan.trackExtras?.some((e) => {
+    if (e.hidden || e.kind !== kind) return false;
+    const pose = extraWorldPose(e, segments);
+    return Math.hypot(
+      pose.xMm - (a.x + Math.cos(a.h) * 172.5 - Math.sin(a.h) * 99),
+      pose.yMm - (a.y + Math.sin(a.h) * 172.5 + Math.cos(a.h) * 99)
+    ) < 1;
+  });
+}
 export function railRequirements(plan) {
   const counts = emptyRailInventory().counts,
     unresolved = [];
@@ -127,19 +143,9 @@ export function railRequirements(plan) {
       continue;
     }
     if (type.startsWith('Pit_stop_weiche_')) {
-      // Schematic pits are counted below. Native extras can describe the same
-      // turnout as a carrier, or a separate turnout merely anchored to it.
       if (plan.pit.enabled && !plan.pit.native && [plan.pit.entry, plan.pit.merge].includes(i)) continue;
       const kind = type === 'Pit_stop_weiche_anfang' ? 'pitEntry' : 'pitExit';
-      const a = segments[i].start;
-      const represented = plan.trackExtras?.some((e) => {
-        if (e.hidden || e.kind !== kind) return false;
-        const pose = extraWorldPose(e, segments);
-        return Math.hypot(
-          pose.xMm - (a.x + Math.cos(a.h) * 172.5 - Math.sin(a.h) * 99),
-          pose.yMm - (a.y + Math.sin(a.h) * 172.5 + Math.cos(a.h) * 99)
-        ) < 1;
-      });
+      const represented = pitTurnoutHasNativeExtra(plan, segments, i);
       if (!represented) {
         if (kind === 'pitEntry') entries++;
         else exits++;

@@ -74,5 +74,6 @@
   "allPit": "Installation complète configurée",
   "individualInsertNote": "Insérez les zones de stands à différents endroits du circuit.",
   "accessRule": "Accès indépendant : un rail de ravitaillement par voie. Une voiture arrêtée ne bloque pas une autre place.",
-  "cu": "3D · Vue oblique côté CU"
+  "cu": "3D · Vue oblique côté CU",
+  "pitPairComposition": "{{count}} entrées + {{count}} sorties"
 }

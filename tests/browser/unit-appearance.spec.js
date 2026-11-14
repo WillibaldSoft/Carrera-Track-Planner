@@ -28,6 +28,37 @@ async function assertLeftOfSlot(canvas) {
     }
     return result
   })
+  const positions = await canvas.evaluate((svg) => {
+    return [
+      ...svg.querySelectorAll(
+        '[data-testid^="cu-track-sensor-"], [data-testid="fuel-infrared-sensor"], [data-testid="switch-infrared-sensor"], [data-testid="pit-switch-infrared-sensor"]',
+      ),
+    ].map((group) => {
+      const circle = group.querySelector('circle')
+      const fuel = group.closest('[data-fuel-artwork]')
+      const cu = group.closest('[data-unit-kind="Control_unit"]')
+      const frame = fuel || cu || group.parentElement
+      const point = new DOMPoint(circle.cx.baseVal.value, circle.cy.baseVal.value)
+        .matrixTransform(circle.getScreenCTM())
+        .matrixTransform(frame.getScreenCTM().inverse())
+      return { actual: point.x + (fuel ? 172.5 : 0), expected: fuel || cu ? 116 : 6 }
+    })
+  })
+  for (const { actual, expected } of positions) expect(actual).toBeCloseTo(expected, 6)
+  const startFinishX = await canvas
+    .locator('[data-testid="cu-start-finish-markings"] text')
+    .evaluateAll((labels) => labels.map((label) => Number(label.getAttribute('x'))))
+  for (const x of startFinishX) expect(x).toBeGreaterThanOrEqual(150)
+  for (const marking of await canvas.locator('[data-testid="cu-start-finish-markings"]').all()) {
+    const printStart = await marking.evaluate((g) =>
+      Math.min(
+        ...[...g.querySelectorAll('rect')]
+          .filter((rect) => !rect.closest('[data-testid^="cu-track-sensor-"]'))
+          .map((rect) => Number(rect.getAttribute('x'))),
+      ),
+    )
+    expect(printStart).toBe(150)
+  }
   expect(offsets.length).toBeGreaterThan(0)
   for (const offset of offsets) expect(offset).toBeLessThan(-5)
   for (const label of await canvas.locator('[data-fuel-artwork] text').all())

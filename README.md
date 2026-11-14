@@ -2,6 +2,7 @@
 
 [Deutsch](README.de.md) · **English** · [Français](README.fr.md)
 
+[1.5.1 · Sensor positions and printed markings](docs/RELEASE-1.5.1.en.md)
 [1.5.0 · Navigation & pit planning](docs/RELEASE-1.5.0.en.md)
 [1.4.0 · Gradients & direct updates](docs/RELEASE-1.4.0.en.md)
 [1.3.0 · 3D ramps](docs/RELEASE-1.3.0.en.md)

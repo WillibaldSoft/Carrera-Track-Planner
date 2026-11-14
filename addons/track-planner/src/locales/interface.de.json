@@ -74,5 +74,6 @@
   "allPit": "Gesamte konfigurierte Anlage",
   "individualInsertNote": "Einzelne Boxenbereiche lassen sich nacheinander an verschiedenen Stellen der Bahn einfügen.",
   "accessRule": "Zufahrt frei: eine Tankschiene je Tankspur. Tankende Autos blockieren keinen weiteren Tankplatz.",
-  "cu": "3D · Schräg von der CU-Seite"
+  "cu": "3D · Schräg von der CU-Seite",
+  "pitPairComposition": "{{count}} Einfahrten + {{count}} Ausfahrten"
 }

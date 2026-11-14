@@ -74,5 +74,6 @@
   "allPit": "Entire configured layout",
   "individualInsertNote": "Insert separate pit areas at different locations on the track.",
   "accessRule": "Independent access: one fuel rail per pit lane. A stopped car does not block another fuel place.",
-  "cu": "3D · Oblique from the CU side"
+  "cu": "3D · Oblique from the CU side",
+  "pitPairComposition": "{{count}} entries + {{count}} exits"
 }

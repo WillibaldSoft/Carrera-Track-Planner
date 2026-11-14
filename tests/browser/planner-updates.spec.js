@@ -1,3 +1,4 @@
+import { revealControl } from './reveal-control.js'
 import { test, expect } from '@playwright/test'
 import fs from 'node:fs/promises'
 import { emptyTrackPlan } from '../../vendor/racehubos/shared/src/index.js'
@@ -9,6 +10,11 @@ const next = {
   notes: '## Deutsch\nVerbesserte Updates.\n## English\nImproved updates.\n## Français\nMises à jour améliorées.',
   url: 'https://github.com/WillibaldSoft/Carrera-Track-Planner/releases/tag/v1.2.1',
   downloads: [],
+}
+async function openUpdates(page) {
+  const trigger = page.getByTestId('planner-updates-toggle')
+  await revealControl(trigger)
+  await trigger.click()
 }
 async function setup(page) {
   let checks = 0,
@@ -43,7 +49,7 @@ for (const lang of ['de', 'en', 'fr'])
       errors = []
     page.on('pageerror', (e) => errors.push(e.message))
     await page.getByTestId('standalone-language').selectOption(lang)
-    await page.getByTestId('planner-updates-toggle').click()
+    await openUpdates(page)
     await expect(page.getByTestId('updates-at-start')).not.toBeChecked()
     expect(requests.checks()).toBe(0)
     expect(requests.installs()).toBe(0)
@@ -61,7 +67,7 @@ for (const lang of ['de', 'en', 'fr'])
     await page.reload()
     await expect.poll(() => requests.checks()).toBe(2)
     expect(requests.installs()).toBe(0)
-    await page.getByTestId('planner-updates-toggle').click()
+    await openUpdates(page)
     await expect(page.getByTestId('updates-at-start')).toBeChecked()
     await page.getByTestId('updates-install').click()
     await expect(page.getByTestId('updates-error')).toBeVisible()
@@ -72,7 +78,7 @@ for (const lang of ['de', 'en', 'fr'])
     await page.getByTestId('room-continue').click()
     await page.getByTestId('add-track-piece').click()
     await page.locator('.planner-name').fill('Unsaved update demo')
-    await page.getByTestId('planner-updates-toggle').click()
+    await openUpdates(page)
     await expect(page.getByTestId('updates-install')).toBeDisabled()
     await expect(page.getByTestId('updates-dirty')).toBeVisible()
     await page.screenshot({ path: `${dir}/03-unsaved-changes-protected.png` })
@@ -84,7 +90,7 @@ test('offline checks leave the planner usable and startup remains opt-in', async
   await page.route('**/api/updates/check', (route) =>
     route.fulfill({ status: 502, json: { success: false, error: 'network' } }),
   )
-  await page.getByTestId('planner-updates-toggle').click()
+  await openUpdates(page)
   await page.getByTestId('updates-check').click()
   await expect(page.getByTestId('updates-error')).toBeVisible()
   await page.keyboard.press('Escape')
@@ -121,7 +127,7 @@ test('Debian system installs offer the matching package without a direct install
     }),
   )
   await page.reload()
-  await page.getByTestId('planner-updates-toggle').click()
+  await openUpdates(page)
   await page.getByTestId('updates-check').click()
   await expect(page.getByTestId('updates-install')).toHaveCount(0)
   await expect(page.getByTestId('updates-download')).toHaveAttribute('href', /amd64\.deb$/)
@@ -164,6 +170,7 @@ for (const lang of ['de', 'en', 'fr'])
     await page.setViewportSize({ width: 1440, height: 950 })
     await page.goto('/updates-host.html')
     const frame = page.frameLocator('iframe')
+    await revealControl(frame.getByTestId('planner-updates-toggle'))
     await expect(frame.getByTestId('planner-updates-toggle')).toBeVisible()
     expect(checks).toBe(0)
     await frame.getByTestId('planner-updates-toggle').click()

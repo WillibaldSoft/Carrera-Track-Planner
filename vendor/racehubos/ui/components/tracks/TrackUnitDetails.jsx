@@ -162,13 +162,14 @@ export function UnitDetails({ segment, realistic = true }) {
               CONTROL UNIT
             </UnitText>
           </g>
+          {/* User measurements: sensor centre at 116 mm; START/FINISH printing starts at 150 mm. */}
           <g data-testid="cu-start-finish-markings">
             {[-96, 70].map((y) => (
               <g key={y} data-testid="finish-checker-field">
                 {Array.from({ length: 8 }, (_, i) => (
                   <rect
                     key={i}
-                    x={146 + (i % 4) * 13}
+                    x={152 + (i % 4) * 13}
                     y={y + Math.floor(i / 4) * 13}
                     width="13"
                     height="13"
@@ -177,10 +178,10 @@ export function UnitDetails({ segment, realistic = true }) {
                 ))}
               </g>
             ))}
-            <rect x="144" y="-31" width="56" height="62" rx=".8" fill="#ecebe4" stroke="#a6aaab" strokeWidth=".6" />
+            <rect x="150" y="-31" width="56" height="62" rx=".8" fill="#ecebe4" stroke="#a6aaab" strokeWidth=".6" />
             <UnitText
               headingRadians={segment.start.h}
-              x="164"
+              x="170"
               y="0"
               angle={-90}
               fill="#222629"
@@ -192,7 +193,7 @@ export function UnitDetails({ segment, realistic = true }) {
             </UnitText>
             <UnitText
               headingRadians={segment.start.h}
-              x="184"
+              x="190"
               y="0"
               angle={-90}
               fill="#222629"
@@ -203,7 +204,7 @@ export function UnitDetails({ segment, realistic = true }) {
               FINISH
             </UnitText>
             {[-64.5, 34.5].map((y, i) => (
-              <g key={i} data-testid={`cu-track-sensor-${i}`}>
+              <g key={i} data-testid={`cu-track-sensor-${i}`} transform="translate(-105 0)">
                 <rect x="215" y={y - 8} width="12" height="16" rx="3" fill="#0a0c0e" stroke="#4c5358" strokeWidth="1" />
                 <circle cx="221" cy={y} r="3.5" fill="#421721" stroke="#92646b" strokeWidth=".8" />
               </g>
@@ -212,7 +213,7 @@ export function UnitDetails({ segment, realistic = true }) {
         </>
       )}
       {['Check_lane', 'Multistart'].includes(type) && (
-        <>
+        <g transform="translate(-84 0)">
           <path d="M165 -96v192 M180 -96v192" stroke="#eee" strokeWidth="5" />
           {[-49.5, 49.5].map((y, i) => (
             <g key={i}>
@@ -232,7 +233,7 @@ export function UnitDetails({ segment, realistic = true }) {
           >
             {type === 'Multistart' ? 'MULTI' : 'CHECK'}
           </UnitText>
-        </>
+        </g>
       )}
       {type === 'AdapterUnit' && (
         <>
@@ -266,48 +267,50 @@ export function FuelDetail({ pose, index, article, worldHeadingDegrees = pose.he
       data-fuel-artwork="striped-sensor"
       transform={`translate(${pose.xMm} ${pose.yMm}) rotate(${pose.headingDegrees})`}
     >
-      {/* Sensor, striped printing and FUEL sit left of the slot in driving direction. */}
-      <g fill="#e5e4de" data-testid="fuel-printed-markings">
-        {[-44, 146].flatMap((x) =>
-          [-41, 41].map((y) => (
-            <path
-              key={`${x}-${y}`}
-              d={`M${x + (x < 0 ? 5 : -5)} ${y}h${x < 0 ? -5 : 5}v${y < 0 ? 5 : -5}`}
-              fill="none"
-              stroke="#e5e4de"
-              strokeWidth="2.1"
-            />
-          )),
-        )}
-        {[-1, 1].flatMap((side) =>
-          Array.from({ length: 12 }, (_, i) => {
-            const distance = 9 + i * 5,
-              x = 46 + side * distance,
-              height = 2 + i * 2.1
-            return (
-              <path key={`${side}-${i}`} d={`M${x} -8v${-height}`} stroke="#e5e4de" strokeWidth={i < 4 ? 1.1 : 2.3} />
-            )
-          }),
-        )}
+      {/* Centred 345 mm rail: -172.5 + 116 = -56.5 mm. Keep artwork registered to the sensor. */}
+      <g transform="translate(-102.5 0)">
+        <g fill="#e5e4de" data-testid="fuel-printed-markings">
+          {[-44, 146].flatMap((x) =>
+            [-41, 41].map((y) => (
+              <path
+                key={`${x}-${y}`}
+                d={`M${x + (x < 0 ? 5 : -5)} ${y}h${x < 0 ? -5 : 5}v${y < 0 ? 5 : -5}`}
+                fill="none"
+                stroke="#e5e4de"
+                strokeWidth="2.1"
+              />
+            )),
+          )}
+          {[-1, 1].flatMap((side) =>
+            Array.from({ length: 12 }, (_, i) => {
+              const distance = 9 + i * 5,
+                x = 46 + side * distance,
+                height = 2 + i * 2.1
+              return (
+                <path key={`${side}-${i}`} d={`M${x} -8v${-height}`} stroke="#e5e4de" strokeWidth={i < 4 ? 1.1 : 2.3} />
+              )
+            }),
+          )}
+        </g>
+        <g data-testid="fuel-infrared-sensor">
+          <circle cx="46" cy="-11" r="4.8" fill="#e1e2db" />
+          <circle cx="46" cy="-11" r="3.2" fill="#0b0d0e" />
+          <circle cx="46" cy="-11" r="1.9" fill="#a32936" />
+          <circle cx="45.5" cy="-10.4" r=".6" fill="#eea29e" />
+        </g>
+        <UnitText
+          headingRadians={headingRadians}
+          x="46"
+          y="-29"
+          angle={-90}
+          fill="#e5e4de"
+          fontSize="11"
+          fontWeight="800"
+          textAnchor="middle"
+        >
+          FUEL
+        </UnitText>
       </g>
-      <g data-testid="fuel-infrared-sensor">
-        <circle cx="46" cy="-11" r="4.8" fill="#e1e2db" />
-        <circle cx="46" cy="-11" r="3.2" fill="#0b0d0e" />
-        <circle cx="46" cy="-11" r="1.9" fill="#a32936" />
-        <circle cx="45.5" cy="-10.4" r=".6" fill="#eea29e" />
-      </g>
-      <UnitText
-        headingRadians={headingRadians}
-        x="46"
-        y="-29"
-        angle={-90}
-        fill="#e5e4de"
-        fontSize="11"
-        fontWeight="800"
-        textAnchor="middle"
-      >
-        FUEL
-      </UnitText>
       {article && <title>{article} · FUEL</title>}
     </g>
   )
@@ -330,8 +333,8 @@ export function SwitchDiodeDetails({ segment, profile = 'planner2022' }) {
         const lane = -(x - segment.start.x) * s + (y - segment.start.y) * c
         return (
           <g key={i} data-testid="switch-infrared-sensor" data-slot-y={lane}>
-            <rect x="74" y={lane - 23} width="12" height="16" rx="3" fill="#0a0c0e" stroke="#4c5358" strokeWidth="1" />
-            <circle cx="80" cy={lane - 15} r="3.5" fill="#421721" stroke="#92646b" strokeWidth=".8" />
+            <rect x="0" y={lane - 23} width="12" height="16" rx="3" fill="#0a0c0e" stroke="#4c5358" strokeWidth="1" />
+            <circle cx="6" cy={lane - 15} r="3.5" fill="#421721" stroke="#92646b" strokeWidth=".8" />
           </g>
         )
       })}

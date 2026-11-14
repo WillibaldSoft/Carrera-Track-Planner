@@ -7,7 +7,13 @@ import { BorderPartsList } from './TrackBorders'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
-import { traceTrackPlan, railRequirements, CARRERA_RAILS, TRACK_PARTS } from '@racehubos/shared'
+import {
+  traceTrackPlan,
+  railRequirements,
+  pitTurnoutHasNativeExtra,
+  CARRERA_RAILS,
+  TRACK_PARTS,
+} from '@racehubos/shared'
 import { trackPartAppearance } from '@core/components/tracks/trackPartAppearance'
 import { labelTrackPart } from '@core/components/tracks/trackPartLabel'
 import { Button } from '@core/components/ui/button'
@@ -17,7 +23,15 @@ export function TrackTypeLegend({ plan, visibleLevel = null }) {
     visibleLevel === null || segments[plan.pit.entry]?.level === visibleLevel ? pitlaneLegend(plan, segments) : []
   const { t } = useTranslation('tracks')
   const counts = plan.pieces
-    .filter((p) => visibleLevel === null || p.level === visibleLevel)
+    .filter(
+      (p, index) =>
+        (visibleLevel === null || p.level === visibleLevel) &&
+        !(
+          p.type.startsWith('Pit_stop_weiche_') &&
+          ((plan.pit.enabled && !plan.pit.native && [plan.pit.entry, plan.pit.merge].includes(index)) ||
+            pitTurnoutHasNativeExtra(plan, segments, index))
+        ),
+    )
     .reduce((map, p) => ((map[p.type] = (map[p.type] || 0) + 1), map), {})
   return (
     <ul data-testid="track-type-legend" className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
@@ -349,7 +363,14 @@ export default function TrackPlanPrint({ plan, name, drawingRef, inline = false 
                         {materialRows.map((p) => (
                           <tr key={p.article} data-testid={`print-material-${p.article}`}>
                             <td>{p.article}</td>
-                            <td>{t(`inventory.parts.${p.label}`, { defaultValue: p.name || p.label })}</td>
+                            <td>
+                              {t(`inventory.parts.${p.label}`, { defaultValue: p.name || p.label })}
+                              {p.article === '30356' && (
+                                <span className="block text-xs">
+                                  {ui('pitPairComposition', { count: requirements.counts[p.article] })}
+                                </span>
+                              )}
+                            </td>
                             <td>{requirements.counts[p.article]}</td>
                           </tr>
                         ))}
