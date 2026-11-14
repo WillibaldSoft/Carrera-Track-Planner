@@ -137,12 +137,12 @@ for (const lang of ['de', 'en', 'fr'])
   test(`add-on uses the host update path without local installation (${lang})`, async ({ page, baseURL }) => {
     let checks = 0,
       localCalls = 0
-    const prefix = 'https://github.com/WillibaldSoft/Carrera-Track-Planner/releases/download/v1.2.1/'
+    const prefix = 'https://github.com/WillibaldSoft/Carrera-Track-Planner/releases/download/v9.0.0/'
     await page.route('https://api.github.com/repos/WillibaldSoft/Carrera-Track-Planner/releases/latest', (route) => {
       checks++
       return route.fulfill({
         json: {
-          tag_name: 'v1.2.1',
+          tag_name: 'v9.0.0',
           draft: false,
           prerelease: false,
           body: next.notes,
