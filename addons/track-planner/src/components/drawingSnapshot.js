@@ -60,6 +60,7 @@ export async function snapshotDrawing(original) {
     }
     copies[i].removeAttribute('tabindex')
   }
+  svg.querySelectorAll('[data-drawing-ui]').forEach((node) => node.remove())
   const b = original.viewBox.baseVal,
     box = [b.x, b.y, b.width, b.height]
   if (!box.every(Number.isFinite) || b.width <= 0 || b.height <= 0) throw new Error('Invalid drawing bounds')

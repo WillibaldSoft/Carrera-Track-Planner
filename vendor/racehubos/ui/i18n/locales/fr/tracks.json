@@ -1,7 +1,11 @@
 {
   "layout": {
+    "hoverStroke": {"add": "Poser les bordures · Relâcher pour appliquer · Échap pour annuler", "remove": "Retirer les bordures · Relâcher pour appliquer · Échap pour annuler"},
+    "hoverRemove": {"left": "Retirer la bordure à gauche dans le sens de circulation", "right": "Retirer la bordure à droite dans le sens de circulation"},
+    "hoverBlocked": {"attached": "Une bordure est déjà fixée de ce côté.", "unit": "Le boîtier de l’unité occupe ce côté.", "unsupported": "Aucune bordure compatible n’est définie pour ce rail.", "pit": "Ce côté est occupé par la voie des stands.", "connected": "Cette extrémité est déjà raccordée.", "grouped": "Dégrouper le groupe de déplacement avant de prolonger.", "limit": "Le nombre maximal de rails est atteint."},
+    "hoverActions": {"forward": "Ajouter la même pièce dans le sens de circulation", "backward": "Ajouter la même pièce en sens inverse", "left": "Ajouter une bordure à gauche dans le sens de circulation", "right": "Ajouter une bordure à droite dans le sens de circulation"},
     "repeatPlace": "Pose multiple",
-    "repeatHint": "Choisir une pièce, puis cliquer sur le plan pour poser des exemplaires. Échap quitte ce mode.",
+    "repeatHint": "Cliquer sur une pièce pour la prendre à la souris. Raccorder à une extrémité libre ou remplacer au milieu d’un rail. Cliquer pour poser, R pour tourner, Échap pour quitter. La pose multiple conserve la sélection. Ctrl + molette ou Ctrl + Page haut/bas zoome.",
     "catalogue": "Catalogue",
     "selection": "Modifier la pièce",
     "viewOptions": "Vue et outils"
@@ -527,7 +531,7 @@
     "afterPart": "Après la pièce {{number}} · {{part}}",
     "hint": "La section raccordée suivante suit jusqu’à ce point. Le repère orange indique la séparation. Les ensembles restent groupés. Une autre modification termine ce choix.",
     "done": "Conserver la séparation",
-    "catalogueHint": "Cliquer sur une pièce du catalogue pour remplacer le rail sélectionné et déplacer la section suivante raccordée. La pose multiple conserve la pose à la souris."
+    "catalogueHint": "Cliquer sur une pièce du catalogue, puis la poser : raccorder à une extrémité ou remplacer au milieu. Échap annule la pose à la souris."
   },
   "joinSections": {
     "action": "Raccorder les sections",

@@ -1,7 +1,11 @@
 {
   "layout": {
+    "hoverStroke": {"add": "Randstreifen legen · Loslassen: übernehmen · Escape: abbrechen", "remove": "Randstreifen entfernen · Loslassen: übernehmen · Escape: abbrechen"},
+    "hoverRemove": {"left": "Randstreifen links in Fahrtrichtung entfernen", "right": "Randstreifen rechts in Fahrtrichtung entfernen"},
+    "hoverBlocked": {"attached": "Randstreifen auf dieser Seite bereits vorhanden.", "unit": "Auf dieser Seite sitzt das Gehäuse der Unit.", "unsupported": "Für dieses Schienenteil ist kein passender Randstreifen hinterlegt.", "pit": "Diese Seite wird von der Boxengasse benötigt.", "connected": "Dieser Anschluss ist bereits verbunden.", "grouped": "Zum Anfügen zuerst den Bewegungsverbund aufheben.", "limit": "Die maximale Anzahl an Schienen ist erreicht."},
+    "hoverActions": {"forward": "Gleiches Teil in Fahrtrichtung anfügen", "backward": "Gleiches Teil gegen die Fahrtrichtung anfügen", "left": "Randstreifen links in Fahrtrichtung anfügen", "right": "Randstreifen rechts in Fahrtrichtung anfügen"},
     "repeatPlace": "Mehrfachlegen",
-    "repeatHint": "Teil wählen, dann auf die Bahnfläche klicken. Weitere Klicks legen weitere Exemplare. Escape beendet den Modus.",
+    "repeatHint": "Teil anklicken: Es folgt der Maus. Am offenen Ende einrasten, in der Teilmitte austauschen. Klick setzt, R dreht, Escape beendet. Mehrfachlegen hält die Auswahl. Strg + Mausrad oder Strg + Bild auf/ab zoomt.",
     "catalogue": "Katalog",
     "selection": "Teil bearbeiten",
     "viewOptions": "Ansicht & Werkzeuge"
@@ -527,7 +531,7 @@
     "afterPart": "Nach Teil {{number}} · {{part}}",
     "hint": "Der folgende verbundene Abschnitt bewegt sich bis hier mit. Orange markiert den Auftrennpunkt. Baugruppen bleiben zusammen. Weitere Änderungen beenden diese Auswahl.",
     "done": "Auftrennpunkt übernehmen",
-    "catalogueHint": "Markiertes Bahnteil per Katalogklick austauschen: Der folgende Abschnitt folgt der neuen Geometrie. Mehrfachlegen behält die Mausplatzierung."
+    "catalogueHint": "Katalogteil anklicken und auf der Bahn platzieren: am Ende andocken oder mittig austauschen. Escape beendet die Mausplatzierung."
   },
   "joinSections": {
     "action": "Zusammenfügen",

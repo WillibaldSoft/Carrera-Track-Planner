@@ -2,6 +2,7 @@
 
 [Deutsch](README.de.md) · **English** · [Français](README.fr.md)
 
+[1.6.0 · Pointer placement & shoulders](docs/RELEASE-1.6.0.en.md)
 [1.5.1 · Sensor positions and printed markings](docs/RELEASE-1.5.1.en.md)
 [1.5.0 · Navigation & pit planning](docs/RELEASE-1.5.0.en.md)
 [1.4.0 · Gradients & direct updates](docs/RELEASE-1.4.0.en.md)
@@ -30,6 +31,9 @@ The launcher opens `http://127.0.0.1:3180` and binds only to loopback. Keep its 
 
 ## Features
 
+- Hold a side arrow and drag across further side arrows: the first arrow fixes add/remove mode; revisits never toggle back. Release commits the whole stroke as one undo step. Escape or loss of focus cancels it.
+
+- Hover over a rail for four arrows with unchanged visible size and larger invisible hit areas. Hover an arrow to preview; click to attach: add the same part along or against the driving direction, or attach a left/right shoulder. Connected ends are disabled; undo/redo is supported. Side arrows toggle shoulders with add/remove previews, including end caps (red minus to remove). Adjacent connected side arrows are directly reachable without returning to the rail centre. Catalogue parts follow the pointer for snapping or centre replacement; Escape cancels. Ctrl + wheel / Page Up/Down zooms.
 - Start/finish and Control Unit setup with two parallel fuel bays; pit assistant and reusable assemblies.
 - Optional AKS installation metadata and marker display.
 - Catalogue repeat placement, direct rail replacement with following geometry and a selectable cut point.
@@ -39,6 +43,8 @@ The launcher opens `http://127.0.0.1:3180` and binds only to loopback. Keep its 
 - Room-aware automatic layout search, automatic accessories and a central toolbar.
 - Saved 3D elevations, adjustable smooth ramps and editable/movable 2D height labels.
 - Vector PDF with embedded fonts; print, PNG and SVG preserve visible manual positions.
+
+For free-placement layouts, pit lanes block shoulders only where their actual geometry overlaps at the same level; old entry/merge indices never reserve detached rails.
 
 ## Integration for Anselme's review
 

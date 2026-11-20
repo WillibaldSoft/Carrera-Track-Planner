@@ -30,6 +30,13 @@ for (const language of ['de', 'en', 'fr'])
     await open(page, language)
     await select(page, 1)
     await page.getByTestId('palette-Kurve_1_60_rechts').click()
+    const point = await page.getByTestId('graph-track-canvas').evaluate((svg) => {
+      const p = svg.createSVGPoint(); p.x = 517.5; p.y = 0
+      const q = p.matrixTransform(svg.getScreenCTM()); return { x: q.x, y: q.y }
+    })
+    await page.mouse.move(point.x, point.y)
+    await expect(page.getByTestId('repeat-track-preview')).toHaveAttribute('data-action', 'replace')
+    await page.mouse.click(point.x, point.y)
     await expect(page.getByTestId('graph-track-canvas')).toHaveAttribute('data-piece-count', '5')
     await expect(page.getByTestId('replacement-cut-select')).toHaveValue('3')
     await expect(page.getByTestId('graph-track-canvas').getByTestId('rail-1')).toHaveAttribute('aria-label', /60/)

@@ -2,6 +2,7 @@
 
 [Deutsch](README.de.md) · [English](README.md) · **Français**
 
+[1.6.0 · Pose à la souris et bordures](docs/RELEASE-1.6.0.fr.md)
 [1.5.1 · Position des capteurs et marquages](docs/RELEASE-1.5.1.fr.md)
 [1.5.0 · Navigation et stands](docs/RELEASE-1.5.0.fr.md)
 [1.4.0 · Gradients & direct updates](docs/RELEASE-1.4.0.fr.md)
@@ -30,6 +31,9 @@ Le lanceur ouvre `http://127.0.0.1:3180` et écoute uniquement en local. Garder 
 
 ## Fonctions
 
+- Maintenir une flèche latérale et glisser sur les suivantes : la première fixe le mode ajouter/retirer ; les passages répétés ne basculent pas les pièces. Relâcher valide un seul pas d’annulation ; Échap ou la perte de focus annule le geste.
+
+- Survoler un rail affiche quatre flèches de taille visible inchangée, avec une zone de clic invisible élargie. Survoler une flèche affiche l’aperçu ; cliquer ajoute la pièce : ajouter la même pièce dans les deux sens ou une bordure à gauche/droite. Les raccords occupés sont désactivés ; annuler/rétablir reste disponible. Les flèches latérales ajoutent/retirent les bordures avec aperçu, embouts compris (moins rouge pour retirer). Les flèches des rails voisins raccordés sont accessibles directement, sans repasser au centre du rail. Les pièces du catalogue suivent la souris pour raccorder ou remplacer au centre ; Échap annule. Ctrl + molette / Page haut/bas zoome.
 - Départ/arrivée et Control Unit avec deux postes de ravitaillement parallèles ; assistant des stands et modèles d’ensembles.
 - Métadonnées d’installation AKS et repères facultatifs.
 - Pose multiple, remplacement direct depuis le catalogue avec adaptation de la section suivante et séparation réglable.
@@ -39,6 +43,8 @@ Le lanceur ouvre `http://127.0.0.1:3180` et écoute uniquement en local. Garder 
 - Recherche adaptée à la pièce, accessoires automatiques et barre centrale.
 - Hauteurs 3D enregistrées, rampes douces réglables et étiquettes 2D déplaçables.
 - PDF vectoriel avec polices intégrées ; impression, PNG et SVG conservent les positions manuelles.
+
+En placement libre, les stands bloquent les bordures uniquement en cas de chevauchement réel au même niveau ; les anciens indices d’entrée/sortie ne réservent pas les rails détachés.
 
 ## Intégration à examiner par Anselme
 

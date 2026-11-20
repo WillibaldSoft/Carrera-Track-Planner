@@ -23,6 +23,8 @@ import { prepareIndividualPitParts, updatePitPartWorld } from './pitPartEditing'
 import ParallelDockingPanel from './ParallelDockingPanel'
 import { trackSectionJoinOptions, joinTrackSections } from './joinTrackSections'
 import { replaceFollowingTrack } from './followingTrackReplacement'
+import { trackExtensionOptions, hoveredShoulderStatus, previewHoveredTrackAction, hoverActionHandles, applyShoulderStrokeStep, shoulderStrokeTargets, crossedShoulderTargets } from './hoverTrackActions.js'
+import { replacementTargetAt } from './cataloguePlacement.js'
 import { repeatedTrackPreview, placeRepeatedTrackPart } from './repeatTrackPlacement'
 import { trackViewport } from './trackViewport'
 import PlannerTools from './PlannerTools'
@@ -202,6 +204,11 @@ export default function GraphicalTrackEditor({
   const [replacement, setReplacement] = useState(null)
   const currentReplacement = replacement?.result.plan === storedPlan ? replacement : null
   const [repeatPlacement, setRepeatPlacement] = useState(false)
+  const [hoveredRail, setHoveredRail] = useState(-1)
+  const [hoverAction, setHoverAction] = useState(null)
+  const [shoulderFlowSide, setShoulderFlowSide] = useState(null)
+  const [cataloguePinned, setCataloguePinned] = useState(false)
+  const mousePlacement = repeatPlacement || cataloguePinned
   const [placementPoint, setPlacementPoint] = useState(null)
   const [placementHeading, setPlacementHeading] = useState(0)
   const [panel, setPanel] = useState('none')
@@ -303,6 +310,8 @@ export default function GraphicalTrackEditor({
     observer.observe(element)
     return () => observer.disconnect()
   }, [])
+  const shoulderStroke = useRef(null)
+  const ignoreHoverClick = useRef(false)
   const dragging = useRef(null),
     suppressClick = useRef(false),
     gridId = useId().replaceAll(':', '')
@@ -537,8 +546,21 @@ export default function GraphicalTrackEditor({
   const pitSwitchLocked = nativePitSwitch && plan.partGroups?.groups.some((g) => g.includes(pitPart.anchor))
   const pitReplacement =
     nativePitSwitch && !pitSwitchLocked && ['Pit_stop_weiche_anfang', 'Pit_stop_weiche_ende'].includes(part)
+  const visibleSegments = trace.segments.filter((s) => railVisible(s.index))
+  const replacementTarget = mousePlacement && placementPoint
+    ? replacementTargetAt(plan, placementPoint, visibleSegments.map((s) => s.index))
+    : -1
+  const replacementPreview = useMemo(() => {
+    if (replacementTarget < 0) return null
+    try {
+      const result = replaceFollowingTrack(storedPlan, replacementTarget, chosen.types)
+      return { ...result.plan, pieces: result.plan.pieces.slice(result.selected, result.selected + chosen.types.length), trackExtras: [], partGroups: undefined, pit: { ...result.plan.pit, enabled: false, entry: 0, merge: 0 } }
+    } catch {
+      return null
+    }
+  }, [storedPlan, replacementTarget, part])
   const stamp =
-    repeatPlacement && !noVisibleLayers
+    mousePlacement && !noVisibleLayers
       ? repeatedTrackPreview(plan, chosen.types, placementPoint, {
           headingDegrees: placementHeading,
           level: active?.level ?? Math.max(0, Math.min(2, visibleLevel ?? 0)),
@@ -547,8 +569,121 @@ export default function GraphicalTrackEditor({
           borderSide: newBorderSide,
         })
       : null
+  const hoverIndex = !mousePlacement && !autoAttachments && !dragging.current && editableRail(hoveredRail) ? hoveredRail : -1
+  const hoverOptions = useMemo(() => trackExtensionOptions(plan, hoverIndex), [plan, hoverIndex])
+  const hoverResult = useMemo(() => {
+    if (shoulderStroke.current || hoverAction?.index !== hoverIndex) return null
+    const result = previewHoveredTrackAction(storedPlan, hoverIndex, hoverAction.action)
+    if (result?.count) result.plan = decorateInsertion(result, result.count)
+    return result
+  }, [storedPlan, hoverIndex, hoverAction, newBorderSide, insertionPlane, draft])
+  const hoverPreviewPlan = useMemo(() => {
+    if (!hoverResult?.count) return null
+    return {
+      ...hoverResult.plan,
+      pieces: hoverResult.plan.pieces.slice(hoverResult.selected, hoverResult.selected + hoverResult.count),
+      partGroups: undefined, trackExtras: [], pit: { ...hoverResult.plan.pit, enabled: false, entry: 0, merge: 0 },
+    }
+  }, [hoverResult])
+  const hoverPreviewBorders = useMemo(() => {
+    if (!hoverResult || hoverResult.count) return []
+    const previous = borderShapes(storedPlan)
+    const next = borderShapes(hoverResult.plan)
+    const [shapes, other] = hoverResult.mode === 'remove' ? [previous, next] : [next, previous]
+    return shapes.filter((shape) => shape.index === hoverIndex &&
+      !other.some((old) => old.index === shape.index && old.side === shape.side && old.kind === shape.kind))
+  }, [hoverResult, storedPlan, hoverIndex])
+  const hoverHandles = useMemo(() => hoverIndex < 0 ? [] : hoverActionHandles(plan, hoverIndex, w, viewport.width,
+    shoulderFlowSide, visibleSegments.filter((segment) => editableRail(segment.index)).map((segment) => segment.index)),
+    [plan, hoverIndex, w, viewport.width, shoulderFlowSide, visibleLevels])
+  useEffect(() => {
+    const cancel = () => { if (shoulderStroke.current) cancelShoulderStroke() }
+    window.addEventListener('blur', cancel)
+    return () => window.removeEventListener('blur', cancel)
+  }, [])
+  function cancelShoulderStroke() {
+    ignoreHoverClick.current = true
+    const stroke = shoulderStroke.current
+    shoulderStroke.current = null
+    if (stroke && canvasRef.current?.hasPointerCapture(stroke.id)) canvasRef.current.releasePointerCapture(stroke.id)
+    setDraft(null)
+    setHoverAction(null)
+  }
+  function updateShoulderStroke(point) {
+    const stroke = shoulderStroke.current
+    if (!stroke) return
+    let next = stroke.plan
+    for (const target of crossedShoulderTargets(stroke.targets, stroke.point, point)) {
+      const key = `${target.index}:${target.action}`
+      setHoveredRail(target.index)
+      setShoulderFlowSide(target.action)
+      if (stroke.visited.has(key)) continue
+      stroke.visited.add(key)
+      next = applyShoulderStrokeStep(next, target.index, target.action, stroke.mode)
+    }
+    stroke.point = point
+    if (next !== stroke.plan) {
+      stroke.plan = next
+      setDraft(next)
+    }
+  }
+  function beginShoulderStroke(event, handle) {
+    if (event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || !handle.enabled ||
+      !['left', 'right'].includes(handle.action)) return
+    const point = world({ currentTarget: canvasRef.current, clientX: event.clientX, clientY: event.clientY })
+    ignoreHoverClick.current = false
+    canvasRef.current.focus({ preventScroll: true })
+    setFrame(bounds)
+    shoulderStroke.current = { id: event.pointerId, base: storedPlan, plan: storedPlan,
+      mode: handle.mode, point, visited: new Set(),
+      targets: shoulderStrokeTargets(storedPlan, w, viewport.width, visibleSegments.filter((s) => editableRail(s.index)).map((s) => s.index)) }
+    canvasRef.current.focus({ preventScroll: true })
+    canvasRef.current.setPointerCapture(event.pointerId)
+    const stroke = shoulderStroke.current
+    stroke.visited.add(`${handle.index}:${handle.action}`)
+    stroke.plan = applyShoulderStrokeStep(storedPlan, handle.index, handle.action, stroke.mode)
+    setDraft(stroke.plan)
+    setShoulderFlowSide(handle.action)
+    setHoverAction(null)
+  }
+  function finishShoulderStroke() {
+    const stroke = shoulderStroke.current
+    if (!stroke) return false
+    shoulderStroke.current = null
+    ignoreHoverClick.current = true
+    if (stroke.plan !== stroke.base) onChange(stroke.plan)
+    setDraft(null)
+    setHoverAction(null)
+    return true
+  }
+  function activateHoverHandle(handle) {
+    setHoveredRail(handle.index)
+    setHoverAction((previous) => previous?.index === handle.index && previous?.action === handle.action ? previous : { index: handle.index, action: handle.action })
+    if (['left', 'right'].includes(handle.action)) setShoulderFlowSide(handle.action)
+  }
+  function runHoverAction(action, index = hoverIndex) {
+    if (index < 0 || !editableRail(index)) return
+    const result = previewHoveredTrackAction(storedPlan, index, action)
+    if (!result) return
+    setFrame(bounds)
+    onChange(result.count ? decorateInsertion(result, result.count) : result.plan)
+    if (result.count) {
+      onSelect(result.selected)
+      setHoveredRail(result.selected)
+    }
+    if (!result.count) {
+      setHoveredRail(index)
+      setShoulderFlowSide(action)
+    }
+    setHoverAction(null)
+  }
   function placeAt(point) {
     if (noVisibleLayers) return
+    const target = replacementTargetAt(storedPlan, point, visibleSegments.map((s) => s.index))
+    if (target >= 0) {
+      if (replaceAndFollow(chosen.types, target) && !repeatPlacement) setCataloguePinned(false)
+      return
+    }
     const preview = repeatedTrackPreview(storedPlan, chosen.types, point, {
       headingDegrees: placementHeading,
       level: active?.level ?? Math.max(0, Math.min(2, visibleLevel ?? 0)),
@@ -560,7 +695,10 @@ export default function GraphicalTrackEditor({
     setFrame(zoom === 1 ? null : bounds)
     onChange(decorateInsertion(result, chosen.types.length))
     onSelect(result.selected)
-    setPlacementPoint(null)
+    if (!repeatPlacement) {
+      setCataloguePinned(false)
+      setPlacementPoint(null)
+    }
   }
   function selectPitPart(id, event) {
     if (suppressClick.current) {
@@ -643,7 +781,6 @@ export default function GraphicalTrackEditor({
   const activeHeading = activeSegment
     ? (((((activeSegment.start.h * 180) / Math.PI + 180) % 360) + 360) % 360) - 180
     : 0
-  const visibleSegments = trace.segments.filter((s) => railVisible(s.index))
   const connector = join ?? visibleSegments.at(-1)?.end ?? { x: 0, y: 0 }
   function setAntiCollision(antiCollision) {
     if (nativePitSwitch) {
@@ -661,9 +798,11 @@ export default function GraphicalTrackEditor({
       })
     }
   }
-  function replaceAndFollow(types) {
-    if (!active || pickedIndices.length !== 1 || pitPart) return false
-    if (plan.partGroups?.groups.some((g) => g.includes(selected))) {
+  function replaceAndFollow(types, target = selected) {
+    if (!plan.pieces[target] || !editableRail(target)) return false
+    if (target === selected && (pickedIndices.length !== 1 || pitPart)) return false
+    const selection = trackSelection(plan, target)
+    if (plan.partGroups?.groups.some((g) => g.includes(target))) {
       setEditNotice(te('replacement.blocked'))
       return true
     }
@@ -671,8 +810,8 @@ export default function GraphicalTrackEditor({
     if (selection.length === types.length && selection.every((i, n) => plan.pieces[i].type === types[n])) return true
     try {
       setEditNotice('')
-      const result = replaceFollowingTrack(storedPlan, selected, types)
-      setReplacement({ base: storedPlan, index: selected, types, result })
+      const result = replaceFollowingTrack(storedPlan, target, types)
+      setReplacement({ base: storedPlan, index: target, types, result })
       onChange(result.plan)
       onSelect(result.selected)
       if (zoom === 1) setFrame(null)
@@ -737,19 +876,31 @@ export default function GraphicalTrackEditor({
     setPan({ x: 0, y: 0 })
   }
   function keyboard(e) {
-    if (e.key === 'Escape' && repeatPlacement) {
+    if (e.key === 'Escape' && shoulderStroke.current) {
+      e.preventDefault()
+      cancelShoulderStroke()
+      return
+    }
+    if (shoulderStroke.current) { e.preventDefault(); return }
+    if (e.key === 'Escape' && mousePlacement) {
       e.preventDefault()
       setRepeatPlacement(false)
+      setCataloguePinned(false)
       setPlacementPoint(null)
       suppressClick.current = false
       return
     }
-    if (e.key.toLowerCase() === 'r' && repeatPlacement && !e.target.closest('input,select,textarea')) {
+    if (e.key.toLowerCase() === 'r' && mousePlacement && !e.target.closest('input,select,textarea')) {
       e.preventDefault()
       setPlacementHeading((h) => h + (e.shiftKey ? -15 : 15))
       return
     }
     if (e.target.closest('input,select,textarea,[contenteditable=true]')) return
+    if (e.ctrlKey && ['PageUp', 'PageDown'].includes(e.key)) {
+      e.preventDefault()
+      setZoom((v) => Math.max(0.4, Math.min(8, v * (e.key === 'PageUp' ? 1.25 : 1 / 1.25))))
+      return
+    }
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
       e.preventDefault()
       selectAll()
@@ -761,7 +912,7 @@ export default function GraphicalTrackEditor({
       else undo()
       return
     }
-    if (e.ctrlKey || e.metaKey || e.altKey) return
+    if (shoulderStroke.current || e.ctrlKey || e.metaKey || e.altKey) return
     if (
       ['Delete', 'Backspace'].includes(e.key) &&
       active &&
@@ -772,6 +923,9 @@ export default function GraphicalTrackEditor({
       edit('delete')
     }
     if (e.key === 'Escape') {
+      setShoulderFlowSide(null)
+      setHoveredRail(-1)
+      setHoverAction(null)
       setContext(null)
       dragging.current = null
       setDraft(null)
@@ -816,6 +970,7 @@ export default function GraphicalTrackEditor({
     )
   }
   wheelHandler.current = (e) => {
+    if (shoulderStroke.current) { e.preventDefault(); return }
     if (dragging.current || !e.deltaY) return
     e.preventDefault()
     const next = Math.max(0.4, Math.min(8, zoom * (e.deltaY < 0 ? 1.15 : 1 / 1.15)))
@@ -1358,7 +1513,7 @@ export default function GraphicalTrackEditor({
               </select>
             </label>
             {!repeatPlacement && <p className="planner-replacement-hint">{t('replacement.catalogueHint')}</p>}
-            {repeatPlacement && (
+            {mousePlacement && (
               <p className="planner-repeat-hint" role="status" data-testid="repeat-placement-hint">
                 {t('layout.repeatHint')}
               </p>
@@ -1423,22 +1578,15 @@ export default function GraphicalTrackEditor({
                       className={`planner-part ${p.id === part ? 'is-selected' : ''}`}
                       onClick={() => {
                         setPart(p.id)
-                        if (!repeatPlacement) replaceAndFollow(p.types)
-                        if (panel === 'catalogue') setPanel(repeatPlacement ? 'none' : 'inspector')
+                        setCataloguePinned(true)
+                        setAutoAttachments(false)
+                        setAutoTarget(-1)
+                        setAutoOption(null)
+                        setPlacementHeading((((join ?? trace.segments.at(-1)?.end)?.h ?? 0) * 180) / Math.PI)
+                        if (panel === 'catalogue') setPanel('none')
                         setPlacementPoint(null)
                       }}
-                      onDoubleClick={() => {
-                        if (noVisibleLayers || repeatPlacement || active || pitPart) return
-                        if (plan.pieces.length + p.types.length > 2000) return
-                        const result = (plan.freePlacement ? editFreeParts : editTrackPieces)(
-                          plan,
-                          selected,
-                          side,
-                          p.types,
-                        )
-                        onChange(decorateInsertion(result, p.types.length))
-                        onSelect(result.selected)
-                      }}
+
                     >
                       <PartIcon types={p.types} />
                       <span>
@@ -1529,7 +1677,7 @@ export default function GraphicalTrackEditor({
               aria-label={t('graph.canvas')}
               className="planner-canvas touch-none"
               style={{
-                cursor: repeatPlacement ? 'crosshair' : undefined,
+                cursor: mousePlacement ? 'crosshair' : undefined,
                 background: background === 'paper' ? '#f8fafc' : background === 'green' ? '#14532d' : '#0f172a',
               }}
               onDragOver={(e) => {
@@ -1580,13 +1728,18 @@ export default function GraphicalTrackEditor({
                 })
               }}
               onPointerLeave={() => {
+                if (shoulderStroke.current) return
                 autoHoverLock.current = -1
+                setHoveredRail(-1)
+                setHoverAction(null)
+                setShoulderFlowSide(null)
                 if (!dragging.current) setPlacementPoint(null)
               }}
               onClickCapture={(e) => {
                 if (
+                  e.target.closest('[data-hover-action]') ||
                   !autoAttachments ||
-                  repeatPlacement ||
+                  mousePlacement ||
                   e.button !== 0 ||
                   e.ctrlKey ||
                   e.metaKey ||
@@ -1601,8 +1754,9 @@ export default function GraphicalTrackEditor({
                 addAutomatic(Number(rail.dataset.railIndex), autoSide, true)
               }}
               onPointerDown={(e) => {
+                if (e.target.closest('[data-hover-action]')) return
                 if (autoAttachments && e.button === 0 && !e.shiftKey && !e.ctrlKey && !e.metaKey) return
-                if (repeatPlacement && e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
+                if (mousePlacement && e.button === 0 && !e.ctrlKey && !e.metaKey && !e.shiftKey) {
                   e.preventDefault()
                   e.currentTarget.focus({ preventScroll: true })
                   suppressClick.current = true
@@ -1684,7 +1838,25 @@ export default function GraphicalTrackEditor({
                 e.currentTarget.setPointerCapture(e.pointerId)
               }}
               onPointerMove={(e) => {
-                if (autoAttachments && !dragging.current && !repeatPlacement) {
+                if (shoulderStroke.current) {
+                  if (e.pointerId === shoulderStroke.current.id) updateShoulderStroke(world(e))
+                  return
+                }
+                if (!dragging.current && !mousePlacement && !autoAttachments && !e.target.closest('[data-hover-action]')) {
+                  const rail = e.target.closest('[data-rail-index]')
+                  if (rail && !e.target.closest('[data-pit-part-id]')) {
+                    const candidate = Number(rail.dataset.railIndex)
+                    if (candidate !== hoveredRail) setHoverAction(null)
+                    setHoveredRail(candidate)
+                  }
+                  else if (hoveredRail >= 0 && !shoulderFlowSide) {
+                    const segment = trace.segments[hoveredRail]
+                    const point = world(e)
+                    if (segment && Math.hypot(point.x - (segment.start.x + segment.end.x) / 2, point.y - (segment.start.y + segment.end.y) / 2) >
+                      Math.hypot(segment.end.x - segment.start.x, segment.end.y - segment.start.y) / 2 + 200 + w / viewport.width * 50) setHoveredRail(-1)
+                  }
+                }
+                if (autoAttachments && !dragging.current && !mousePlacement) {
                   if (e.target.closest('[data-pit-part-id]')) {
                     setAutoTarget(-1)
                     setAutoOption(null)
@@ -1705,7 +1877,7 @@ export default function GraphicalTrackEditor({
                     }
                   }
                 }
-                if (repeatPlacement && !dragging.current) setPlacementPoint(world(e))
+                if (mousePlacement && !dragging.current) setPlacementPoint(world(e))
                 const d = dragging.current
                 if (!d) return
                 if (Math.hypot(e.clientX - d.x, e.clientY - d.y) < 3 && !d.moved) return
@@ -1759,6 +1931,7 @@ export default function GraphicalTrackEditor({
                 setSnapHint(snapped.snap)
               }}
               onPointerUp={(e) => {
+                if (shoulderStroke.current?.id === e.pointerId && finishShoulderStroke()) return
                 const d = dragging.current
                 if (d?.kind === 'box' && d.moved) {
                   const indices = trackRectangleSelection(d.base, d.point, world(e, d.inverse), null).filter(
@@ -1787,7 +1960,9 @@ export default function GraphicalTrackEditor({
                 setMarquee(null)
                 if (d?.kind === 'pan') setPan((p) => ({ ...p }))
               }}
+              onLostPointerCapture={() => { if (shoulderStroke.current) cancelShoulderStroke() }}
               onPointerCancel={() => {
+                if (shoulderStroke.current) cancelShoulderStroke()
                 dragging.current = null
                 setDraft(null)
                 setMarquee(null)
@@ -1838,7 +2013,8 @@ export default function GraphicalTrackEditor({
                 labels={labels}
                 visibleDrawingLevels={visibleLevels}
                 connector={
-                  !repeatPlacement &&
+                  !mousePlacement &&
+                  !hoverOptions &&
                   !autoAttachments &&
                   !dockPreview &&
                   (visibleLevels === null || !!active) &&
@@ -1962,16 +2138,25 @@ export default function GraphicalTrackEditor({
                   />
                 </g>
               )}
+              {replacementTarget >= 0 && (
+                <g pointerEvents="none" data-testid="catalogue-replacement-target">
+                  <circle cx={(trace.segments[replacementTarget].start.x + trace.segments[replacementTarget].end.x) / 2}
+                    cy={(trace.segments[replacementTarget].start.y + trace.segments[replacementTarget].end.y) / 2}
+                    r="65" fill="#f59e0b" fillOpacity=".3" stroke="#f59e0b" strokeWidth="5" />
+                </g>
+              )}
               {stamp && (
                 <g
                   data-testid="repeat-track-preview"
                   data-part-type={part}
-                  data-occupied={stamp.occupied}
+                  data-action={replacementTarget >= 0 ? 'replace' : stamp.snapped ? 'snap' : 'place'}
+                  data-replacement-index={replacementTarget >= 0 ? replacementTarget : undefined}
+                  data-occupied={replacementTarget >= 0 ? !replacementPreview : stamp.occupied}
                   opacity={stamp.occupied ? 0.3 : 0.55}
                   pointerEvents="none"
                 >
                   <TrackPlanPreview
-                    plan={decorateInsertion({ plan: stamp.plan, selected: 0 }, chosen.types.length)}
+                    plan={replacementPreview ?? decorateInsertion({ plan: stamp.plan, selected: 0 }, chosen.types.length)}
                     embedded
                     realistic={realistic}
                     showOrigin={false}
@@ -2006,7 +2191,7 @@ export default function GraphicalTrackEditor({
                 </g>
               )}
               {showConnections && !autoAttachments && (
-                <g pointerEvents={repeatPlacement ? 'none' : undefined}>
+                <g pointerEvents={mousePlacement ? 'none' : undefined}>
                   <ConnectionHints
                     plan={plan}
                     visibleDrawingLevels={visibleLevels}
@@ -2069,6 +2254,62 @@ export default function GraphicalTrackEditor({
                   pointerEvents="none"
                 />
               )}
+              {(hoverPreviewPlan || hoverPreviewBorders.length > 0) && (
+                <g data-testid="hover-action-preview" data-action={hoverAction?.action} data-mode={hoverResult?.mode ?? 'add'} data-drawing-ui="true" pointerEvents="none" opacity=".55">
+                  {hoverPreviewPlan && <TrackPlanPreview plan={hoverPreviewPlan} embedded realistic={realistic} showOrigin={false} />}
+                  {hoverPreviewBorders.map((shape, i) => <g key={i}>
+                    <path d={shape.points.map((p, n) => `${n ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ') + 'Z'} fill={hoverResult?.mode === 'remove' ? '#ef4444' : '#292b2e'} stroke={hoverResult?.mode === 'remove' ? '#dc2626' : '#0d9488'} strokeWidth="4" strokeDasharray={hoverResult?.mode === 'remove' ? '14 8' : undefined} />
+                    {hoverResult?.mode !== 'remove' && borderArtwork(shape).map((patch, j) => <path key={j} d={patch.points.map((p, n) => `${n ? 'L' : 'M'}${p[0]} ${p[1]}`).join(' ') + 'Z'} fill={patch.color} />)}
+                  </g>)}
+                </g>
+              )}
+              {hoverOptions && <g data-testid="hover-track-actions" data-drawing-ui="true" data-rail-index={hoverIndex}>
+                {hoverHandles.map((handle) => {
+                  const { index, action, angle, x, y, enabled, reason, radius, mode } = handle
+                  const label = mode === 'remove' ? t(`layout.hoverRemove.${action}`) : t(`layout.hoverActions.${action}`)
+                  return <g key={`${index}:${action}`} data-hover-action={action} data-rail-index={index}
+                    data-testid={index === hoverIndex ? `hover-track-${action}` : `hover-track-next-${index}-${action}`}
+                    data-handle-key={`${index}:${action}`} data-mode={mode ?? 'add'}
+                    role="button" tabIndex={enabled ? 0 : -1} aria-label={label}
+                    aria-disabled={!enabled} style={{ cursor: enabled ? 'pointer' : 'default' }}
+                    transform={`translate(${x} ${y})`} opacity={enabled ? 1 : .35}
+                    onPointerEnter={() => activateHoverHandle(handle)}
+                    onPointerMove={() => activateHoverHandle(handle)}
+                    onPointerLeave={() => setHoverAction(null)}
+                    onFocus={() => activateHoverHandle(handle)}
+                    onBlur={() => setHoverAction(null)}
+                    onPointerDown={(e) => { e.stopPropagation(); e.preventDefault(); ignoreHoverClick.current = false; beginShoulderStroke(e, handle) }}
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      if (ignoreHoverClick.current && e.detail > 0) { ignoreHoverClick.current = false; return }
+                      if (enabled) runHoverAction(action, index)
+                    }}
+                    onKeyDown={(e) => {
+                      if (['Enter', ' '].includes(e.key)) { e.preventDefault(); e.stopPropagation(); if (enabled) runHoverAction(action, index) }
+                    }}>
+                    <title>{label}{reason ? ` — ${t(`layout.hoverBlocked.${reason}`)}` : ''}</title>
+                    <circle data-testid={index === hoverIndex ? `hover-track-hit-${action}` : undefined} r={Math.max(radius * 1.5, w / viewport.width * 24)} fill="transparent" pointerEvents="all" />
+                    <circle pointerEvents="none" r={radius} fill={mode === 'remove' ? '#b91c1c' : ['left', 'right'].includes(action) ? '#b45309' : '#0f766e'} stroke="white" strokeWidth={radius * .12} />
+                    <path d={mode === 'remove' ? `M ${-radius * .5} 0 H ${radius * .5}` : `M ${-radius * .5} 0 H ${radius * .5} M 0 ${-radius * .45} L ${radius * .5} 0 L 0 ${radius * .45}`}
+                      transform={mode === 'remove' ? undefined : `rotate(${angle * 180 / Math.PI})`} fill="none" stroke="white" strokeWidth={radius * .16} strokeLinecap="round" strokeLinejoin="round" pointerEvents="none" />
+                  </g>
+                })}
+              </g>}
+              {shoulderStroke.current && <text data-testid="shoulder-stroke-status" data-drawing-ui="true" pointerEvents="none"
+                x={box[0] + w / 2} y={box[1] + h - w / viewport.width * 18} textAnchor="middle"
+                fontSize={w / viewport.width * 14} fill={background === 'paper' ? '#0f766e' : '#99f6e4'}>
+                {t(`layout.hoverStroke.${shoulderStroke.current.mode}`)}
+              </text>}
+              {hoverAction?.index === hoverIndex && hoverOptions && (() => {
+                const status = ['left', 'right'].includes(hoverAction.action)
+                  ? hoveredShoulderStatus(storedPlan, hoverIndex, hoverAction.action, hoverOptions.reverse)
+                  : hoverOptions[hoverAction.action]
+                return status.reason ? <text data-testid="hover-action-unavailable" data-drawing-ui="true" pointerEvents="none"
+                  x={box[0] + w / 2} y={box[1] + h - w / viewport.width * 18} textAnchor="middle"
+                  fontSize={w / viewport.width * 14} fill={background === 'paper' ? '#92400e' : '#fcd34d'}>
+                  {t(`layout.hoverBlocked.${status.reason}`)}
+                </text> : null
+              })()}
               {snapHint && (
                 <circle
                   data-testid="free-snap-indicator"

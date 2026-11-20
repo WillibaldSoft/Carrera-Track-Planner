@@ -1,7 +1,11 @@
 {
   "layout": {
+    "hoverStroke": {"add": "Add shoulders · Release to apply · Escape to cancel", "remove": "Remove shoulders · Release to apply · Escape to cancel"},
+    "hoverRemove": {"left": "Remove the left shoulder in the driving direction", "right": "Remove the right shoulder in the driving direction"},
+    "hoverBlocked": {"attached": "A shoulder is already attached on this side.", "unit": "The unit housing occupies this side.", "unsupported": "No matching shoulder is defined for this rail.", "pit": "This side is occupied by the pit lane.", "connected": "This end is already connected.", "grouped": "Ungroup the movement group before extending.", "limit": "The maximum rail count has been reached."},
+    "hoverActions": {"forward": "Add the same part in the driving direction", "backward": "Add the same part against the driving direction", "left": "Add a left shoulder in the driving direction", "right": "Add a right shoulder in the driving direction"},
     "repeatPlace": "Repeat placement",
-    "repeatHint": "Choose a part, then click the canvas to place copies. Further clicks place more copies. Escape exits this mode.",
+    "repeatHint": "Click a part to attach it to the pointer. Snap at an open end or replace at the middle of a rail. Click to place, R to rotate, Escape to cancel. Repeat placement keeps the selection. Ctrl + wheel or Ctrl + Page Up/Down zooms.",
     "catalogue": "Catalogue",
     "selection": "Edit part",
     "viewOptions": "View & tools"
@@ -527,7 +531,7 @@
     "afterPart": "After part {{number}} · {{part}}",
     "hint": "The connected following section moves up to this point. Orange marks the cut. Assemblies remain together. Further edits end this selection.",
     "done": "Keep cut point",
-    "catalogueHint": "Click a catalogue part to replace the selected rail and move the connected following section. Repeat placement keeps mouse stamping."
+    "catalogueHint": "Click a catalogue part, then place it on the track: dock at an end or replace at the middle. Escape cancels pointer placement."
   },
   "joinSections": {
     "action": "Join sections",

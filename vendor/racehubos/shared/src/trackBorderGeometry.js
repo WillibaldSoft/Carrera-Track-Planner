@@ -180,6 +180,24 @@ function overlap(a, b) {
   }
   return contained(a, b) || contained(b, a)
 }
+// Check actual occupied space, including detached or moved pit-lane pieces.
+// Shared boundaries are allowed; only overlap at the same physical level blocks.
+export function pitShoulderSideBlocked(plan, index, side) {
+  const extras = (plan.trackExtras || []).filter((e) => ['single', 'pitEntry', 'pitExit'].includes(e.kind))
+  if (!extras.length && (!plan.pit.enabled || plan.pit.native)) return false
+  const segments = traceTrackPlan(plan).segments
+  const segment = segments[index]
+  if (!segment) return false
+  const shoulder = borderShapes(plan, [{ ...segment, borders: { [side]: { startCap: false, endCap: false } } }])[0]
+  if (!shoulder) return false
+  if (extras.some((extra) => {
+    const level = segments[extra.anchor]?.level ?? extra.level ?? 0
+    return level === segment.level && overlap(shoulder.points, softyExtraGeometry(extra, segments).polygon)
+  })) return true
+  return !plan.pit.native && plan.pit.enabled && segments[plan.pit.entry]?.level === segment.level &&
+    pitRoadPolygons(plan, segments).some((polygon) => overlap(shoulder.points, polygon))
+}
+
 export function borderConflicts(plan) {
   const seg = traceTrackPlan(plan).segments,
     shapes = borderShapes(plan, seg)

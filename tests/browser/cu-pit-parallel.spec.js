@@ -5,6 +5,7 @@ import {
   createPitAssembly,
   enableFreePlacement,
   transformFreeParts,
+  traceTrackPlan,
 } from '../../vendor/racehubos/shared/src/index.js'
 const loop = () =>
   enableFreePlacement({
@@ -55,6 +56,14 @@ for (const language of ['de', 'en', 'fr'])
     await open(page, loop(), language)
     await pick(page, 3)
     await page.getByTestId('palette-Kurve_2_30_rechts').click()
+    const segment = traceTrackPlan(loop()).segments[3]
+    const p = await page.getByTestId('graph-track-canvas').evaluate((svg, segment) => {
+      const p = svg.createSVGPoint(); p.x = (segment.start.x + segment.end.x) / 2; p.y = (segment.start.y + segment.end.y) / 2
+      const q = p.matrixTransform(svg.getScreenCTM()); return {x:q.x,y:q.y}
+    }, segment)
+    await page.mouse.move(p.x,p.y)
+    await expect(page.getByTestId('repeat-track-preview')).toHaveAttribute('data-action','replace')
+    await page.mouse.click(p.x,p.y)
     await expect(page.getByTestId('replacement-cut-select')).toHaveValue('6')
     await expect(page.getByTestId('replacement-cut-select').locator('option').last()).toContainText('10')
     await pick(page, 0)

@@ -1,3 +1,4 @@
+import { pitShoulderSideBlocked } from './trackBorderGeometry.js';
 import { validateDrawLayer } from './trackDrawLayers.js';
 // Flat Carrera 124/132/Evolution shoulders. Article identities: Carrera catalogues
 // 2013 pp90–91 / 2020 shoulder table. 99mm is the nominal planning width.
@@ -88,6 +89,10 @@ export function validateBorders(value, type) {
   return Object.keys(result).length ? result : undefined;
 }
 export function pitBorderSideBlocked(plan, index, side) {
+  // Free placement and individually positioned pit pieces have no reliable
+  // relationship to the array interval between the old entry/merge indices.
+  if (plan.freePlacement || plan.pit.native || plan.pit.individualParts)
+    return pitShoulderSideBlocked(plan, index, side);
   if (!plan.pit.enabled || side !== 'right') return false;
   for (let i = plan.pit.entry, n = 0; n < plan.pieces.length; n++, i = (i + 1) % plan.pieces.length) {
     if (i === index) return true;

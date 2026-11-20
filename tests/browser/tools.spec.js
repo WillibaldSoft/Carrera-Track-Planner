@@ -138,6 +138,7 @@ test('context menu rotates, replaces and deletes a rail with undo', async ({ pag
   await expect(page.getByTestId('free-part-angle')).toHaveValue('15')
   await page.getByTestId('track-undo').click()
   await page.getByTestId('palette-Drittelgerade').click()
+  await page.keyboard.press('Escape')
   await page.getByTestId('graph-track-canvas').getByTestId('rail-0').click({ button: 'right' })
   await page.getByTestId('context-replace').click()
   await expect(page.getByTestId('graph-track-canvas').getByTestId('rail-0')).toHaveAttribute('aria-label', /Drittel/)

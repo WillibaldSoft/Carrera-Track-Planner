@@ -2,6 +2,7 @@
 
 **Deutsch** · [English](README.md) · [Français](README.fr.md)
 
+[1.6.0 · Mausplatzierung & Randstreifen](docs/RELEASE-1.6.0.de.md)
 [1.5.1 · Diodenpositionen und Aufdrucke](docs/RELEASE-1.5.1.de.md)
 [1.5.0 · Navigation & Boxengassen](docs/RELEASE-1.5.0.de.md)
 [1.4.0 · Gradients & direct updates](docs/RELEASE-1.4.0.de.md)
@@ -30,15 +31,20 @@ Der Starter öffnet `http://127.0.0.1:3180` und lauscht nur lokal. Das Startterm
 
 ## Funktionen
 
+- Seitenpfeil gedrückt halten und über weitere Seitenpfeile ziehen: Der erste Pfeil legt Anfügen/Entfernen fest, Wiederbesuche schalten nichts zurück. Loslassen übernimmt den ganzen Zug mit einem Rückgängig-Schritt; Escape oder Fokusverlust verwirft ihn.
+
 - Start/Ziel und Control Unit mit zwei parallelen Tankplätzen, Boxenassistent und Baugruppenvorlagen.
 - Optionale AKS-Einbauangabe und sichtbare Markierungen.
-- Mehrfachlegen, direkter Katalogaustausch mit Nachführen der Bahn und wählbarem Auftrennpunkt.
+- Katalogteile folgen direkt der Maus: am freien Ende einrasten oder mittig austauschen, mit Nachführen und wählbarem Auftrennpunkt. Mehrfachlegen hält die Auswahl; Escape beendet sie. Strg + Mausrad / Bild auf/ab zoomt.
+- Vier unverändert große Pfeile mit größeren unsichtbaren Trefferflächen beim Überfahren einer Schiene: Vorschau beim Überfahren des Pfeils, Anfügen erst per Klick; gleiche Teile in und gegen Fahrtrichtung anfügen, Randstreifen links/rechts ergänzen. Belegte Anschlüsse sind gesperrt; Rückgängig/Wiederholen wird unterstützt. Seitenpfeile schalten Randstreifen mit Vorschau ein/aus (rotes Minus zum Entfernen, einschließlich Endstücken). Die nächsten Seitenpfeile angeschlossener Schienen bleiben direkt erreichbar.
 - Zwei markierte Streckenabschnitte an gewählten freien Anschlüssen zusammenfügen; Rückgängig/Wiederholen.
 - Feste Bahnfläche mit unabhängig scrollenden Seitenbereichen; Deutsch, Englisch und Französisch sowie System/Hell/Dunkel.
 - Nativer JSON-Austausch, unterstützte Softyroyal-/TRK-Varianten, Bildexport, Bestand und geometrische Aufbauprüfung.
 - Raumabhängige Streckensuche, automatisches Zubehör und zentrale Werkzeugleiste.
 - Gespeicherte 3D-Höhen, einstellbare sanfte Rampen und verschiebbare 2D-Höhenbeschriftungen.
 - Vektor-PDF mit eingebetteten Schriften; Druck, PNG und SVG übernehmen sichtbare manuelle Positionen.
+
+Bei frei platzierten Bahnen sperrt die Boxengasse Randstreifen nur bei tatsächlicher räumlicher Überlappung auf derselben Ebene; alte Einfahrts-/Ausfahrtsnummern sperren keine frei eingesetzten Schienen.
 
 ## Integration zur Prüfung durch Anselme
 
